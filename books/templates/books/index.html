@@ -1,0 +1,13 @@
+{% extends "books/layout.html" %}
+
+{% block body %}
+    <h1>Books</h1>
+    <ul>
+        {% for book in books %}
+            <li>{{ book }}</li>
+        {% empty %}
+            <li>No books.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'books:add' %}">Add New book</a>
+{% endblock %}
