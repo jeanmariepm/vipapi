@@ -1,6 +1,6 @@
 from django import forms
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Book
@@ -10,13 +10,21 @@ class NewBookForm(forms.Form):
     # priority = forms.IntegerField(label="Priority", min_value=1, max_value=5)
 
 # Create your views here.
-@login_required
 def index(request):
     books = Book.objects.all()
     return render(request, "books/index.html", {
         "books": books
     })
 
+@login_required
+def detail(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    return render(request, "books/detail.html", {
+        "book": book
+    })
+
+
+@login_required
 def add(request):
     if request.method == "POST":
         form = NewBookForm(request.POST)

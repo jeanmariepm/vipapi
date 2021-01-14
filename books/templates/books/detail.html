@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <h1>Book</h1>
+    <dl class=""></dl>
+    <dt>Title</dt>
+    <dd>{{ book.title }}</dd>
+    <dt>Genre</dt>
+    <dd>{{ book.genre.name }}</dd>
+    <dt>Published Date</dt>
+    <dd>{{ book.pub_dt }}</dd>
+{% endblock %}

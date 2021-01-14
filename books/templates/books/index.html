@@ -2,12 +2,29 @@
 
 {% block body %}
     <h1>Books</h1>
-    <ul>
-        {% for book in books %}
-            <li>{{ book.title }}:{{ book.genre.name }}:{{ book.pub_date }}</li>
-        {% empty %}
-            <li>No books.</li>
-        {% endfor %}
-    </ul>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Pub Dt</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+                <tr>
+                    <td>
+                        <a href="{% url 'books:detail' book.id %}">
+                            {{ book.title }} 
+                        </a>
+                    </td>
+                    <td>{{ book.genre.name }}</td>
+                    <td>{{ book.pub_date }}</td>
+                </tr>
+            {% empty %}
+                <h3>No books.</h2>
+            {% endfor %}
+        </tbody>
+    </table>
     <a href="{% url 'books:add' %}">Add New book</a>
 {% endblock %}
