@@ -5,9 +5,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Book
 
-class NewBookForm(forms.Form):
-    book = forms.CharField(label="New book")
-    # priority = forms.IntegerField(label="Priority", min_value=1, max_value=5)
+class ReviewForm(forms.Form):
+    critique = forms.CharField(label="Your Review")
 
 # Create your views here.
 def index(request):
@@ -19,24 +18,25 @@ def index(request):
 @login_required
 def detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
+    reviews = book.book_reviews.all()
     return render(request, "books/detail.html", {
-        "book": book
+        "book": book,
+        "reviews": reviews
     })
 
 
 @login_required
-def add(request):
+def addReview(request):
     if request.method == "POST":
-        form = NewBookForm(request.POST)
+        form = ReviewForm(request.POST)
         if form.is_valid():
-            book = form.cleaned_data["book"]
-            request.session["books"] += [book]
-            return HttpResponseRedirect(reverse("books:index"))
-        else:
-            return render(request, "books/add.html", {
-                "form": form
-            })
+            critique = form.cleaned_data["critique"]
+            # create a review and it to the DB
+        # redirect to detail view
+        return render(rreverse("books:detail"), {
+                    "book": book,
+                    "reviews": reviews
+                })
     else:
-        return render(request, "books/add.html", {
-            "form": NewBookForm()
-        })
+        # cannot be here
+        pass

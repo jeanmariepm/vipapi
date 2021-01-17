@@ -9,4 +9,8 @@
     <dd>{{ book.genre.name }}</dd>
     <dt>Published Date</dt>
     <dd>{{ book.pub_dt }}</dd>
+    <br>
+    {% for review in reviews %}
+        {{ review.critic.username }} said on {{ review.rev_date}} : {{ review.comment}}
+    {% endfor %}
 {% endblock %}

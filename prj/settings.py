@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['vipveed.herokuapp.com', 'localhost']
 INSTALLED_APPS = [
     'home',
     'books',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -125,3 +126,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'prj/static')
+
+CRISPY_TEMPLATE_PACK="bootstrap4"
