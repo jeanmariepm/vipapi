@@ -3,10 +3,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import Book
+from .models import Book, Review
 
 class ReviewForm(forms.Form):
-    critique = forms.CharField(label="Your Review")
+    comment = forms.CharField(label="Your Review")
 
 # Create your views here.
 def index(request):
@@ -19,9 +19,22 @@ def index(request):
 def detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     reviews = book.book_reviews.all()
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            comment = form.cleaned_data["comment"]
+            review = Review(book = book, 
+                        critic = request.user, 
+                        comment = comment)
+            review.save()
+    else:
+        form = ReviewForm()
+
+    reviews = book.book_reviews.all()
     return render(request, "books/detail.html", {
         "book": book,
-        "reviews": reviews
+        "reviews": reviews,
+        "form": form
     })
 
 

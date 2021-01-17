@@ -10,7 +10,17 @@
     <dt>Published Date</dt>
     <dd>{{ book.pub_dt }}</dd>
     <br>
-    {% for review in reviews %}
-        {{ review.critic.username }} said on {{ review.rev_date}} : {{ review.comment}}
-    {% endfor %}
+    <ul>
+        {% for review in reviews %}
+            <li>
+                {{ review.critic.username }} said on {{ review.rev_date}} : {{ review.comment}}
+            </li>
+        {% endfor %}
+    </ul>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit your review">
+      </form>
+    
 {% endblock %}
