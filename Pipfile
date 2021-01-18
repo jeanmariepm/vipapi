@@ -12,6 +12,7 @@ pylint-django = "*"
 gunicorn = "*"
 whitenoise = "*"
 django-crispy-forms = "*"
+django-extensions = "*"
 
 [requires]
 python_version = "3.8"
