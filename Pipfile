@@ -13,6 +13,9 @@ gunicorn = "*"
 whitenoise = "*"
 django-crispy-forms = "*"
 django-extensions = "*"
+dj-database-url = "*"
+wheel = "*"
+setuptools = "*"
 
 [requires]
 python_version = "3.8"
