@@ -18,7 +18,6 @@ def index(request):
 @login_required
 def detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
-    reviews = book.book_reviews.all()
     if request.method == "POST":
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -38,18 +37,3 @@ def detail(request, book_id):
     })
 
 
-@login_required
-def addReview(request):
-    if request.method == "POST":
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            critique = form.cleaned_data["critique"]
-            # create a review and it to the DB
-        # redirect to detail view
-        return render(rreverse("books:detail"), {
-                    "book": book,
-                    "reviews": reviews
-                })
-    else:
-        # cannot be here
-        pass

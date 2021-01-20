@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 
 {% block body %}
+{% load static %}
+<script type="text/javascript" src="{% static 'books/books.js' %}"></script>
+
     <h1>Book</h1>
     <dl class=""></dl>
     <dt>Title</dt>
@@ -8,7 +11,7 @@
     <dt>Genre</dt>
     <dd>{{ book.genre.name }}</dd>
     <dt>Published Date</dt>
-    <dd>{{ book.pub_dt }}</dd>
+    <dd>{{ book.pub_date }}</dd>
     <br>
     <ul>
         {% for review in reviews %}
@@ -20,7 +23,8 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Submit your review">
+        <input id="submit" type="submit" value="Submit your review">
+
       </form>
-    
+
 {% endblock %}
