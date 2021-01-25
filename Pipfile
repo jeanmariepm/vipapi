@@ -17,6 +17,7 @@ dj-database-url = "*"
 wheel = "*"
 setuptools = "*"
 psycopg2 = "*"
+django-webpack-loader = "*"
 
 [requires]
 python_version = "3.8"

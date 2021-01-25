@@ -34,8 +34,10 @@ ALLOWED_HOSTS = ['vipveed.herokuapp.com', 'localhost']
 INSTALLED_APPS = [
     'home',
     'books',
+    'games',
     'crispy_forms',
     'django_extensions',
+    'webpack_loader',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -129,6 +131,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'prj/static')
 
 CRISPY_TEMPLATE_PACK="bootstrap4"
+
+
 
 import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=600)
