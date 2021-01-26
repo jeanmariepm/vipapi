@@ -1,10 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+//import 'bootstrap/dist/css/bootstrap.css'
+import Addition from './components/addition'
+import classes from './index.css'
 
 const Hello = () => {
   return (
-    <div>
-      <h1>Try these games</h1>
+    <div className={classes} class='app'>
+      <Addition/>
     </div>
   )
 }
