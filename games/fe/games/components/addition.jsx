@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import styles from './addition.css'
+import styles from "./addition.css";
+import { Button } from "react-bootstrap";
 
 class Addition extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class Addition extends Component {
       response: "",
       score: 0,
       incorrect: false,
-      imageURL: 'https://picsum.photos/100'
+      imageURL: "https://picsum.photos/100",
     };
   }
 
@@ -24,23 +25,23 @@ class Addition extends Component {
 
   renderWinnerScreen() {
     return (
-      <React.Fragment>
-        <img src={this.state.imageURL}/>
+      <div className="app">
+        <img src={this.state.imageURL} />
         <div id="winner">You won!</div>
-        <button onClick={this.startOver}>Start Over</button>
-      </React.Fragment>
+        <Button onClick={this.startOver}>Start Over</Button>
+      </div>
     );
   }
 
   startOver = () => {
-    this.setState( (state) => ({
-      score: 0
-    }))
-  }
+    this.setState((state) => ({
+      score: 0,
+    }));
+  };
 
   renderProblem() {
     return (
-      <div className='app'>
+      <div className="app">
         <h1>Addition</h1>
         <h4>From CS50 Web Dev on EdX</h4>
         <div className={this.state.incorrect ? "incorrect" : ""} id="problem">
