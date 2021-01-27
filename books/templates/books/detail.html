@@ -1,30 +1,26 @@
-{% extends "layout.html" %}
-
-{% block body %}
-{% load static %}
+{% extends "layout.html" %} {% block body %} {% load static %}
 <script type="text/javascript" src="{% static 'books/books.js' %}"></script>
 
-    <h1>Book</h1>
-    <dl class=""></dl>
-    <dt>Title</dt>
-    <dd>{{ book.title }}</dd>
-    <dt>Genre</dt>
-    <dd>{{ book.genre.name }}</dd>
-    <dt>Published Date</dt>
-    <dd>{{ book.pub_date }}</dd>
-    <br>
-    <ul>
-        {% for review in reviews %}
-            <li>
-                {{ review.critic.username }} said on {{ review.rev_date}} : {{ review.comment}}
-            </li>
-        {% endfor %}
-    </ul>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input id="submit" type="submit" value="Submit your review">
-
-      </form>
+<h1>Book</h1>
+<dl clasName=""></dl>
+<dt>Title</dt>
+<dd>{{ book.title }}</dd>
+<dt>Genre</dt>
+<dd>{{ book.genre.name }}</dd>
+<dt>Published Date</dt>
+<dd>{{ book.pub_date }}</dd>
+<br />
+<ul>
+  {% for review in reviews %}
+  <li>
+    {{ review.critic.username }} said on {{ review.rev_date}} : {{
+    review.comment}}
+  </li>
+  {% endfor %}
+</ul>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <input id="submit" type="submit" value="Submit your review" />
+</form>
 
 {% endblock %}

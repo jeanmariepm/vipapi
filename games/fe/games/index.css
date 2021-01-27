@@ -1,4 +1,5 @@
-#app {
+.app {
   text-align: center;
   font-family: sans-serif;
+  background-color: lightblue;
 }
