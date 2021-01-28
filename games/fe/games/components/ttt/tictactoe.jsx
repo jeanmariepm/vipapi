@@ -17,9 +17,13 @@ class TicTacToe extends Component {
   };
 
   renderSquare(i) {
-    let dispVal = this.state.game.squares[i];
-    dispVal = dispVal ? dispVal : "";
-    return <Square value={dispVal} onClick={() => this.clickHandler(i)} />;
+    return (
+      <Square
+        game={this.state.game}
+        index={i}
+        onClick={() => this.clickHandler(i)}
+      />
+    );
   }
 
   clickHandler(i) {

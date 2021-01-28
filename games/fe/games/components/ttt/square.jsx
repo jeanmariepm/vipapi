@@ -1,12 +1,36 @@
-import React from "react";
+import React, { Component } from "react";
 import { Button } from "react-bootstrap";
 import styles from "./tictactoe.css";
 
-const Square = (props) => {
-  return (
-    <Button className="Square" onClick={() => props.onClick()}>
-      {props.value}
-    </Button>
-  );
-};
+class Square extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      game: props.game,
+      handler: props.onClick,
+      index: props.index,
+    };
+  }
+
+  getDisabled() {
+    const value = this.getValue();
+    return value === null ? false : true;
+  }
+  getValue() {
+    return this.state.game.squares[this.state.index];
+  }
+
+  render() {
+    console.log(this.state.index, this.getValue(), this.getDisabled());
+    return (
+      <Button
+        className="Square"
+        disabled={this.getDisabled()}
+        onClick={() => this.state.handler()}
+      >
+        {this.getValue()}
+      </Button>
+    );
+  }
+}
 export default Square;
