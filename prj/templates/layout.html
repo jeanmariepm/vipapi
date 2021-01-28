@@ -14,26 +14,26 @@
         {% endif %}    </head>
     <body>
 
-        <nav clasName="navbar navbar-dark bg-primary">
-            <div clasName="container-fluid">
-                <span clasName="navbar-brand mb-0 h1">Veed</span>
-                <a clasName="nav-link active" aria-current="page" href="{% url 'home:index' %}">Home</a>
-                <a clasName="nav-link" href="{% url 'books:index' %}" tabindex="-1" aria-current="true">Books</a>
-                <a clasName="nav-link" href="{% url 'games:index' %}" tabindex="-1" aria-current="true">Games</a>
+        <nav class="navbar navbar-dark bg-primary">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1">Veed</span>
+                <a class="nav-link text-light active" aria-current="page" href="{% url 'home:index' %}">Home</a>
+                <a class="nav-link text-light" href="{% url 'books:index' %}" tabindex="-1" aria-current="true">Books</a>
+                <a class="nav-link text-light" href="{% url 'games:index' %}" tabindex="-1" aria-current="true">Games</a>
             
                 {% if user.is_authenticated %}
-                <a clasName="nav-link" href="{% url 'home:logout' %}?next={{ request.path }}" tabindex="-1" aria-disabled="true">Logout</a>
+                <a class="nav-link text-dark" href="{% url 'home:logout' %}?next={{ request.path }}" tabindex="-1" aria-disabled="true">Logout</a>
                 {% else %}
-                    <a clasName="nav-link" href="{% url 'home:login' %}?next={{ request.path }}" tabindex="-1" aria-disabled="true">Login</a>
+                    <a class="nav-link text-dark" href="{% url 'home:login' %}?next={{ request.path }}" tabindex="-1" aria-disabled="true">Login</a>
                 {% endif %}
               </div>
             </div>
           </nav>
                     
-        <main clasName='container'>
+        <div class='container-fluid'>
             {% block body %}
             {% endblock %}
-        </main>
+        </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
     </body>
