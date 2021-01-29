@@ -2,14 +2,21 @@
 <script type="text/javascript" src="{% static 'books/books.js' %}"></script>
 
 <h1>Book</h1>
-<dl clasName=""></dl>
-<dt>Title</dt>
-<dd>{{ book.title }}</dd>
-<dt>Genre</dt>
-<dd>{{ book.genre.name }}</dd>
-<dt>Published Date</dt>
-<dd>{{ book.pub_date }}</dd>
-<br />
+<div class="table-responsive">
+  <table class="table">
+    <tbody>
+      <tr></tr>
+      <th scope="row" width="25%">Title</th>
+      <td>{{ book.title }}</td>
+      <tr></tr>
+      <th scope="row">Genre</th>
+      <td>{{ book.genre.name }}</td>
+      <tr></tr>
+      <th scope="row">Published Date</th>
+      <td>{{ book.pub_date }}</td>
+    </tbody>
+  </table>
+</div>
 <ul>
   {% for review in reviews %}
   <li>
@@ -18,9 +25,20 @@
   </li>
   {% endfor %}
 </ul>
+{% if user.is_authenticated %}
 <form method="post">
   {% csrf_token %} {{ form.as_p }}
   <input id="submit" type="submit" value="Submit your review" />
 </form>
-
-{% endblock %}
+{% else %}
+<span>
+  <a
+    href="{% url 'home:login' %}?next={{ request.path }}"
+    tabindex="-1"
+    aria-disabled="true"
+  >
+    Login
+  </a>
+  to add your review
+</span>
+{% endif %} {% endblock %}

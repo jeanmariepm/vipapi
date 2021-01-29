@@ -6,6 +6,16 @@
   To fully explore the site, register
   <a href="{% url 'home:register' %}">here</a>
 </p>
+<p>
+  If you have already registered, please
+  <a
+    href="{% url 'home:login' %}?next={{ request.path }}"
+    tabindex="-1"
+    aria-disabled="true"
+  >
+    Login
+  </a>
+</p>
 {% endif %}
 <br />
 <div class="alert alert-dark" role="alert">

@@ -15,7 +15,6 @@ def index(request):
         "books": books
     })
 
-@login_required
 def detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     if request.method == "POST":
