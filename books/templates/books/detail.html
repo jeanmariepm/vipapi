@@ -16,15 +16,16 @@
       <td>{{ book.pub_date }}</td>
     </tbody>
   </table>
+  <table class="table table-bordered table-sm">
+    <tbody>
+      {% for review in reviews %}
+      <td>{{ review.critic.username }}</td>
+      <td>{{ review.comment }}</td>
+      <td>{{review.rev_date}}</td>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
-<ul>
-  {% for review in reviews %}
-  <li>
-    {{ review.critic.username }} said on {{ review.rev_date}} : {{
-    review.comment}}
-  </li>
-  {% endfor %}
-</ul>
 {% if user.is_authenticated %}
 <form method="post">
   {% csrf_token %} {{ form.as_p }}
