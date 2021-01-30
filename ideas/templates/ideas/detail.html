@@ -1,0 +1,54 @@
+{% extends "layout.html" %} {% block body %} {% load static %}
+<script type="text/javascript" src="{% static 'books/books.js' %}"></script>
+
+<div class="table-responsive">
+  <table class="table">
+    <tbody>
+      <tr>
+        <th scope="row" width="25%">Idea</th>
+        <td>{{ idea.title }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Description</th>
+        <td>{{ idea.description }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Posted By</th>
+        <td>{{ idea.posted_ny.username }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Posted Date</th>
+        <td>{{ idea.posted_date }}</td>
+      </tr>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered table-sm">
+    <tbody>
+      {% for comment in comments %}
+      <tr>
+        <td>{{ comment.commented_by.username }}</td>
+        <td>{{ comment.remark }}</td>
+        <td>{{comment.comment_date}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% if user.is_authenticated %}
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button class="btn btn-primary" type="submit">Submit your comment</button>
+</form>
+{% else %}
+<span>
+  <a
+    href="{% url 'home:login' %}?next={{ request.path }}"
+    tabindex="-1"
+    aria-disabled="true"
+  >
+    Login
+  </a>
+  to add your review
+</span>
+{% endif %} {% endblock %}

@@ -18,7 +18,7 @@
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">Veed</span>
                 <a class="nav-link text-light active" aria-current="page" href="{% url 'home:index' %}">Home</a>
-                <a class="nav-link text-light" href="{% url 'books:index' %}" tabindex="-1" aria-current="true">Books</a>
+                <a class="nav-link text-light" href="{% url 'ideas:index' %}" tabindex="-1" aria-current="true">Ideas</a>
                 <a class="nav-link text-light" href="{% url 'games:index' %}" tabindex="-1" aria-current="true">Games</a>
             
                 {% if user.is_authenticated %}

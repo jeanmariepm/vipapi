@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['vipveed.herokuapp.com', 'localhost']
 
 INSTALLED_APPS = [
     'home',
-    'books',
+    'ideas',
     'games',
     'crispy_forms',
     'django_extensions',
