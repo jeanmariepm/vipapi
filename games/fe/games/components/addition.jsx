@@ -43,7 +43,6 @@ class Addition extends Component {
     return (
       <div className="app">
         <h1>Addition</h1>
-        <h4>From CS50 Web Dev on EdX</h4>
         <div className={this.state.incorrect ? "incorrect" : ""} id="problem">
           {this.state.num1} + {this.state.num2}
         </div>

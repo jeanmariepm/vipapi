@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.css";
 import Addition from "./components/addition";
 import TicTacToe from "./components/ttt/tictactoe";
+import Bridge from "./components/bridge/bridge";
 import styles from "./index.css";
 import { Container, Tabs, Tab } from "react-bootstrap";
 
@@ -27,7 +28,7 @@ class App extends Component {
             <TicTacToe />
           </Tab>
           <Tab eventKey="bridge" title="Bridge">
-            <h2>Another under construction</h2>
+            <Bridge />{" "}
           </Tab>
         </Tabs>
       </Container>
