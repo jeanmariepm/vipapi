@@ -21,7 +21,6 @@ class Square extends Component {
   }
 
   render() {
-    console.log(this.state.index, this.getValue(), this.getDisabled());
     return (
       <Button
         className="Square"

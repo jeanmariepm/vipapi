@@ -6,39 +6,40 @@ import Hand from "./hand";
 class Bridge extends Component {
   constructor(props) {
     super(props);
-    const player = this.shuffle();
+    const deal = this.shuffle();
     this.state = {
-      player: player,
+      deal: deal,
     };
   }
   startOver = () => {
-    const player = this.shuffle();
+    const deal = this.shuffle();
     this.setState((state) => ({
-      player: player,
+      deal: deal,
     }));
   };
 
   shuffle = () => {
     let cards = [];
-    for (let i = 1; i <= 52; i++) {
-      cards[i - 1] = i;
+    for (let i = 0; i < 52; i++) {
+      cards[i] = i;
     }
     let card;
-    let player = []; // = [{ S: [], H: [], D: [], C: [] }];
+    let deal = [];
 
     for (let j = 0; j < 4; j++) {
-      player.push({ S: [], H: [], D: [], C: [] });
+      let player = { S: [], H: [], D: [], C: [] };
       for (let k = 0; k < 13; k++) {
         card = cards[Math.floor(Math.random() * cards.length)];
         cards.splice(cards.indexOf(card), 1);
-        if (card < 13) player[j]["S"].push(card);
-        else if (card <= 26) player[j]["H"].push(card);
-        else if (card <= 39) player[j]["D"].push(card);
-        else if (card <= 52) player[j]["C"].push(card);
+        if (card < 13) player["S"].push(card);
+        else if (card < 26) player["H"].push(card);
+        else if (card < 39) player["D"].push(card);
+        else if (card < 52) player["C"].push(card);
       }
+      deal.push(player);
     }
-    console.log(player);
-    return player;
+    console.log("Shuffled: ", deal);
+    return deal;
   };
 
   render() {
@@ -50,23 +51,23 @@ class Bridge extends Component {
             <Button onClick={this.startOver}>Redeal</Button>
           </Col>
           <Col>
-            <Hand player={this.state.player[0]} />
+            <Hand player={this.state.deal[0]} />
           </Col>
           <Col></Col>
         </Row>
         <Row>
           <Col>
-            <Hand player={this.state.player[1]} />
+            <Hand player={this.state.deal[1]} />
           </Col>
           <Col></Col>
           <Col>
-            <Hand player={this.state.player[2]} />
+            <Hand player={this.state.deal[2]} />
           </Col>
         </Row>
         <Row>
           <Col></Col>
           <Col>
-            <Hand player={this.state.player[3]} />
+            <Hand player={this.state.deal[3]} />
           </Col>
           <Col></Col>
         </Row>

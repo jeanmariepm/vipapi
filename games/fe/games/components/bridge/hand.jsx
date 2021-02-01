@@ -6,49 +6,39 @@ import Club from "./c.gif";
 import styles from "./bridge.css";
 
 class Hand extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      player: props.player,
-    };
-  }
   getSuitCards(suit) {
-    let cards = this.state.player[suit];
-    console.log("cards:", cards);
+    let cards = this.props.player[suit];
 
     cards.sort((a, b) => {
       return b - a;
     });
     let cardString = "";
     for (let i = 0; i < cards.length; i++) {
-      console.log("card:", cards[i]);
-
       cards[i] = this.getBridgeString(cards[i]);
-      console.log("bridgeCard:", cards[i]);
       cardString += cards[i];
     }
-    console.log("Player cards as str", cardString);
 
     return cardString;
   }
   getBridgeString(ch) {
     const bridgeMap = {
-      1: "2",
-      2: "3",
-      3: "4",
-      4: "5",
-      5: "6",
-      6: "7",
-      7: "8",
-      8: "9",
-      9: "T",
-      10: "J",
-      11: "Q",
-      12: "K",
-      0: "A",
+      0: "2",
+      1: "3",
+      2: "4",
+      3: "5",
+      4: "6",
+      5: "7",
+      6: "8",
+      7: "9",
+      8: "T",
+      9: "J",
+      10: "Q",
+      11: "K",
+      12: "A",
     };
     return bridgeMap[ch % 13];
   }
+
   render() {
     return (
       <table>
