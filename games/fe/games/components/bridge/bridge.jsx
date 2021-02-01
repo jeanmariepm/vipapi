@@ -9,12 +9,20 @@ class Bridge extends Component {
     const deal = this.shuffle();
     this.state = {
       deal: deal,
+      reveal: false,
     };
   }
+  reveal = () => {
+    this.setState((state) => ({
+      reveal: !this.state.reveal,
+    }));
+  };
+
   startOver = () => {
     const deal = this.shuffle();
     this.setState((state) => ({
       deal: deal,
+      reveal: false,
     }));
   };
 
@@ -48,26 +56,35 @@ class Bridge extends Component {
         <h1>Under construction</h1>
         <Row>
           <Col>
-            <Button onClick={this.startOver}>Redeal</Button>
+            <p>
+              <Button variant="secondary" size="sm" onClick={this.startOver}>
+                Re-deal
+              </Button>
+            </p>
+            <p>
+              <Button variant="secondary" size="sm" onClick={this.reveal}>
+                {this.state.reveal ? "Hide" : "Show"}
+              </Button>
+            </p>
           </Col>
           <Col>
-            <Hand player={this.state.deal[0]} />
+            <Hand player={this.state.deal[0]} reveal={this.state.reveal} />
           </Col>
           <Col></Col>
         </Row>
         <Row>
           <Col>
-            <Hand player={this.state.deal[1]} />
+            <Hand player={this.state.deal[1]} reveal={this.state.reveal} />
           </Col>
           <Col></Col>
           <Col>
-            <Hand player={this.state.deal[2]} />
+            <Hand player={this.state.deal[2]} reveal={this.state.reveal} />
           </Col>
         </Row>
         <Row>
           <Col></Col>
           <Col>
-            <Hand player={this.state.deal[3]} />
+            <Hand player={this.state.deal[3]} reveal={true} />
           </Col>
           <Col></Col>
         </Row>

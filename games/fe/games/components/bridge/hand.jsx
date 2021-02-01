@@ -7,19 +7,19 @@ import styles from "./bridge.css";
 
 class Hand extends Component {
   getSuitCards(suit) {
-    let cards = this.props.player[suit];
+    if (this.props.reveal === false) return "?";
 
+    let cards = this.props.player[suit];
     cards.sort((a, b) => {
       return b - a;
     });
     let cardString = "";
     for (let i = 0; i < cards.length; i++) {
-      cards[i] = this.getBridgeString(cards[i]);
-      cardString += cards[i];
+      cardString += this.getBridgeString(cards[i]);
     }
-
     return cardString;
   }
+
   getBridgeString(ch) {
     const bridgeMap = {
       0: "2",
