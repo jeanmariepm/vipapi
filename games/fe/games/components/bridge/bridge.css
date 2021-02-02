@@ -1,6 +1,8 @@
 .pcard {
   font-family: "Courier New", Courier, monospace;
   text-align: left;
+  font-weight: bolder;
+  font-size: large;
 }
 
 .app {

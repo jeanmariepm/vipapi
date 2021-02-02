@@ -3,6 +3,7 @@ import Spade from "./s.gif";
 import Heart from "./h.gif";
 import Diamond from "./d.gif";
 import Club from "./c.gif";
+import { Table } from "react-bootstrap";
 import styles from "./bridge.css";
 
 class Hand extends Component {
@@ -41,34 +42,42 @@ class Hand extends Component {
 
   render() {
     return (
-      <table>
+      <Table size="sm">
         <tbody>
-          <tr>
+          <tr height>
             <td>
-              <img src={Spade} />
+              <div className="pcard">
+                <img src={Spade} />
+                {this.getSuitCards("S")}
+              </div>
             </td>
-            <td className="pcard">{this.getSuitCards("S")}</td>
           </tr>
           <tr>
             <td>
-              <img src={Heart} />
+              <div className="pcard">
+                <img src={Heart} />
+                {this.getSuitCards("H")}
+              </div>
             </td>
-            <td className="pcard">{this.getSuitCards("H")}</td>
           </tr>
           <tr>
             <td>
-              <img src={Diamond} />
+              <div className="pcard">
+                <img src={Diamond} />
+                {this.getSuitCards("D")}
+              </div>
             </td>
-            <td className="pcard">{this.getSuitCards("D")}</td>
           </tr>
           <tr>
             <td>
-              <img src={Club} />
+              <div className="pcard">
+                <img src={Club} />
+                {this.getSuitCards("C")}
+              </div>
             </td>
-            <td className="pcard">{this.getSuitCards("C")}</td>
           </tr>
         </tbody>
-      </table>
+      </Table>
     );
   }
 }
