@@ -3,14 +3,19 @@ import Spade from "./s.gif";
 import Heart from "./h.gif";
 import Diamond from "./d.gif";
 import Club from "./c.gif";
-import { Table } from "react-bootstrap";
+import { Card, Image } from "react-bootstrap";
 import styles from "./bridge.css";
 
 class Hand extends Component {
+  getSuitImage(suit) {
+    const images = { Spade, Heart, Diamond, Club };
+    return <img src={images[suit]} />;
+  }
   getSuitCards(suit) {
     if (this.props.reveal === false) return "?";
 
     let cards = this.props.player[suit];
+
     cards.sort((a, b) => {
       return b - a;
     });
@@ -18,6 +23,7 @@ class Hand extends Component {
     for (let i = 0; i < cards.length; i++) {
       cardString += this.getBridgeString(cards[i]);
     }
+
     return cardString;
   }
 
@@ -41,43 +47,21 @@ class Hand extends Component {
   }
 
   render() {
+    let defSuit = Spade;
     return (
-      <Table size="sm">
-        <tbody>
-          <tr height>
-            <td>
-              <div className="pcard">
-                <img src={Spade} />
-                {this.getSuitCards("S")}
+      <Card bg="info">
+        <Card.Body>
+          {this.props.name}
+          {["Spade", "Heart", "Diamond", "Club"].map((suit, idx) => {
+            return (
+              <div key={suit} className="pcard">
+                {this.getSuitImage(suit)}
+                {this.getSuitCards(suit)}
               </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div className="pcard">
-                <img src={Heart} />
-                {this.getSuitCards("H")}
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div className="pcard">
-                <img src={Diamond} />
-                {this.getSuitCards("D")}
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div className="pcard">
-                <img src={Club} />
-                {this.getSuitCards("C")}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </Table>
+            );
+          })}
+        </Card.Body>
+      </Card>
     );
   }
 }

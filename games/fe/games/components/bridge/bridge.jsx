@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Card, Container } from "react-bootstrap";
 import styles from "./bridge.css";
+import DealControls from "./dealControls";
+import BidControls from "./bidControls";
 import Hand from "./hand";
 
 class Bridge extends Component {
@@ -12,7 +14,7 @@ class Bridge extends Component {
       reveal: false,
     };
   }
-  reveal = () => {
+  show = () => {
     this.setState((state) => ({
       reveal: !this.state.reveal,
     }));
@@ -35,14 +37,14 @@ class Bridge extends Component {
     let deal = [];
 
     for (let j = 0; j < 4; j++) {
-      let player = { S: [], H: [], D: [], C: [] };
+      let player = { Spade: [], Heart: [], Diamond: [], Club: [] };
       for (let k = 0; k < 13; k++) {
         card = cards[Math.floor(Math.random() * cards.length)];
         cards.splice(cards.indexOf(card), 1);
-        if (card < 13) player["S"].push(card);
-        else if (card < 26) player["H"].push(card);
-        else if (card < 39) player["D"].push(card);
-        else if (card < 52) player["C"].push(card);
+        if (card < 13) player["Spade"].push(card);
+        else if (card < 26) player["Heart"].push(card);
+        else if (card < 39) player["Diamond"].push(card);
+        else if (card < 52) player["Club"].push(card);
       }
       deal.push(player);
     }
@@ -54,40 +56,51 @@ class Bridge extends Component {
     return (
       <div className="app">
         <h1>Under construction</h1>
-        <Row>
-          <Col>
-            <p>
-              <Button variant="secondary" size="sm" onClick={this.startOver}>
-                Re-deal
-              </Button>
-            </p>
-            <p>
-              <Button variant="secondary" size="sm" onClick={this.reveal}>
-                {this.state.reveal ? "Hide" : "Show"}
-              </Button>
-            </p>
-          </Col>
-          <Col>
-            <Hand player={this.state.deal[0]} reveal={this.state.reveal} />
-          </Col>
-          <Col></Col>
-        </Row>
-        <Row>
-          <Col>
-            <Hand player={this.state.deal[1]} reveal={this.state.reveal} />
-          </Col>
-          <Col></Col>
-          <Col>
-            <Hand player={this.state.deal[2]} reveal={this.state.reveal} />
-          </Col>
-        </Row>
-        <Row>
-          <Col></Col>
-          <Col>
-            <Hand player={this.state.deal[3]} reveal={true} />
-          </Col>
-          <Col></Col>
-        </Row>
+        <Container fluid>
+          <Row>
+            <Col>
+              <DealControls
+                startOver={this.startOver}
+                show={this.show}
+                reveal={this.state.reveal}
+              />
+            </Col>
+            <Col>
+              <Hand
+                player={this.state.deal[0]}
+                name="North"
+                reveal={this.state.reveal}
+              />
+            </Col>
+            <Col></Col>
+          </Row>
+          <Row>
+            <Col>
+              <Hand
+                player={this.state.deal[1]}
+                name="West"
+                reveal={this.state.reveal}
+              />
+            </Col>
+            <Col></Col>
+            <Col>
+              <Hand
+                player={this.state.deal[2]}
+                name="East"
+                reveal={this.state.reveal}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col></Col>
+            <Col>
+              <Hand player={this.state.deal[3]} name="South" reveal={true} />
+            </Col>
+            <Col>
+              <BidControls />
+            </Col>
+          </Row>
+        </Container>
       </div>
     );
   }

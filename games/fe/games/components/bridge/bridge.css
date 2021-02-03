@@ -3,6 +3,7 @@
   text-align: left;
   font-weight: bolder;
   font-size: large;
+  max-height: fit-content;
 }
 
 .app {
