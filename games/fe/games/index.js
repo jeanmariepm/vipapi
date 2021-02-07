@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.css";
 import Addition from "./components/addition";
 import TicTacToe from "./components/ttt/tictactoe";
-import Bridge from "./components/bridge/bridge";
+import BridgeGames from "./components/bridge/bridgeGames";
 import styles from "./index.css";
 import { Container, Tabs, Tab } from "react-bootstrap";
 
@@ -12,7 +12,12 @@ class App extends Component {
     super(props);
 
     this.state = {
-      gamed: ["<Addition>", "<h2>tbd<h2>", "<h2>under construction<h2>"],
+      games: [
+        { name: "Addition", comp: <Addition /> },
+        { name: "Tic Tac Toe", comp: <TicTacToe /> },
+        { name: "Bridge", comp: <BridgeGames /> },
+      ],
+
       current_index: 0,
     };
   }
@@ -20,16 +25,17 @@ class App extends Component {
   render = () => {
     return (
       <Container>
-        <Tabs defaultActiveKey="addition" id="uncontrolled-tab-example">
-          <Tab eventKey="addition" title="Addition">
-            <Addition />
-          </Tab>
-          <Tab eventKey="tictactoe" title="Tic Tac Toe">
-            <TicTacToe />
-          </Tab>
-          <Tab eventKey="bridge" title="Bridge">
-            <Bridge />{" "}
-          </Tab>
+        <Tabs
+          defaultActiveKey={this.state.games[this.state.current_index].name}
+          id="uncontrolled-tab-example"
+        >
+          {this.state.games.map((game) => {
+            return (
+              <Tab key={game.name} eventKey={game.name} title={game.name}>
+                {game.comp}
+              </Tab>
+            );
+          })}
         </Tabs>
       </Container>
     );
@@ -40,22 +46,6 @@ class App extends Component {
     this.setState((state) => {
       current_index: selectedIndex;
     });
-  };
-
-  setCarouselIems = () => {
-    return (
-      <div className="carousel-inner">
-        {this.state.games.map((game, index) => {
-          return (
-            <div
-              className={`carousel-item {rhis.state.current_game === index? "active": ""}`}
-            >
-              {game}
-            </div>
-          );
-        })}
-      </div>
-    );
   };
 }
 
