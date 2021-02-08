@@ -11,7 +11,7 @@ class Bridge extends Component {
     const deal = this.shuffle();
     this.state = {
       deal: deal,
-      reveal: false,
+      reveal: true,
     };
   }
   show = () => {
@@ -24,7 +24,7 @@ class Bridge extends Component {
     const deal = this.shuffle();
     this.setState((state) => ({
       deal: deal,
-      reveal: false,
+      reveal: true,
     }));
   };
 

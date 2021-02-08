@@ -13,9 +13,9 @@ class BridgeGames extends Component {
 
     this.state = {
       games: [
-        { name: "Opening Bid", comp: <Opener /> },
-        { name: "Double Dummy", comp: <TicTacToe /> },
-        { name: "Play", comp: <Bridge /> },
+        { name: "Bidding", comp: <Opener /> },
+        { name: "Dbl Dummy", comp: <TicTacToe /> },
+        { name: "Play 4", comp: <Bridge /> },
       ],
 
       current_index: 0,
@@ -43,7 +43,11 @@ class BridgeGames extends Component {
           <Col sm={9}>
             <Tab.Content>
               {this.state.games.map((game) => {
-                return <Tab.Pane eventKey={game.name}>{game.comp}</Tab.Pane>;
+                return (
+                  <Tab.Pane key={game.name} eventKey={game.name}>
+                    {game.comp}
+                  </Tab.Pane>
+                );
               })}
             </Tab.Content>
           </Col>

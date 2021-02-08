@@ -45,22 +45,28 @@ class Hand extends Component {
     };
     return bridgeMap[ch % 13];
   }
-
+  renderCards = () => {
+    return (
+      <div className="pcard">
+        {["Spade", "Heart", "Diamond", "Club"].map((suit, idx) => {
+          return (
+            <div key={suit}>
+              {this.getSuitImage(suit)}
+              {this.getSuitCards(suit)}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
   render() {
-    let defSuit = Spade;
+    if (this.props.variant === "line") {
+      return this.renderCards();
+    }
     return (
       <Card bg="info">
-        <Card.Body>
-          {this.props.name}
-          {["Spade", "Heart", "Diamond", "Club"].map((suit, idx) => {
-            return (
-              <div key={suit} className="pcard">
-                {this.getSuitImage(suit)}
-                {this.getSuitCards(suit)}
-              </div>
-            );
-          })}
-        </Card.Body>
+        {this.props.name}
+        <Card.Body>{this.renderCards()}</Card.Body>
       </Card>
     );
   }

@@ -6,6 +6,8 @@ class BidControls extends Component {
     super(props);
     this.state = {
       selectedOption: "Pass",
+      bidNumber: "1",
+      bidSuit: "C",
     };
   }
 
@@ -15,83 +17,80 @@ class BidControls extends Component {
       selectedOption: event.target.value,
     });
   };
+  onNumberSelect = (event) => {
+    console.log(event.target.value);
+    this.setState({
+      bidNumber: event.target.value,
+    });
+  };
+  onSuitSelect = (event) => {
+    console.log(event.target.value);
+    this.setState({
+      bidSuit: event.target.value,
+    });
+  };
 
   showOption = (selection) => {
     return (
-      <td>
-        <Form.Check
-          type="radio"
-          inline
-          name="bid"
-          checked={this.state.selectedOption === selection}
-          value={selection}
-          label={selection}
-          key={selection}
-          onClick={(event) => this.onSelect(event)}
-        />
-      </td>
+      <Form.Check
+        type="radio"
+        inline
+        name="bid"
+        checked={this.state.selectedOption === selection}
+        value={selection}
+        label={selection}
+        key={selection}
+        onChange={(event) => this.onSelect(event)}
+      />
     );
   };
 
   showPicks = () => {
-    console.log("showPicks:", this.state.selectedOption);
-
     if (this.state.selectedOption === "Pick")
       return (
-        <tr>
-          <td>
-            <Form.Control as="select">
-              {[1, 2, 3, 4, 5, 6, 7].map((number) => {
-                return <option key={number}>{number}</option>;
-              })}
-            </Form.Control>
-          </td>
-          <td>
-            <Form.Control as="select">
-              {["C", "D", "H", "S", "NT"].map((suit) => {
-                return <option key={suit}>{suit}</option>;
-              })}
-            </Form.Control>
-          </td>
-        </tr>
+        <React.Fragment>
+          <Form.Control as="select" onChange={this.onNumberSelect}>
+            {[1, 2, 3, 4, 5, 6, 7].map((number) => {
+              return <option key={number}>{number}</option>;
+            })}
+          </Form.Control>
+          <Form.Control as="select" onChange={this.onSuitSelect}>
+            {["C", "D", "H", "S", "NT"].map((suit) => {
+              return <option key={suit}>{suit}</option>;
+            })}
+          </Form.Control>
+        </React.Fragment>
       );
   };
 
+  handleOk = () => {
+    console.log("handleOk");
+
+    let bid;
+    if (this.state.selectedOption === "Pick") {
+      bid = `${this.state.bidNumber}${this.state.bidSuit}`;
+    } else {
+      bid = this.state.selectedOption;
+    }
+    console.log("Final bid = ", bid);
+    this.props.onBid(bid);
+  };
+
   render() {
+    let options = ["Pick", "Pass"];
+    if (this.props.double) options.push("Dbl");
+    if (this.props.redouble) options.push("RDbl");
+
     return (
-      <Card bg="secondary">
-        <Card.Body>
-          <Form>
-            <table>
-              <tbody>
-                <tr>
-                  {["Pick", "Pass"].map((selection) => {
-                    return this.showOption(selection);
-                  })}
-                </tr>
-                <tr>
-                  {["Dbl", "RDbl"].map((selection) => {
-                    return this.showOption(selection);
-                  })}
-                </tr>
-                {this.showPicks()}
-                <tr>
-                  <td>
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      size="sm"
-                      className="mb-2"
-                    >
-                      OK
-                    </Button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Form>
-        </Card.Body>
-      </Card>
+      <Form>
+        {options.map((selection) => {
+          return this.showOption(selection);
+        })}
+        {this.showPicks()}
+        <Button key="okbtn" variant="link" size="sm" onClick={this.handleOk}>
+          OK
+        </Button>
+      </Form>
     );
   }
 }

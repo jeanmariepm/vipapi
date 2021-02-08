@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Col, Button, Card, Container } from "react-bootstrap";
+import { Table, Row, Col, Button, Card, Container } from "react-bootstrap";
 import styles from "./bridge.css";
 import DealControls from "./dealControls";
 import BidControls from "./bidControls";
@@ -10,28 +10,80 @@ class Opener extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      deals: [],
       deal: new Deal().shuffle(),
+      bid: null,
     };
   }
 
+  onBid = (bid) => {
+    console.log("Setting bid:", bid);
+    this.setState({ bid });
+  };
   startOver = () => {
-    const deal = new Deal();
-    this.setState((state) => ({
-      deal: new Deal().shuffle(),
-    }));
+    console.log("Starting next deal");
+    const deal = new Deal().shuffle();
+    const bid = this.state.bid;
+    const deals = this.state.deals;
+    deals.push({ deal, bid });
+    this.setState({
+      deal,
+      bid: null,
+      deals,
+    });
+  };
+
+  getBidController = (idx) => {
+    let bid;
+    if (idx === -1) bid = this.state.bid;
+    else bid = this.state.deals[idx]["bid"];
+    console.log("Bid is currently ", bid);
+
+    if (bid) {
+      return <div>{bid}</div>;
+    }
+    console.log("Idx is  ", idx);
+    return <BidControls double={false} redouble={false} onBid={this.onBid} />;
   };
 
   render() {
+    console.log("Deals in history ", this.state.deals);
     return (
-      <Container fluid>
-        <DealControls
-          startOver={this.startOver}
-          show={this.show}
-          reveal={this.state.reveal}
-        />
-        <Hand player={this.state.deal[3]} name="South" reveal={true} />
-        <BidControls />
-      </Container>
+      <React.Fragment>
+        <Table>
+          <tbody>
+            {this.state.deals.map((deal, idx) => {
+              return (
+                <tr key={idx}>
+                  <td>
+                    <Hand
+                      variant="line"
+                      player={this.state.deals[idx]["deal"][3]}
+                      name="South"
+                      reveal={true}
+                    />
+                  </td>
+                  <td>{this.getBidController(idx)}</td>
+                </tr>
+              );
+            })}
+            <tr key="-1">
+              <td>
+                <Hand
+                  variant="line"
+                  player={this.state.deal[3]}
+                  name="South"
+                  reveal={true}
+                />
+              </td>
+              <td>{this.getBidController(-1)}</td>
+            </tr>
+          </tbody>
+        </Table>
+        <Button variant="link" size="sm" onClick={this.startOver}>
+          Next Deal
+        </Button>
+      </React.Fragment>
     );
   }
 }
