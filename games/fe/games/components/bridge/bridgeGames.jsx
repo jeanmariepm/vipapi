@@ -15,7 +15,7 @@ class BridgeGames extends Component {
       games: [
         { name: "Bidding", comp: <Opener /> },
         { name: "Dbl Dummy", comp: <TicTacToe /> },
-        { name: "Play 4", comp: <Bridge /> },
+        // { name: "Play 4", comp: <Bridge /> },
       ],
 
       current_index: 0,

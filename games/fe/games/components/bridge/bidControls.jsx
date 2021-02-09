@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Button, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 
 class BidControls extends Component {
   constructor(props) {

@@ -50,22 +50,25 @@ class Hand extends Component {
       <div className="pcard">
         {["Spade", "Heart", "Diamond", "Club"].map((suit, idx) => {
           return (
-            <div key={suit}>
+            <React.Fragment key={suit}>
               {this.getSuitImage(suit)}
               {this.getSuitCards(suit)}
-            </div>
+            </React.Fragment>
           );
         })}
       </div>
     );
   };
   render() {
-    if (this.props.variant === "line") {
+    if (this.props.display === "line") {
+      console.log("Show hand in line");
       return this.renderCards();
     }
+    console.log("Show hand in card ", this.props);
+
     return (
       <Card bg="info">
-        {this.props.name}
+        {this.props.name} {this.props.v}
         <Card.Body>{this.renderCards()}</Card.Body>
       </Card>
     );

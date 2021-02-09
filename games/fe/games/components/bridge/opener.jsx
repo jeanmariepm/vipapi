@@ -57,9 +57,9 @@ class Opener extends Component {
                 <tr key={idx}>
                   <td>
                     <Hand
-                      variant="line"
                       player={this.state.deals[idx]["deal"][3]}
                       name="South"
+                      display={"line"}
                       reveal={true}
                     />
                   </td>
@@ -70,9 +70,9 @@ class Opener extends Component {
             <tr key="-1">
               <td>
                 <Hand
-                  variant="line"
                   player={this.state.deal[3]}
                   name="South"
+                  display={"line"}
                   reveal={true}
                 />
               </td>
