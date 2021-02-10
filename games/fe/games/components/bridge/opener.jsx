@@ -16,6 +16,10 @@ class Opener extends Component {
     };
   }
 
+  componentDidMount() {
+    console.log("Opeber did mount");
+  }
+
   onBid = (bid) => {
     console.log("Setting bid:", bid);
     this.setState({ bid });
@@ -24,7 +28,7 @@ class Opener extends Component {
     console.log("Starting next deal");
     const deal = new Deal().shuffle();
     const bid = this.state.bid;
-    const deals = this.state.deals;
+    const deals = [...this.state.deals];
     deals.push({ deal, bid });
     this.setState({
       deal,

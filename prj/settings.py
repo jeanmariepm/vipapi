@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'games',
     'crispy_forms',
     'django_extensions',
-    'webpack_loader',
+    'webpack_loader','rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -13,7 +13,7 @@ class App extends Component {
 
     this.state = {
       games: [
-        { name: "Addition", comp: <Addition /> },
+        { name: "Addition", comp: <Addition username={_username_} /> },
         { name: "Tic Tac Toe", comp: <TicTacToe /> },
         { name: "Bridge", comp: <BridgeGames /> },
       ],
@@ -23,6 +23,7 @@ class App extends Component {
   }
 
   render = () => {
+    console.log("username", _username_);
     return (
       <Container>
         <Tabs

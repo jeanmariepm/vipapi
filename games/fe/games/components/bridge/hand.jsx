@@ -6,73 +6,74 @@ import Club from "./c.gif";
 import { Card, Image } from "react-bootstrap";
 import styles from "./bridge.css";
 
-class Hand extends Component {
-  getSuitImage(suit) {
-    const images = { Spade, Heart, Diamond, Club };
-    return <img src={images[suit]} />;
-  }
-  getSuitCards(suit) {
-    if (this.props.reveal === false) return "?";
+const getSuitImage = (suit) => {
+  const images = { Spade, Heart, Diamond, Club };
+  return <img src={images[suit]} />;
+};
+const getSuitCards = (player, suit, reveal) => {
+  if (reveal === false) return "?";
 
-    let cards = this.props.player[suit];
+  let cards = player[suit];
 
-    cards.sort((a, b) => {
-      return b - a;
-    });
-    let cardString = "";
-    for (let i = 0; i < cards.length; i++) {
-      cardString += this.getBridgeString(cards[i]);
-    }
-
-    return cardString;
+  cards.sort((a, b) => {
+    return b - a;
+  });
+  let cardString = "";
+  for (let i = 0; i < cards.length; i++) {
+    cardString += getBridgeString(cards[i]);
   }
 
-  getBridgeString(ch) {
-    const bridgeMap = {
-      0: "2",
-      1: "3",
-      2: "4",
-      3: "5",
-      4: "6",
-      5: "7",
-      6: "8",
-      7: "9",
-      8: "T",
-      9: "J",
-      10: "Q",
-      11: "K",
-      12: "A",
-    };
-    return bridgeMap[ch % 13];
-  }
-  renderCards = () => {
+  return cardString;
+};
+
+const getBridgeString = (ch) => {
+  const bridgeMap = {
+    0: "2",
+    1: "3",
+    2: "4",
+    3: "5",
+    4: "6",
+    5: "7",
+    6: "8",
+    7: "9",
+    8: "T",
+    9: "J",
+    10: "Q",
+    11: "K",
+    12: "A",
+  };
+  return bridgeMap[ch % 13];
+};
+const Hand = ({ reveal, display, player, name }) => {
+  const renderCards = () => {
     return (
       <div className="pcard">
         {["Spade", "Heart", "Diamond", "Club"].map((suit, idx) => {
           return (
             <React.Fragment key={suit}>
-              {this.getSuitImage(suit)}
-              {this.getSuitCards(suit)}
+              {getSuitImage(suit)}
+              {getSuitCards(player, suit, reveal)}
             </React.Fragment>
           );
         })}
       </div>
     );
   };
-  render() {
-    if (this.props.display === "line") {
+  const render = () => {
+    if (display === "line") {
       console.log("Show hand in line");
-      return this.renderCards();
+      return renderCards();
     }
     console.log("Show hand in card ", this.props);
 
     return (
       <Card bg="info">
-        {this.props.name} {this.props.v}
-        <Card.Body>{this.renderCards()}</Card.Body>
+        {name}
+        <Card.Body>{renderCards()}</Card.Body>
       </Card>
     );
-  }
-}
+  };
+  return render();
+};
 
 export default Hand;

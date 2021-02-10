@@ -18,6 +18,9 @@ wheel = "*"
 setuptools = "*"
 psycopg2 = "*"
 django-webpack-loader = "*"
+djangorestframework = "*"
+pip = "*"
+django-rest-knox = "*"
 
 [requires]
 python_version = "3.8"

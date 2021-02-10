@@ -4,6 +4,10 @@
     {% extends "layout.html" %} {% block body %}
 
     <div id="App"></div>
+    <script>
+      var _username_ = "{{user.username}}";
+    </script>
+
     <script src="./index.js"></script>
     {% endblock %}
   </body>
