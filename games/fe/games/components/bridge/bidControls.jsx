@@ -5,92 +5,49 @@ class BidControls extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedOption: "Pass",
-      bidNumber: "1",
-      bidSuit: "C",
+      bid: "Pass",
     };
   }
 
   onSelect = (event) => {
     console.log(event.target.value);
     this.setState({
-      selectedOption: event.target.value,
+      bid,
     });
   };
-  onNumberSelect = (event) => {
-    console.log(event.target.value);
-    this.setState({
-      bidNumber: event.target.value,
-    });
-  };
-  onSuitSelect = (event) => {
-    console.log(event.target.value);
-    this.setState({
-      bidSuit: event.target.value,
-    });
-  };
-
-  showOption = (selection) => {
-    return (
-      <Form.Check
-        type="radio"
-        inline
-        name="bid"
-        checked={this.state.selectedOption === selection}
-        value={selection}
-        label={selection}
-        key={selection}
-        onChange={(event) => this.onSelect(event)}
-      />
-    );
-  };
-
-  showPicks = () => {
-    if (this.state.selectedOption === "Pick")
-      return (
-        <React.Fragment>
-          <Form.Control as="select" onChange={this.onNumberSelect}>
-            {[1, 2, 3, 4, 5, 6, 7].map((number) => {
-              return <option key={number}>{number}</option>;
-            })}
-          </Form.Control>
-          <Form.Control as="select" onChange={this.onSuitSelect}>
-            {["C", "D", "H", "S", "NT"].map((suit) => {
-              return <option key={suit}>{suit}</option>;
-            })}
-          </Form.Control>
-        </React.Fragment>
+  getPicks = () => {
+    let picks = [];
+    for (let level = 1; level <= 7; level++)
+      ["C", "D", "H", "S", "NT"].forEach((suit) =>
+        picks.push(`${level}${suit}`)
       );
+    return picks;
   };
 
   handleOk = () => {
-    console.log("handleOk");
-
-    let bid;
-    if (this.state.selectedOption === "Pick") {
-      bid = `${this.state.bidNumber}${this.state.bidSuit}`;
-    } else {
-      bid = this.state.selectedOption;
-    }
-    console.log("Final bid = ", bid);
-    this.props.onBid(bid);
+    console.log("Final bid = ", this.state.bid);
+    this.props.onBid(this.state.bid);
   };
 
   render() {
-    let options = ["Pick", "Pass"];
+    let options = ["Pass"];
     if (this.props.double) options.push("Dbl");
     if (this.props.redouble) options.push("RDbl");
 
     return (
-      <Form>
-        {options.map((selection) => {
-          return this.showOption(selection);
-        })}
-        {this.showPicks()}
-        <Button key="okbtn" variant="link" size="sm" onClick={this.handleOk}>
-          OK
-        </Button>
-      </Form>
+      <React.Fragment>
+        <select onChange={this.onSelect} className="selectpicker btn-success ">
+          {options.map((option) => (
+            <option key={option}>{option}</option>
+          ))}
+          {this.getPicks().map((pick) => (
+            <option key={pick}>{pick}</option>
+          ))}
+        </select>
+        <button onClick={this.handleOk} className="btn-link ml-6">
+          <i class="fa fa-paper-plane" aria-hidden="true"></i>{" "}
+        </button>
+      </React.Fragment>
     );
   }
 }

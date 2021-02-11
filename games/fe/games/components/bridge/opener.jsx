@@ -5,6 +5,7 @@ import DealControls from "./dealControls";
 import BidControls from "./bidControls";
 import Deal from "./deal";
 import Hand from "./hand";
+import Like from "../common/like";
 
 class Opener extends Component {
   constructor(props) {
@@ -24,6 +25,15 @@ class Opener extends Component {
     console.log("Setting bid:", bid);
     this.setState({ bid });
   };
+  undoBid = () => {
+    console.log("Undoing bid:");
+    this.setState({ bid: null });
+  };
+
+  handleSave = () => {
+    console.log("Save deals = ", this.state.deals);
+  };
+
   startOver = () => {
     console.log("Starting next deal");
     const deal = new Deal().shuffle();
@@ -44,10 +54,35 @@ class Opener extends Component {
     console.log("Bid is currently ", bid);
 
     if (bid) {
-      return <div>{bid}</div>;
+      return (
+        <div>
+          {bid}
+          {idx === -1 ? (
+            <Button variant="link" size="sm" onClick={this.undoBid}>
+              <i class="fa fa-undo" aria-hidden="true"></i>{" "}
+            </Button>
+          ) : (
+            ""
+          )}
+        </div>
+      );
     }
     console.log("Idx is  ", idx);
     return <BidControls double={false} redouble={false} onBid={this.onBid} />;
+  };
+
+  showNextActions = () => {
+    if (this.state.bid)
+      return (
+        <React.Fragment>
+          <Button variant="link" size="sm" onClick={this.startOver}>
+            <i class="fa fa-plus" aria-hidden="true"></i>{" "}
+          </Button>
+          <button onClick={this.handleSave} className="btn-link ml-6">
+            <i class="fa fa-save" aria-hidden="true"></i>{" "}
+          </button>
+        </React.Fragment>
+      );
   };
 
   render() {
@@ -55,10 +90,19 @@ class Opener extends Component {
     return (
       <React.Fragment>
         <Table>
+          <thead>
+            <td>D</td>
+            <td>Vul</td>
+            <td>Hand</td>
+            <td>Bid</td>
+            <td>By</td>
+          </thead>
           <tbody>
             {this.state.deals.map((deal, idx) => {
               return (
                 <tr key={idx}>
+                  <td>N</td>
+                  <td>None</td>
                   <td>
                     <Hand
                       player={this.state.deals[idx]["deal"][3]}
@@ -68,10 +112,13 @@ class Opener extends Component {
                     />
                   </td>
                   <td>{this.getBidController(idx)}</td>
+                  <td></td>
                 </tr>
               );
             })}
             <tr key="-1">
+              <td>N</td>
+              <td>None</td>
               <td>
                 <Hand
                   player={this.state.deal[3]}
@@ -81,12 +128,11 @@ class Opener extends Component {
                 />
               </td>
               <td>{this.getBidController(-1)}</td>
+              <td></td>
             </tr>
           </tbody>
         </Table>
-        <Button variant="link" size="sm" onClick={this.startOver}>
-          Next Deal
-        </Button>
+        {this.showNextActions()}
       </React.Fragment>
     );
   }

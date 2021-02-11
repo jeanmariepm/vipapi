@@ -1,43 +1,20 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
-import Addition from "./components/addition";
-import TicTacToe from "./components/ttt/tictactoe";
-import BridgeGames from "./components/bridge/bridgeGames";
+import "font-awesome/css/font-awesome.css";
+import Menu from "./components/menu";
 import styles from "./index.css";
-import { Container, Tabs, Tab } from "react-bootstrap";
+import { Container, Tabs, Tab, Navbar } from "react-bootstrap";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      games: [
-        { name: "Addition", comp: <Addition username={_username_} /> },
-        { name: "Tic Tac Toe", comp: <TicTacToe /> },
-        { name: "Bridge", comp: <BridgeGames /> },
-      ],
-
-      current_index: 0,
-    };
-  }
-
   render = () => {
     console.log("username", _username_);
     return (
       <Container>
-        <Tabs
-          defaultActiveKey={this.state.games[this.state.current_index].name}
-          id="uncontrolled-tab-example"
-        >
-          {this.state.games.map((game) => {
-            return (
-              <Tab key={game.name} eventKey={game.name} title={game.name}>
-                {game.comp}
-              </Tab>
-            );
-          })}
-        </Tabs>
+        <BrowserRouter>
+          <Menu />
+        </BrowserRouter>
       </Container>
     );
   };
