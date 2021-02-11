@@ -9,7 +9,6 @@ import { Container, Tabs, Tab, Navbar } from "react-bootstrap";
 
 class App extends Component {
   render = () => {
-    console.log("username", _username_);
     return (
       <Container>
         <BrowserRouter>

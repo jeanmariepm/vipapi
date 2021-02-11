@@ -3,7 +3,7 @@ import { Link, Switch, Route } from "react-router-dom";
 import Addition from "./addition";
 import BridgeGames from "./bridge/bridgeGames";
 import TicTacToe from "./ttt/tictactoe";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar } from "react-bootstrap";
 
 class Menu extends Component {
   render() {
@@ -14,12 +14,16 @@ class Menu extends Component {
       <React.Fragment>
         <Navbar collapseOnSelect className="navbar navbar-light bg-link">
           <Navbar.Toggle />
-          <Navbar.Collapse className="justify-content-start">
-            <Nav>
-              <Nav.Link href="/bridge">Bridge</Nav.Link>
-              <Nav.Link href="/ttt">Tic Tac Toe</Nav.Link>
-              <Nav.Link href="/addition">Addition</Nav.Link>
-            </Nav>
+          <Navbar.Collapse className="justify-content-center">
+            <Link to="/bridge">
+              <p className="ml-2">Bridge</p>
+            </Link>
+            <Link to="/ttt">
+              <p className="ml-2">TicTacToe</p>
+            </Link>
+            <Link to="/addition">
+              <p className="ml-2">Addition</p>
+            </Link>
           </Navbar.Collapse>
         </Navbar>
         <div className="tabs">

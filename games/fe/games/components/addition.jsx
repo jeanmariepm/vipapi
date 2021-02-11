@@ -27,7 +27,7 @@ class Addition extends Component {
     return (
       <div className="app">
         <img src={this.state.imageURL} />
-        <div id="winner">You won, {this.props.username}!</div>
+        <div id="winner">You won!</div>
         <Button onClick={this.startOver}>Start Over</Button>
       </div>
     );
