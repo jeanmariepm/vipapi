@@ -10,9 +10,9 @@ class BidControls extends Component {
   }
 
   onSelect = (event) => {
-    console.log(event.target.value);
+    console.log("Bid sekected:", event.target.value);
     this.setState({
-      bid,
+      bid: event.target.value,
     });
   };
   getPicks = () => {
@@ -45,7 +45,7 @@ class BidControls extends Component {
           ))}
         </select>
         <button onClick={this.handleOk} className="btn-link ml-6">
-          <i class="fa fa-paper-plane" aria-hidden="true"></i>{" "}
+          <i className="fa fa-paper-plane" aria-hidden="true"></i>{" "}
         </button>
       </React.Fragment>
     );

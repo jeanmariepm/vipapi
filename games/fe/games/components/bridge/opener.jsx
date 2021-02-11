@@ -14,6 +14,7 @@ class Opener extends Component {
       deals: [],
       deal: new Deal().shuffle(),
       bid: null,
+      bidding: true,
     };
   }
 
@@ -23,27 +24,36 @@ class Opener extends Component {
 
   onBid = (bid) => {
     console.log("Setting bid:", bid);
-    this.setState({ bid });
+    this.setState({ bid, bidding: false });
   };
   undoBid = () => {
     console.log("Undoing bid:");
-    this.setState({ bid: null });
+    this.setState({ bid: null, bidding: true });
   };
 
   handleSave = () => {
     console.log("Save deals = ", this.state.deals);
   };
-
+  rmDeal = () => {
+    this.setState({
+      deal: null,
+      bid: null,
+      bidding: false,
+    });
+  };
   startOver = () => {
     console.log("Starting next deal");
-    const deal = new Deal().shuffle();
-    const bid = this.state.bid;
+    const { bid, deal } = this.state;
+
     const deals = [...this.state.deals];
-    deals.push({ deal, bid });
+    if (bid) {
+      deals.push({ deal, bid });
+    }
     this.setState({
-      deal,
+      deal: new Deal().shuffle(),
       bid: null,
       deals,
+      bidding: true,
     });
   };
 
@@ -52,34 +62,45 @@ class Opener extends Component {
     if (idx === -1) bid = this.state.bid;
     else bid = this.state.deals[idx]["bid"];
     console.log("Bid is currently ", bid);
-
-    if (bid) {
-      return (
-        <div>
-          {bid}
-          {idx === -1 ? (
-            <Button variant="link" size="sm" onClick={this.undoBid}>
-              <i class="fa fa-undo" aria-hidden="true"></i>{" "}
+    let bidElement;
+    if (idx === -1)
+      if (this.state.bidding)
+        bidElement = (
+          <React.Fragment>
+            <BidControls double={false} redouble={false} onBid={this.onBid} />
+            <Button variant="link" size="sm" onClick={this.rmDeal}>
+              <i className="fa fa-minus" aria-hidden="true"></i>{" "}
             </Button>
-          ) : (
-            ""
-          )}
-        </div>
-      );
+          </React.Fragment>
+        );
+      else {
+        bidElement = (
+          <React.Fragment>
+            {bid}
+            <Button variant="link" size="sm" onClick={this.undoBid}>
+              <i className="fa fa-undo" aria-hidden="true"></i>{" "}
+            </Button>
+            <Button variant="link" size="sm" onClick={this.rmDeal}>
+              <i className="fa fa-minus" aria-hidden="true"></i>{" "}
+            </Button>
+          </React.Fragment>
+        );
+      }
+    else {
+      bidElement = <React.Fragment>{bid}</React.Fragment>;
     }
-    console.log("Idx is  ", idx);
-    return <BidControls double={false} redouble={false} onBid={this.onBid} />;
+    return bidElement;
   };
 
   showNextActions = () => {
-    if (this.state.bid)
+    if (!this.state.bidding)
       return (
         <React.Fragment>
           <Button variant="link" size="sm" onClick={this.startOver}>
-            <i class="fa fa-plus" aria-hidden="true"></i>{" "}
+            <i className="fa fa-plus" aria-hidden="true"></i>{" "}
           </Button>
           <button onClick={this.handleSave} className="btn-link ml-6">
-            <i class="fa fa-save" aria-hidden="true"></i>{" "}
+            <i className="fa fa-save" aria-hidden="true"></i>{" "}
           </button>
         </React.Fragment>
       );
@@ -116,20 +137,24 @@ class Opener extends Component {
                 </tr>
               );
             })}
-            <tr key="-1">
-              <td>N</td>
-              <td>None</td>
-              <td>
-                <Hand
-                  player={this.state.deal[3]}
-                  name="South"
-                  display={"line"}
-                  reveal={true}
-                />
-              </td>
-              <td>{this.getBidController(-1)}</td>
-              <td></td>
-            </tr>
+            {this.state.deal ? (
+              <tr key="-1">
+                <td>N</td>
+                <td>None</td>
+                <td>
+                  <Hand
+                    player={this.state.deal[3]}
+                    name="South"
+                    display={"line"}
+                    reveal={true}
+                  />
+                </td>
+                <td>{this.getBidController(-1)}</td>
+                <td></td>
+              </tr>
+            ) : (
+              ""
+            )}
           </tbody>
         </Table>
         {this.showNextActions()}
