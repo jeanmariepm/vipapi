@@ -1,0 +1,24 @@
+.App {
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.Square {
+  background-color: grey;
+  font-size: 14px;
+  width: 50px;
+  height: 50px;
+  margin: 2px 2px 2px 2px;
+  border-radius: 4px;
+}
+.Status {
+  color: blue;
+  text-align: center;
+}
+
+.BoardSquare {
+  width: 180px;
+  height: 180px;
+  margin: auto;
+  border-radius: 10px;
+}

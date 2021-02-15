@@ -30,7 +30,7 @@ class BridgeGames extends Component {
       >
         <Row>
           <Col sm={3}>
-            <Nav variant="pills" className="flex-column">
+            <Nav variant="info" className="flex-column">
               {this.state.games.map((game) => {
                 return (
                   <Nav.Link key={game.name} eventKey={game.name}>

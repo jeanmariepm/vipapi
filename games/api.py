@@ -4,7 +4,7 @@ from .serializers import DealSerializer
 
 class DealViewSet(viewsets.ModelViewSet):
     permission_classes = [
-        permissions.IsAuthenticated,
+        permissions.AllowAny,
     ]
     serializer_class = DealSerializer
 

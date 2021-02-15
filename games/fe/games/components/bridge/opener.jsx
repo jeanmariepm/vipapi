@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { Table, Row, Col, Button, Card, Container } from "react-bootstrap";
-import styles from "./bridge.css";
-import DealControls from "./dealControls";
 import BidControls from "./bidControls";
 import Deal from "./deal";
 import Hand from "./hand";
-import Like from "../common/like";
+import axios from "axios";
+const apiBase = "games";
 
 class Opener extends Component {
   constructor(props) {
@@ -19,7 +18,9 @@ class Opener extends Component {
   }
 
   componentDidMount() {
-    console.log("Opeber did mount");
+    console.log("Opener did mount");
+    const promise = axios.get("http://localhost:8000/games/api/deals/");
+    console.log("Promise:", promise);
   }
 
   onBid = (bid) => {
@@ -33,6 +34,7 @@ class Opener extends Component {
 
   handleSave = () => {
     console.log("Save deals = ", this.state.deals);
+    //await axios.post(apiBase, { a: 1 });
   };
   rmDeal = () => {
     this.setState({
