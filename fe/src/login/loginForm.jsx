@@ -1,17 +1,23 @@
 import React from "react";
 import { Button } from "react-bootstrap";
+import UserContext from "../context/userContext";
+import axios from "axios";
 
 class LoginForm extends React.Component {
+  static contextType = UserContext;
   constructor(props) {
     super(props);
+
     this.state = {
       username: "",
       password: "",
-      handle_signup: props.handle_signup,
-      handle_login: props.handle_login,
       display_form: "login",
     };
   }
+  componentDidMount() {
+    console.log(this.context);
+  }
+
   toggleRegister = () => {
     console.log("toggleRegister");
     const current_form = this.state.display_form;
@@ -31,7 +37,7 @@ class LoginForm extends React.Component {
 
   loginScreen = () => (
     <div>
-      <form onSubmit={(e) => this.state.handle_login(e, this.state)}>
+      <form onSubmit={(e) => this.handle_login(e, this.state)}>
         <h4>Log In</h4>
         <label htmlFor="username">Username</label>
         <input
@@ -58,7 +64,7 @@ class LoginForm extends React.Component {
 
   registerScreen = () => (
     <div>
-      <form onSubmit={(e) => this.state.handle_signup(e, this.state)}>
+      <form onSubmit={(e) => this.handle_signup(e, this.state)}>
         <h4>Sign Up</h4>
         <label htmlFor="username">Username</label>
         <input
@@ -82,6 +88,26 @@ class LoginForm extends React.Component {
       </Button>
     </div>
   );
+  handle_login = async (e, data) => {
+    e.preventDefault();
+    const result = await axios.post("http://localhost:8000/token-auth/", data);
+    console.log("Logged in (data from server): ", result);
+
+    const token = result.data.token;
+    const username = result.data.user.username;
+    localStorage.setItem("token", token);
+    this.context.loginHandler(username);
+  };
+
+  handle_signup = async (e, data) => {
+    e.preventDefault();
+    const result = await axios.post("http://localhost:8000/home/users/", data);
+    console.log("Signed in (data from server): ", result);
+    const token = result.data.token;
+    const username = result.data.username;
+    localStorage.setItem("token", token);
+    this.context.loginHandler(username);
+  };
 
   render() {
     return (
