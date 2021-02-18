@@ -20,6 +20,8 @@ psycopg2 = "*"
 django-webpack-loader = "*"
 djangorestframework = "*"
 pip = "*"
+djangorestframework-jwt = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.8"

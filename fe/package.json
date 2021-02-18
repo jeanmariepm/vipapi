@@ -5,15 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/parcel serve index.html"
+    "start": "./node_modules/.bin/parcel serve index.html",
+    "build": "./build.sh"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "browserslist": [
+    "since 2017-06"
+  ],
   "devDependencies": {
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.5.1",

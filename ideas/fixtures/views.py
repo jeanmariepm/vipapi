@@ -11,6 +11,30 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer, UserSerializerWithToken
 
 
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField()
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]
+
+
+# Create your views here.
+def index(request):
+    return render(request, "home/index.html")
+
+
+def register(request):
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("home:login"))
+    else:
+        form = RegisterForm()
+    return render(request, "registration/register.html", {"form": form})
+
+
 @api_view(["GET"])
 def current_user(request):
     """
@@ -35,27 +59,3 @@ class UserList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class RegisterForm(UserCreationForm):
-    email = forms.EmailField()
-
-    class Meta:
-        model = User
-        fields = ["username", "email", "password1", "password2"]
-
-
-# Create your views here.
-def index(request):
-    return render(request, "home/index.html")
-
-
-def register(request):
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse("home:login"))
-    else:
-        form = RegisterForm()
-    return render(request, "registration/register.html", {"form": form})

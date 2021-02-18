@@ -4,7 +4,6 @@ import { BrowserRouter } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 import Menu from "./src/nav/menu";
-
 class App extends Component {
   render = () => {
     return (
