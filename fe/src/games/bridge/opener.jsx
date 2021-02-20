@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { Table, Row, Col, Button, Card, Container } from "react-bootstrap";
-import BidControls from "./bidControls";
 import Deal from "./deal";
 import Hand from "./hand";
+
 import axios from "axios";
+import BidControls from "./bidControls";
 const apiBase = "games";
 
 class Opener extends Component {

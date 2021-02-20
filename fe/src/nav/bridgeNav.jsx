@@ -1,20 +1,17 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import "bootstrap/dist/css/bootstrap.css";
-import Opener from "./opener";
-import TicTacToe from "../ttt/tictactoe";
-import Bridge from "./bridge";
-import styles from "./bridge.css";
+import Opener from "../games/bridge/opener";
 import { Container, Nav, Tabs, Tab, Row, Col } from "react-bootstrap";
+import Guide from "../games/bridge/guide";
 
-class BridgeGames extends Component {
+class BridgeNav extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       games: [
-        { name: "Bidding", comp: <Opener /> },
-        { name: "Dbl Dummy", comp: <TicTacToe /> },
+        { name: "Bid", comp: <Opener /> },
+        { name: "Guide", comp: <Guide /> },
         // { name: "Play 4", comp: <Bridge /> },
       ],
 
@@ -62,4 +59,4 @@ class BridgeGames extends Component {
     });
   };
 }
-export default BridgeGames;
+export default BridgeNav;

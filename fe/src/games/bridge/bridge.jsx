@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Row, Col, Button, Card, Container } from "react-bootstrap";
-import styles from "./bridge.css";
 import DealControls from "./dealControls";
 import BidControls from "./bidControls";
 import Hand from "./hand";

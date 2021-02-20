@@ -16,6 +16,7 @@ def current_user(request):
     """
     Determine the current user by their token, and return their data
     """
+    permission_classes = (permissions.AllowAny,)
 
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
@@ -43,19 +44,3 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
-
-
-# Create your views here.
-def index(request):
-    return render(request, "home/index.html")
-
-
-def register(request):
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse("home:login"))
-    else:
-        form = RegisterForm()
-    return render(request, "registration/register.html", {"form": form})

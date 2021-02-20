@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import jwtDecode from "jwt-decode";
 import axios from "axios";
 import { BrowserRouter } from "react-router-dom";
 import Menu from "./nav/menu";
@@ -20,9 +21,14 @@ class Veed extends React.Component {
   }
 
   loginHandler = (username) => {
+    console.log(this.props);
+    this.props.history.goBack();
     this.setState({ username, loggedIn: true });
   };
   logoutandler = () => {
+    console.log(this.props);
+    this.props.history.goBack();
+
     this.setState({ username: this.guestUsername, loggedIn: false });
   };
 
@@ -32,17 +38,9 @@ class Veed extends React.Component {
 
     if (loggedIn) {
       console.log("Alreay logged in ");
-      const result = await axios.get(
-        "http://localhost:8000/home/current_user/",
-        {},
-        {
-          headers: {
-            Authorization: `JWT ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log("Already authenticated (data from server): ", result);
-      const username = result.data.user.username;
+      const user = jwtDecode(token);
+      console.log("user", user);
+      const username = user.username;
       this.setState({ username, loggedIn });
     } else {
       console.log("Not logged in yet");
@@ -52,6 +50,7 @@ class Veed extends React.Component {
   render() {
     const userState = this.state;
     console.log(userState);
+    console.log(this.props);
 
     return (
       <UserContext.Provider value={userState}>

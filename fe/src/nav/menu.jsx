@@ -6,6 +6,7 @@ import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import Home from "./home";
 import LoginNav from "./loginNav";
 import UserContext from "../context/userContext";
+import BridgeNav from "./bridgeNav";
 
 const Menu = () => {
   const { username, loggedIn } = React.useContext(UserContext);
@@ -28,7 +29,7 @@ const Menu = () => {
             </Nav.Link>
             <Nav.Link href="#link">Ideas</Nav.Link>
             <NavDropdown title="Games" id="basic-nav-dropdown">
-              <NavDropdown.Item as={Link} to={tttPath}>
+              <NavDropdown.Item as={Link} to={bridgePath}>
                 Bridge
               </NavDropdown.Item>
               <NavDropdown.Item as={Link} to={tttPath}>
@@ -47,9 +48,11 @@ const Menu = () => {
       </Navbar>
       <Switch>
         <Route path={additionPath} component={Addition} />
+        <Route path={bridgePath} component={BridgeNav} />
+
         <Route path={tttPath} component={TicTacToe} />
         <Route path={loginNavPath} component={LoginNav} />
-        <Route exact path="/" component={Home}></Route>
+        <Route exact path="/" component={Home} />
       </Switch>
     </React.Fragment>
   );
