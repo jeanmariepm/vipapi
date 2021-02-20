@@ -5,6 +5,8 @@ import axios from "axios";
 import { BrowserRouter } from "react-router-dom";
 import Menu from "./nav/menu";
 import "bootstrap/dist/css/bootstrap.css";
+import "font-awesome/css/font-awesome.css";
+
 import UserContext from "./context/userContext";
 
 class Veed extends React.Component {
