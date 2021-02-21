@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import { Table, Row, Col, Button, Card, Container } from "react-bootstrap";
 import Deal from "./deal";
 import Hand from "./hand";
+import { paginate } from "../../common/paginate";
 
 import axios from "axios";
 import BidControls from "./bidControls";
+import Pagination from "../../common/pagination";
 const apiBase = "games";
 
 class Opener extends Component {
@@ -15,14 +17,18 @@ class Opener extends Component {
       deal: new Deal().shuffle(),
       bid: null,
       bidding: true,
+      currentPage: 1,
+      pageSize: 3,
     };
   }
 
   componentDidMount() {
     console.log("Opener did mount");
-    const promise = axios.get("http://localhost:8000/games/api/deals/");
-    console.log("Promise:", promise);
+    //const promise = axios.get("http://localhost:8000/games/api/deals/");
   }
+  handlePageChange = (page) => {
+    this.setState({ currentPage: page });
+  };
 
   onBid = (bid) => {
     console.log("Setting bid:", bid);
@@ -58,6 +64,7 @@ class Opener extends Component {
       deals,
       bidding: true,
     });
+    console.log("# of deals = ", deals.length);
   };
 
   getBidController = (idx) => {
@@ -109,57 +116,75 @@ class Opener extends Component {
       );
   };
 
+  getPagedDeals = () => {
+    const { pageSize, currentPage, deals } = this.state;
+    return paginate(deals, currentPage, pageSize);
+  };
+
+  showPageDeals = () => {
+    const pageDeals = this.getPagedDeals();
+    if (pageDeals && pageDeals.length > 0) {
+      return pageDeals.map((deal, idx) => {
+        return (
+          <tr key={idx}>
+            <td>N</td>
+            <td>None</td>
+            <td>
+              <Hand
+                player={pageDeals[idx]["deal"][3]}
+                name="South"
+                display={"line"}
+                reveal={true}
+              />
+            </td>
+            <td>{this.getBidController(idx)}</td>
+            <td></td>
+          </tr>
+        );
+      });
+    } else {
+      console.log("No deals:", pageDeals);
+    }
+  };
+  showCurrentDeal = () => {
+    if (this.state.deal)
+      return (
+        <React.Fragment>
+          <Hand
+            player={this.state.deal[3]}
+            name="South"
+            display={"line"}
+            reveal={true}
+          />
+          {this.getBidController(-1)}
+        </React.Fragment>
+      );
+  };
   render() {
-    console.log("Deals in history ", this.state.deals);
+    const pageDeals = this.getPagedDeals();
+    console.log("Deals in page ", pageDeals);
     return (
       <React.Fragment>
         <Table>
           <thead>
-            <td>D</td>
-            <td>Vul</td>
-            <td>Hand</td>
-            <td>Bid</td>
-            <td>By</td>
+            <tr>
+              <td>D</td>
+              <td>Vul</td>
+              <td>Hand</td>
+              <td>Bid</td>
+              <td>By</td>
+            </tr>
           </thead>
-          <tbody>
-            {this.state.deals.map((deal, idx) => {
-              return (
-                <tr key={idx}>
-                  <td>N</td>
-                  <td>None</td>
-                  <td>
-                    <Hand
-                      player={this.state.deals[idx]["deal"][3]}
-                      name="South"
-                      display={"line"}
-                      reveal={true}
-                    />
-                  </td>
-                  <td>{this.getBidController(idx)}</td>
-                  <td></td>
-                </tr>
-              );
-            })}
-            {this.state.deal ? (
-              <tr key="-1">
-                <td>N</td>
-                <td>None</td>
-                <td>
-                  <Hand
-                    player={this.state.deal[3]}
-                    name="South"
-                    display={"line"}
-                    reveal={true}
-                  />
-                </td>
-                <td>{this.getBidController(-1)}</td>
-                <td></td>
-              </tr>
-            ) : (
-              ""
-            )}
-          </tbody>
+          <tbody>{this.showPageDeals()}</tbody>
         </Table>
+        <Pagination
+          itemsCount={this.state.deals.length}
+          currentPage={this.state.currentPage}
+          onPageChange={this.handlePageChange}
+          pageSize={this.state.pageSize}
+        />
+        {this.showCurrentDeal()}
+        <br />
         {this.showNextActions()}
       </React.Fragment>
     );
