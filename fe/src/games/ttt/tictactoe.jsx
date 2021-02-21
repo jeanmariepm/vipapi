@@ -27,15 +27,16 @@ class TicTacToe extends Component {
   }
 
   clickHandler(i) {
+    this.state.game.setAction("X", i);
+
     // const game = { ...this.state.gane };
     if (this.state.game.getWinner()) {
       console.log(`Disabling clickHandler as we have a winners `);
-      return;
+    } else {
+      const action = this.state.game.getAIAction();
+      console.log(`AI recommends: ${action}`);
+      this.state.game.setAction("O", action);
     }
-    this.state.game.setAction("X", i);
-    const action = this.state.game.getAIAction();
-    console.log(`AI recommends: ${action}`);
-    this.state.game.setAction("O", action);
     this.setState({
       game: this.state.game,
     });

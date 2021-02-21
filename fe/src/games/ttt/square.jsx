@@ -27,7 +27,7 @@ class Square extends Component {
         disabled={this.getDisabled()}
         onClick={() => this.state.handler()}
       >
-        {this.getValue()}
+        <strong>{this.getValue()}</strong>
       </Button>
     );
   }

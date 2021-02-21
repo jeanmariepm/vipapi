@@ -31,6 +31,7 @@ class Game {
         squares[a] === squares[b] &&
         squares[a] === squares[c]
       ) {
+        console.log("Found a winner:", squares[a], squares);
         return this.squares[a];
       }
     }
@@ -55,6 +56,7 @@ class Game {
 
     let [, action] = this.minmax(this.squares, "O");
     if (action === -1) {
+      console.log("giving up?");
       action = this.squares.findIndex((s) => s === null);
     }
     return action;
@@ -81,10 +83,10 @@ class Game {
       });
     });
     // pick the best remaining
-    if (next_val === 0 && depth < 8) {
+    if (next_val === 0 && depth < 10) {
       let [cnext_val, caction] = [next_val, action];
       squares.forEach((element, index) => {
-        if (!element) {
+        if (next_val === 0 && !element) {
           squares[index] = player;
           [next_val, action] = this.minmax(
             squares,
