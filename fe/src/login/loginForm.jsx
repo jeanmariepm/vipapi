@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import UserContext from "../context/userContext";
-import axios from "axios";
 
 class LoginForm extends React.Component {
   static contextType = UserContext;
@@ -14,12 +13,8 @@ class LoginForm extends React.Component {
       display_form: "login",
     };
   }
-  componentDidMount() {
-    console.log(this.context);
-  }
 
   toggleRegister = () => {
-    console.log("toggleRegister");
     const current_form = this.state.display_form;
     this.setState({
       display_form: current_form === "login" ? "register" : "login",
@@ -90,23 +85,27 @@ class LoginForm extends React.Component {
   );
   handle_login = async (e, data) => {
     e.preventDefault();
+    /*     
     const result = await axios.post("http://localhost:8000/token-auth/", data);
     console.log("Logged in (data from server): ", result);
 
     const token = result.data.token;
     const username = result.data.user.username;
     localStorage.setItem("token", token);
-    this.context.loginHandler(username);
+ */
+    this.context.loginHandler(data.username, data.password);
   };
 
   handle_signup = async (e, data) => {
     e.preventDefault();
+    /* 
     const result = await axios.post("http://localhost:8000/home/users/", data);
     console.log("Signed in (data from server): ", result);
     const token = result.data.token;
     const username = result.data.username;
     localStorage.setItem("token", token);
-    this.context.loginHandler(username);
+ */
+    this.context.signupHandler(data.username, data.password);
   };
 
   render() {

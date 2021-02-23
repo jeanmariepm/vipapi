@@ -16,6 +16,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["vipveed.herokuapp.com", "localhost"]
 # CORS_ORIGIN_WHITELIST = ("http://localhost:1234",)
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Application definition
@@ -25,7 +26,6 @@ INSTALLED_APPS = [
     "ideas",
     "games",
     "fe",
-    "crispy_forms",
     "django_extensions",
     "webpack_loader",
     "rest_framework",

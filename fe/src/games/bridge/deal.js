@@ -1,5 +1,7 @@
+import brisgeService from "../../common/bridgeService";
 class Deal {
-  shuffle = () => {
+  static apiBase = "http://localhost:8000/games/api/deals/";
+  static shuffle() {
     let cards = [];
     for (let i = 0; i < 52; i++) {
       cards[i] = i;
@@ -21,7 +23,16 @@ class Deal {
     }
     console.log("Shuffled: ", deal);
     return deal;
-  };
+  }
+
+  static async save(deals) {
+    for (let i = 0; i < deals.length; i++) {
+      const { deal: hands, bid } = deals[i];
+      console.log({ hands, bid });
+      brisgeService.saveDeal(hands, bid);
+      console.log("Saved!!!");
+    }
+  }
 }
 
 export default Deal;

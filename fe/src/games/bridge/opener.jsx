@@ -4,17 +4,15 @@ import Deal from "./deal";
 import Hand from "./hand";
 import { paginate } from "../../common/paginate";
 
-import axios from "axios";
 import BidControls from "./bidControls";
 import Pagination from "../../common/pagination";
-const apiBase = "games";
 
 class Opener extends Component {
   constructor(props) {
     super(props);
     this.state = {
       deals: [],
-      deal: new Deal().shuffle(),
+      deal: Deal.shuffle(),
       bid: null,
       bidding: true,
       currentPage: 1,
@@ -41,7 +39,7 @@ class Opener extends Component {
 
   handleSave = () => {
     console.log("Save deals = ", this.state.deals);
-    //await axios.post(apiBase, { a: 1 });
+    Deal.save(this.state.deals);
   };
   rmDeal = () => {
     this.setState({
@@ -50,6 +48,7 @@ class Opener extends Component {
       bidding: false,
     });
   };
+
   startOver = () => {
     console.log("Starting next deal");
     const { bid, deal } = this.state;
@@ -59,7 +58,7 @@ class Opener extends Component {
       deals.push({ deal, bid });
     }
     this.setState({
-      deal: new Deal().shuffle(),
+      deal: Deal.shuffle(),
       bid: null,
       deals,
       bidding: true,
@@ -124,28 +123,52 @@ class Opener extends Component {
   showPageDeals = () => {
     const pageDeals = this.getPagedDeals();
     if (pageDeals && pageDeals.length > 0) {
-      return pageDeals.map((deal, idx) => {
-        return (
-          <tr key={idx}>
-            <td>N</td>
-            <td>None</td>
-            <td>
-              <Hand
-                player={pageDeals[idx]["deal"][3]}
-                name="South"
-                display={"line"}
-                reveal={true}
-              />
-            </td>
-            <td>{this.getBidController(idx)}</td>
-            <td></td>
-          </tr>
-        );
-      });
+      return (
+        <React.Fragment>
+          <Table>
+            <thead>
+              <tr>
+                <td>D</td>
+                <td>Vul</td>
+                <td>Hand</td>
+                <td>Bid</td>
+                <td>By</td>
+              </tr>
+            </thead>
+            <tbody>
+              {pageDeals.map((deal, idx) => {
+                return (
+                  <tr key={idx}>
+                    <td>N</td>
+                    <td>None</td>
+                    <td>
+                      <Hand
+                        player={pageDeals[idx]["deal"][3]}
+                        name="South"
+                        display={"line"}
+                        reveal={true}
+                      />
+                    </td>
+                    <td>{this.getBidController(idx)}</td>
+                    <td></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+          <Pagination
+            itemsCount={this.state.deals.length}
+            currentPage={this.state.currentPage}
+            onPageChange={this.handlePageChange}
+            pageSize={this.state.pageSize}
+          />
+        </React.Fragment>
+      );
     } else {
       console.log("No deals:", pageDeals);
     }
   };
+
   showCurrentDeal = () => {
     if (this.state.deal)
       return (
@@ -160,29 +183,11 @@ class Opener extends Component {
         </React.Fragment>
       );
   };
+
   render() {
-    const pageDeals = this.getPagedDeals();
-    console.log("Deals in page ", pageDeals);
     return (
       <React.Fragment>
-        <Table>
-          <thead>
-            <tr>
-              <td>D</td>
-              <td>Vul</td>
-              <td>Hand</td>
-              <td>Bid</td>
-              <td>By</td>
-            </tr>
-          </thead>
-          <tbody>{this.showPageDeals()}</tbody>
-        </Table>
-        <Pagination
-          itemsCount={this.state.deals.length}
-          currentPage={this.state.currentPage}
-          onPageChange={this.handlePageChange}
-          pageSize={this.state.pageSize}
-        />
+        {this.showPageDeals()}
         {this.showCurrentDeal()}
         <br />
         {this.showNextActions()}

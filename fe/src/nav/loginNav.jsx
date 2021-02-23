@@ -1,12 +1,12 @@
 import React from "react";
 import LoginForm from "../login/loginForm";
 import LogoutForm from "../login/logoutForm";
-import UserContext from "../context/userContext";
+import auth from "../common/authService";
 
 const LoginNav = () => {
-  const { loggedIn } = React.useContext(UserContext);
+  const username = auth.getCurrentUser();
 
-  return <div>{loggedIn ? <LogoutForm /> : <LoginForm />}</div>;
+  return <div>{username ? <LogoutForm /> : <LoginForm />}</div>;
 };
 
 export default LoginNav;

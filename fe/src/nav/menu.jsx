@@ -5,17 +5,18 @@ import TicTacToe from "../games/ttt/tictactoe";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import Home from "./home";
 import LoginNav from "./loginNav";
-import UserContext from "../context/userContext";
 import BridgeNav from "./bridgeNav";
+import auth from "../common/authService";
 
 const Menu = () => {
-  const { username, loggedIn } = React.useContext(UserContext);
-  const path = "/"; //window.location.pathname;
+  const username = auth.getCurrentUser();
+  const loggedIn = username ? true : false;
+
+  const path = "/";
   const bridgePath = path + "bridge";
   const tttPath = path + "ttt";
   const loginNavPath = path + "login";
   const additionPath = path + "addition";
-  console.log("bridgePath:", bridgePath);
 
   return (
     <React.Fragment>
