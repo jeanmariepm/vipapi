@@ -17,6 +17,7 @@ class Veed extends React.Component {
     this.state = {
       username: guestUsername,
       loginHandler: this.loginHandler,
+      signupHandler: this.signupHandler,
       logoutHandler: this.logoutHandler,
     };
   }
