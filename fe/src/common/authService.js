@@ -21,8 +21,8 @@ export async function login(username, password, callback) {
   localStorage.setItem(tokenKey, result.token);
   callback();
 }
-export async function signup(username, password) {
-  const { data: result } = await http.post(apiUrl + "/home/users/", {
+export async function signup(username, password, callback) {
+  const { data: result } = await axios.post(apiUrl + "/home/users/", {
     username,
     password,
   });

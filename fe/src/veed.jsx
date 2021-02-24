@@ -32,9 +32,7 @@ class Veed extends React.Component {
     auth.login(username, password, this.onLoginComplete);
   };
   signupHandler = (username, password) => {
-    auth.signup(username, password);
-    this.setState({ username: auth.getCurrentUser() });
-    this.props.history.goBack();
+    auth.signup(username, password, this.onLoginComplete);
   };
 
   logoutHandler = () => {
