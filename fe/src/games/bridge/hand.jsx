@@ -61,7 +61,7 @@ const Hand = ({ reveal, display, player, name }) => {
   };
   const render = () => {
     if (display === "line") {
-      console.log("Show hand in line");
+      console.log("Show hand in line", player);
       return renderCards();
     }
     console.log("Show hand in card ", this.props);

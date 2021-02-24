@@ -6,23 +6,34 @@ import { paginate } from "../../common/paginate";
 
 import BidControls from "./bidControls";
 import Pagination from "../../common/pagination";
+import brisgeService from "../../common/bridgeService";
 
 class Opener extends Component {
   constructor(props) {
     super(props);
     this.state = {
       deals: [],
-      deal: Deal.shuffle(),
+      hands: null,
       bid: null,
-      bidding: true,
+      bidding: false,
       currentPage: 1,
       pageSize: 3,
     };
   }
 
+  onGetDeals = (dbDeals) => {
+    let deals = [];
+    if (dbDeals)
+      for (let i = 0; i < dbDeals.length; i++) {
+        console.log("i hands", i, ":", dbDeals[i].hands);
+        deals[i] = { hands: JSON.parse(dbDeals[i].hands), bid: dbDeals[i].bid };
+      }
+    console.log("Fetched deals:", deals);
+    this.setState({ deals });
+  };
   componentDidMount() {
     console.log("Opener did mount");
-    //const promise = axios.get("http://localhost:8000/games/api/deals/");
+    brisgeService.getDeals(this.onGetDeals);
   }
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
@@ -37,28 +48,29 @@ class Opener extends Component {
     this.setState({ bid: null, bidding: true });
   };
 
-  handleSave = () => {
-    console.log("Save deals = ", this.state.deals);
-    Deal.save(this.state.deals);
+  handleRefresh = () => {
+    brisgeService.getDeals(this.onGetDeals);
   };
+
   rmDeal = () => {
     this.setState({
-      deal: null,
+      hands: null,
       bid: null,
       bidding: false,
     });
   };
 
-  startOver = () => {
+  newDeal = () => {
     console.log("Starting next deal");
-    const { bid, deal } = this.state;
+    const { bid, hands } = this.state;
 
     const deals = [...this.state.deals];
     if (bid) {
-      deals.push({ deal, bid });
+      deals.push({ hands, bid });
+      brisgeService.saveDeal(hands, bid);
     }
     this.setState({
-      deal: Deal.shuffle(),
+      hands: Deal.shuffle(),
       bid: null,
       deals,
       bidding: true,
@@ -105,11 +117,11 @@ class Opener extends Component {
     if (!this.state.bidding)
       return (
         <React.Fragment>
-          <Button variant="link" size="sm" onClick={this.startOver}>
+          <Button variant="link" size="sm" onClick={this.newDeal}>
             <i className="fa fa-plus" aria-hidden="true"></i>{" "}
           </Button>
-          <button onClick={this.handleSave} className="btn-link ml-6">
-            <i className="fa fa-save" aria-hidden="true"></i>{" "}
+          <button onClick={this.handleRefresh} className="btn-link ml-6">
+            <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
           </button>
         </React.Fragment>
       );
@@ -143,7 +155,7 @@ class Opener extends Component {
                     <td>None</td>
                     <td>
                       <Hand
-                        player={pageDeals[idx]["deal"][3]}
+                        player={pageDeals[idx]["hands"][3]}
                         name="South"
                         display={"line"}
                         reveal={true}
@@ -170,11 +182,11 @@ class Opener extends Component {
   };
 
   showCurrentDeal = () => {
-    if (this.state.deal)
+    if (this.state.hands)
       return (
         <React.Fragment>
           <Hand
-            player={this.state.deal[3]}
+            player={this.state.hands[3]}
             name="South"
             display={"line"}
             reveal={true}

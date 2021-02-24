@@ -24,15 +24,6 @@ class Deal {
     console.log("Shuffled: ", deal);
     return deal;
   }
-
-  static async save(deals) {
-    for (let i = 0; i < deals.length; i++) {
-      const { deal: hands, bid } = deals[i];
-      console.log({ hands, bid });
-      brisgeService.saveDeal(hands, bid);
-      console.log("Saved!!!");
-    }
-  }
 }
 
 export default Deal;
