@@ -19,6 +19,7 @@ export async function login(username, password, callback) {
   console.log("Login complete", result);
 
   localStorage.setItem(tokenKey, result.token);
+  http.setJwt(getJwt());
   callback();
 }
 export async function signup(username, password, callback) {
@@ -27,15 +28,18 @@ export async function signup(username, password, callback) {
     password,
   });
   localStorage.setItem(tokenKey, result.token);
+  http.setJwt(getJwt());
   callback();
 }
 
 export function loginWithJwt(jwt) {
   localStorage.setItem(tokenKey, jwt);
+  http.setJwt(getJwt());
 }
 
 export function logout() {
   localStorage.removeItem(tokenKey);
+  http.setJwt(getJwt());
 }
 
 export function getCurrentUser() {
