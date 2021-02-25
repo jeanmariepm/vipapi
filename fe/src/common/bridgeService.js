@@ -9,16 +9,29 @@ const apiUrl =
 
 export async function saveDeal(hands, bid) {
   const username = auth.getCurrentUser();
-  console.log({ hands, bid });
-  const { data: result } = await http.post(apiUrl + "/games/api/deals/", {
-    hands: JSON.stringify(hands),
-    bid,
-    username,
-  });
+  if (!username) {
+    console.log("Not saving deal. Need to login first");
+    return;
+  }
+  const jwt = auth.getJwt();
+
+  console.log({ hands, bid, username }, jwt);
+  const { data: result } = await http.post(
+    apiUrl + "/games/api/deals/",
+    {
+      hands: JSON.stringify(hands),
+      bid,
+      username,
+    },
+    {
+      headers: { Authorization: "JWT " + jwt },
+    }
+  );
 }
 
 export async function getDeals(callback) {
   const username = auth.getCurrentUser();
+
   console.log("Fetching deals from:", apiUrl + "/games/api/deals/");
   const { data: result } = await http.get(apiUrl + "/games/api/deals/", {
     username,

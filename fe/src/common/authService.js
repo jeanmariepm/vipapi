@@ -7,8 +7,8 @@ const apiUrl =
     ? window.location.protocol + "//" + window.location.hostname + ":8000"
     : window.location.origin;
 const tokenKey = "token";
-
-http.setJwt(getJwt());
+let loggedIn = false;
+let username = null;
 
 export async function login(username, password, callback) {
   console.log("Logging in, username=", username);
@@ -19,7 +19,6 @@ export async function login(username, password, callback) {
   console.log("Login complete", result);
 
   localStorage.setItem(tokenKey, result.token);
-  http.setJwt(getJwt());
   callback();
 }
 export async function signup(username, password, callback) {
@@ -28,25 +27,44 @@ export async function signup(username, password, callback) {
     password,
   });
   localStorage.setItem(tokenKey, result.token);
-  http.setJwt(getJwt());
   callback();
 }
 
-export function loginWithJwt(jwt) {
-  localStorage.setItem(tokenKey, jwt);
-  http.setJwt(getJwt());
+export async function loginWithJwt(jwt) {
+  console.log("logging in with jwt:", jwt);
+  try {
+    const { data: result } = await axios.post(
+      apiUrl + "/home/current_user/",
+      { username },
+      {
+        headers: { Authorization: "JWT " + jwt },
+      }
+    );
+    console.log("logged in with jwt", result.token);
+
+    localStorage.setItem(tokenKey, result.token);
+  } catch (ex) {
+    if (ex.response.status > 400) {
+      console.error(ex.response);
+      console.log("Need to login again");
+      logout();
+    }
+  }
 }
 
 export function logout() {
   localStorage.removeItem(tokenKey);
-  http.setJwt(getJwt());
+  username = null;
 }
 
 export function getCurrentUser() {
+  if (username) return username;
   try {
     const jwt = localStorage.getItem(tokenKey);
     console.log("jwt", jwtDecode(jwt));
-    return jwtDecode(jwt).username;
+    username = jwtDecode(jwt).username;
+    //loginWithJwt(jwt);
+    return username;
   } catch (ex) {
     console.log("Nothing in jwt");
     return null;

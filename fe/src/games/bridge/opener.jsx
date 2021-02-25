@@ -25,14 +25,16 @@ class Opener extends Component {
     let deals = [];
     if (dbDeals)
       for (let i = 0; i < dbDeals.length; i++) {
-        console.log("i hands", i, ":", dbDeals[i].hands);
-        deals[i] = { hands: JSON.parse(dbDeals[i].hands), bid: dbDeals[i].bid };
+        deals[i] = {
+          hands: JSON.parse(dbDeals[i].hands),
+          bid: dbDeals[i].bid,
+          username: dbDeals[i].username,
+        };
       }
     console.log("Fetched deals:", deals);
     this.setState({ deals });
   };
   componentDidMount() {
-    console.log("Opener did mount");
     brisgeService.getDeals(this.onGetDeals);
   }
   handlePageChange = (page) => {
@@ -75,14 +77,12 @@ class Opener extends Component {
       deals,
       bidding: true,
     });
-    console.log("# of deals = ", deals.length);
   };
 
   getBidController = (idx) => {
     let bid;
     if (idx === -1) bid = this.state.bid;
     else bid = this.state.deals[idx]["bid"];
-    console.log("Bid is currently ", bid);
     let bidElement;
     if (idx === -1)
       if (this.state.bidding)
@@ -162,7 +162,7 @@ class Opener extends Component {
                       />
                     </td>
                     <td>{this.getBidController(idx)}</td>
-                    <td></td>
+                    <td> {pageDeals[idx].username}</td>
                   </tr>
                 );
               })}

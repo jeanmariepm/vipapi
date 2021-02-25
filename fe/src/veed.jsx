@@ -13,9 +13,10 @@ const guestUsername = "Guest of JeanMarie";
 class Veed extends React.Component {
   constructor(props) {
     super(props);
-    console.log("Veed constructor", props);
+    let username = auth.getCurrentUser();
+    if (!username) username = guestUsername;
     this.state = {
-      username: guestUsername,
+      username,
       loginHandler: this.loginHandler,
       signupHandler: this.signupHandler,
       logoutHandler: this.logoutHandler,
@@ -36,11 +37,12 @@ class Veed extends React.Component {
   };
 
   logoutHandler = () => {
+    console.log("logoutHandler ...");
     auth.logout();
     this.onLoginComplete();
   };
   componentDidMount() {
-    this.setState({ username: auth.getCurrentUser() });
+    console.log("Veed did mount");
   }
 
   render() {
