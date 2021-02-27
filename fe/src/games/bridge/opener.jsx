@@ -7,8 +7,12 @@ import { paginate } from "../../common/paginate";
 import BidControls from "./bidControls";
 import Pagination from "../../common/pagination";
 import brisgeService from "../../common/bridgeService";
+import UserContext from "../../context/userContext";
+import { logoutHandler } from "../../veed";
 
 class Opener extends Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -29,6 +33,7 @@ class Opener extends Component {
           hands: JSON.parse(dbDeals[i].hands),
           bid: dbDeals[i].bid,
           username: dbDeals[i].username,
+          ai_bid: dbDeals[i].ai_bid,
         };
       }
     console.log("Fetched deals:", deals);
@@ -42,11 +47,9 @@ class Opener extends Component {
   };
 
   onBid = (bid) => {
-    console.log("Setting bid:", bid);
     this.setState({ bid, bidding: false });
   };
   undoBid = () => {
-    console.log("Undoing bid:");
     this.setState({ bid: null, bidding: true });
   };
 
@@ -62,15 +65,17 @@ class Opener extends Component {
     });
   };
 
-  newDeal = () => {
-    console.log("Starting next deal");
-    const { bid, hands } = this.state;
-
-    const deals = [...this.state.deals];
-    if (bid) {
-      deals.push({ hands, bid });
-      brisgeService.saveDeal(hands, bid);
+  onSaveDeal = (deal) => {
+    console.log("onSaveDeal:", deal);
+    if (!deal) {
+      this.context.logoutHandler();
+      return;
     }
+    const deals = [...this.state.deals];
+    const hands = JSON.parse(deal.hands);
+    const { bid, username, ai_bid } = deal;
+    deals.push({ hands, bid, username, ai_bid });
+
     this.setState({
       hands: Deal.shuffle(),
       bid: null,
@@ -78,37 +83,52 @@ class Opener extends Component {
       bidding: true,
     });
   };
+  newDeal = () => {
+    console.log("Starting next deal");
+    const { bid, hands } = this.state;
 
-  getBidController = (idx) => {
-    let bid;
-    if (idx === -1) bid = this.state.bid;
-    else bid = this.state.deals[idx]["bid"];
+    if (bid) {
+      brisgeService.saveDeal(hands, bid, this.onSaveDeal);
+    } else {
+      this.setState({
+        hands: Deal.shuffle(),
+        bid: null,
+        bidding: true,
+      });
+    }
+  };
+
+  getBidController = () => {
     let bidElement;
-    if (idx === -1)
-      if (this.state.bidding)
-        bidElement = (
-          <React.Fragment>
-            <BidControls double={false} redouble={false} onBid={this.onBid} />
-            <Button variant="link" size="sm" onClick={this.rmDeal}>
-              <i className="fa fa-minus" aria-hidden="true"></i>{" "}
-            </Button>
-          </React.Fragment>
-        );
-      else {
-        bidElement = (
-          <React.Fragment>
-            {bid}
-            <Button variant="link" size="sm" onClick={this.undoBid}>
-              <i className="fa fa-undo" aria-hidden="true"></i>{" "}
-            </Button>
-            <Button variant="link" size="sm" onClick={this.rmDeal}>
-              <i className="fa fa-minus" aria-hidden="true"></i>{" "}
-            </Button>
-          </React.Fragment>
-        );
-      }
+    if (this.state.bidding)
+      bidElement = (
+        <React.Fragment>
+          <BidControls double={false} redouble={false} onBid={this.onBid} />
+          <Button variant="link" size="sm" onClick={this.rmDeal}>
+            <i
+              className="fa fa-minus"
+              title="Forget this deal"
+              aria-hidden="true"
+            ></i>
+          </Button>
+        </React.Fragment>
+      );
     else {
-      bidElement = <React.Fragment>{bid}</React.Fragment>;
+      bidElement = (
+        <React.Fragment>
+          {this.state.bid}
+          <Button variant="link" size="sm" onClick={this.undoBid}>
+            <i className="fa fa-undo" title="Undo bid" aria-hidden="true"></i>{" "}
+          </Button>
+          <Button variant="link" size="sm" onClick={this.rmDeal}>
+            <i
+              className="fa fa-minus"
+              title="Forget this deal"
+              aria-hidden="true"
+            ></i>
+          </Button>
+        </React.Fragment>
+      );
     }
     return bidElement;
   };
@@ -118,10 +138,14 @@ class Opener extends Component {
       return (
         <React.Fragment>
           <Button variant="link" size="sm" onClick={this.newDeal}>
-            <i className="fa fa-plus" aria-hidden="true"></i>{" "}
+            <i className="fa fa-plus" title="Save deal" aria-hidden="true"></i>{" "}
           </Button>
           <button onClick={this.handleRefresh} className="btn-link ml-6">
-            <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
+            <i
+              className="fa fa-refresh"
+              title="Refresh deals"
+              aria-hidden="true"
+            ></i>{" "}
           </button>
         </React.Fragment>
       );
@@ -145,6 +169,7 @@ class Opener extends Component {
                 <td>Hand</td>
                 <td>Bid</td>
                 <td>By</td>
+                <td>AI's Bid</td>
               </tr>
             </thead>
             <tbody>
@@ -161,8 +186,9 @@ class Opener extends Component {
                         reveal={true}
                       />
                     </td>
-                    <td>{this.getBidController(idx)}</td>
+                    <td>{pageDeals[idx].bid}</td>
                     <td> {pageDeals[idx].username}</td>
+                    <td> {pageDeals[idx].ai_bid}</td>
                   </tr>
                 );
               })}
@@ -191,7 +217,7 @@ class Opener extends Component {
             display={"line"}
             reveal={true}
           />
-          {this.getBidController(-1)}
+          {this.getBidController()}
         </React.Fragment>
       );
   };

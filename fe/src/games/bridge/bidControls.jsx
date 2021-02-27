@@ -45,7 +45,11 @@ class BidControls extends Component {
           ))}
         </select>
         <button onClick={this.handleOk} className="btn-link ml-6">
-          <i className="fa fa-paper-plane" aria-hidden="true"></i>{" "}
+          <i
+            className="fa fa-paper-plane"
+            title="Place bid"
+            aria-hidden="true"
+          ></i>
         </button>
       </React.Fragment>
     );

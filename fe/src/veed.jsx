@@ -13,10 +13,8 @@ const guestUsername = "Guest of JeanMarie";
 class Veed extends React.Component {
   constructor(props) {
     super(props);
-    let username = auth.getCurrentUser();
-    if (!username) username = guestUsername;
     this.state = {
-      username,
+      username: guestUsername,
       loginHandler: this.loginHandler,
       signupHandler: this.signupHandler,
       logoutHandler: this.logoutHandler,
