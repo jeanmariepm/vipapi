@@ -24,6 +24,14 @@ class DealTestCase(TestCase):
         deal = Deal(hands=hands, bid="1D", username="tester", ai_bid="Test")
         deal.save()
 
+        hands = '[{"S":"","H":"KT972","D":"JT9","C":"AJ653"},{"S":"Q852","H":"A543","D":"A2","C":"K84"},{"S":"AKT963","H":"QJ8","D":"Q6","C":"72"},{"S":"J74","H":"6","D":"K87543","C":"QT9"}]'
+        deal = Deal(hands=hands, bid="2D", username="tester", ai_bid="Test")
+        deal.save()
+
+        hands = '[{"S":"AJT74","H":"J","D":"T7","C":"AT943"},{"S":"8","H":"KT8","D":"KQ85","C":"KQ852"},{"S":"Q95","H":"9643","D":"J9432","C":"7"},{"S":"K632","H":"AQ752","D":"A6","C":"J6"}]'
+        deal = Deal(hands=hands, bid="2D", username="tester", ai_bid="Test")
+        deal.save()
+
     def testBids(self):
         client = RequestsClient()
         response = client.get("http://localhost:8000/games/api/deals/")

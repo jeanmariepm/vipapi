@@ -2,12 +2,15 @@ class bid_agent:
     def __init__(self, hand):
         self.hand = hand
         self.hcp = 0
+        self.ltc = 0
         self.distribution = []
         self.handShape = ""
         self.evaluate_hand()
 
     def __str__(self):
-        return f" {self.hand}\n{self.hcp} {self.distribution} {self.handShape}"
+        return (
+            f" {self.hand}\n{self.hcp} {self.ltc} {self.distribution} {self.handShape}"
+        )
 
     def evaluate_hand(self):
         for suit, cards in self.hand.items():
@@ -16,6 +19,8 @@ class bid_agent:
             self.hcp += 2 if "Q" in cards else 0
             self.hcp += 1 if "J" in cards else 0
             self.distribution.append(len(cards))
+            ltcCards = [x for x in cards if x not in "AKQ"]
+            self.ltc += min(3, len(cards)) - (len(cards) - len(ltcCards))
         if self.distribution.count(0) > 0:
             self.handShape = "U"  # void
         elif self.distribution.count(1) > 0:
@@ -59,11 +64,55 @@ class bid_agent:
             return "1D" if diamondLength >= clubLength else "1C"
         return "TBD"
 
+    def get2CBid(self):
+        if self.hcp >= 21:
+            return "2C"
+        return "TBD"
+
+    def getPreemptBid(self):
+        if self.ltc >= 9:
+            return "TBD"
+        if max(self.distribution) < 6:
+            return "TBD"
+        spadeLength = self.distribution[0]
+        heartLength = self.distribution[1]
+        diamondLength = self.distribution[2]
+        clubLength = self.distribution[3]
+        if max(self.distribution) == 6:
+            return (
+                "2S"
+                if spadeLength == 6
+                else "2H"
+                if heartLength == 6
+                else "2D"
+                if diamondLength == 6
+                else "TBD"
+            )
+        if max(self.distribution) > 6:
+            suit = (
+                "S"
+                if spadeLength > 6
+                else "H"
+                if heartLength > 6
+                else "D"
+                if diamondLength > 6
+                else "C"
+            )
+            level = 11 - self.ltc
+            return f"{level}{suit}"
+        return "TBD"
+
     def make_bid(self):
         ai_bid = self.getNTBid()
         if ai_bid == "TBD":
             ai_bid = self.get1MajorBid()
         if ai_bid == "TBD":
             ai_bid = self.get1MinorBid()
+        if ai_bid == "TBD":
+            ai_bid = self.get2CBid()
+        if ai_bid == "TBD":
+            ai_bid = self.getPreemptBid()
+        if ai_bid == "TBD":
+            ai_bid = "Pass"
 
         return f"{ai_bid}"
