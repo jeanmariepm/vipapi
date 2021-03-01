@@ -22,6 +22,7 @@ djangorestframework = "*"
 pip = "*"
 djangorestframework-jwt = "*"
 django-cors-headers = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"
