@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -58,7 +59,12 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ),
 }
-JWT_AUTH = {"JWT_RESPONSE_PAYLOAD_HANDLER": "prj.utils.my_jwt_response_handler"}
+JWT_AUTH = {
+    "JWT_RESPONSE_PAYLOAD_HANDLER": "prj.utils.my_jwt_response_handler",
+    "JWT_EXPIRATION_DELTA": datetime.timedelta(days=2),
+    "JWT_ALLOW_REFRESH": True,
+    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=7),
+}
 
 
 ROOT_URLCONF = "prj.urls"

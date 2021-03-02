@@ -7,8 +7,7 @@ const apiUrl =
     ? window.location.protocol + "//" + window.location.hostname + ":8000"
     : window.location.origin;
 const tokenKey = "token";
-let loggedIn = false;
-let username = null;
+let loggedInUserName = null;
 
 export async function login(username, password, callback) {
   console.log("Logging in, username=", username);
@@ -17,8 +16,8 @@ export async function login(username, password, callback) {
     password,
   });
   console.log("Login complete", result);
-
   localStorage.setItem(tokenKey, result.token);
+  loggedInUserName = username;
   callback();
 }
 export async function signup(username, password, callback) {
@@ -27,22 +26,19 @@ export async function signup(username, password, callback) {
     password,
   });
   localStorage.setItem(tokenKey, result.token);
+  loggedInUserName = username;
   callback();
 }
 
 export async function loginWithJwt(jwt) {
   console.log("logging in with jwt:", jwt);
   try {
-    const { data: result } = await axios.post(
-      apiUrl + "/home/current_user/",
-      { username },
-      {
-        headers: { Authorization: "JWT " + jwt },
-      }
-    );
-    console.log("logged in with jwt", result.token);
-
-    localStorage.setItem(tokenKey, result.token);
+    const { data: result } = await axios.get(apiUrl + "/home/current_user/", {
+      headers: { Authorization: "JWT " + jwt },
+    });
+    console.log("logged in with jwt", result);
+    loggedInUserName = result.username;
+    //localStorage.setItem(tokenKey, result.token);
   } catch (ex) {
     if (ex.response.status > 400) {
       console.error(ex.response);
@@ -54,17 +50,18 @@ export async function loginWithJwt(jwt) {
 
 export function logout() {
   localStorage.removeItem(tokenKey);
-  username = null;
+  loggedInUserName = null;
 }
 
 export function getCurrentUser() {
-  if (username) return username;
+  if (loggedInUserName) return loggedInUserName;
   try {
     const jwt = localStorage.getItem(tokenKey);
+    if (!jwt) return null;
     console.log("jwt", jwtDecode(jwt));
-    username = jwtDecode(jwt).username;
-    //loginWithJwt(jwt);
-    return username;
+    loggedInUserName = jwtDecode(jwt).username;
+    loginWithJwt(jwt);
+    return loggedInUserName;
   } catch (ex) {
     console.log("Nothing in jwt");
     return null;

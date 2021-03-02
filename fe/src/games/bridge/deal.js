@@ -29,7 +29,6 @@ class Deal {
     let bridgeDeal = [];
     for (let j = 0; j < 4; j++) {
       bridgeDeal[j] = { S: [], H: [], D: [], C: [] };
-      console.log(j, bridgeDeal[j]);
       ["S", "H", "D", "C"].map((suit) => {
         bridgeDeal[j][suit] = deal[j][suit].sort((a, b) => {
           return b - a;

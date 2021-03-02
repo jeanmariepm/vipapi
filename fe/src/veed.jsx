@@ -41,6 +41,8 @@ class Veed extends React.Component {
   };
   componentDidMount() {
     console.log("Veed did mount");
+    const username = auth.getCurrentUser();
+    if (username) this.setState({ username });
   }
 
   render() {
