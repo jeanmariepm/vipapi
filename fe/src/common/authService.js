@@ -37,8 +37,9 @@ export async function loginWithJwt(jwt) {
       headers: { Authorization: "JWT " + jwt },
     });
     console.log("logged in with jwt", result);
-    loggedInUserName = result.username;
+    //loggedInUserName = result.username;
     //localStorage.setItem(tokenKey, result.token);
+    return null; // since refresh is not working
   } catch (ex) {
     if (ex.response.status > 400) {
       console.error(ex.response);
@@ -59,8 +60,9 @@ export function getCurrentUser() {
     const jwt = localStorage.getItem(tokenKey);
     if (!jwt) return null;
     console.log("jwt", jwtDecode(jwt));
-    loggedInUserName = jwtDecode(jwt).username;
-    loginWithJwt(jwt);
+    const exp = jwtDecode(jwt).exp;
+    if (exp < 1000 * 60 * 60 * 4) loginWithJwt(jwt);
+    else loggedInUserName = jwtDecode(jwt).username;
     return loggedInUserName;
   } catch (ex) {
     console.log("Nothing in jwt");

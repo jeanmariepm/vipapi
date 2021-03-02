@@ -34,26 +34,36 @@ class LoginForm extends React.Component {
     <div>
       <form onSubmit={(e) => this.handle_login(e, this.state)}>
         <h4>Log In</h4>
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          name="username"
-          value={this.state.username}
-          onChange={this.handle_change}
-        />
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          value={this.state.password}
-          onChange={this.handle_change}
-        />
-        <input type="submit" />
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            className="form-control"
+            name="username"
+            value={this.state.username}
+            onChange={this.handle_change}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            className="form-control"
+            name="password"
+            value={this.state.password}
+            onChange={this.handle_change}
+          />
+        </div>
+        <button type="submit" className="btn btn-primary btn-block">
+          Submit
+        </button>
+        <p className="text-right">
+          New to Veed?{" "}
+          <Button variant="link" onClick={this.toggleRegister}>
+            Please Sign Up
+          </Button>
+        </p>
       </form>
-      <h3>New to Veed?</h3>
-      <Button variant="link" onClick={this.toggleRegister}>
-        Please Sign Up
-      </Button>
     </div>
   );
 
@@ -61,26 +71,36 @@ class LoginForm extends React.Component {
     <div>
       <form onSubmit={(e) => this.handle_signup(e, this.state)}>
         <h4>Sign Up</h4>
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          name="username"
-          value={this.state.username}
-          onChange={this.handle_change}
-        />
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          value={this.state.password}
-          onChange={this.handle_change}
-        />
-        <input type="submit" />
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            className="form-control"
+            name="username"
+            value={this.state.username}
+            onChange={this.handle_change}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            className="form-control"
+            name="password"
+            value={this.state.password}
+            onChange={this.handle_change}
+          />
+        </div>
+        <button type="submit" className="btn btn-primary btn-block">
+          Submit
+        </button>
+        <p className="text-right">
+          Already signed up to Veed?
+          <Button variant="link" onClick={this.toggleRegister}>
+            Please Log In
+          </Button>
+        </p>
       </form>
-      <h3>Already signed up to Veed?</h3>
-      <Button variant="link" onClick={this.toggleRegister}>
-        Please Log In
-      </Button>
     </div>
   );
   handle_login = async (e, data) => {

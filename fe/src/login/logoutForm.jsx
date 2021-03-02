@@ -12,10 +12,18 @@ class LogoutForm extends React.Component {
     return (
       <React.Fragment>
         <h4>Log Out</h4>
-        <label htmlFor="username">Username</label>
-        <strong>{this.context.username}</strong>
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            readonly
+            className="form-control"
+            name="username"
+            value={this.context.username}
+          />
+        </div>
         <Button variant="link" onClick={() => this.context.logoutHandler()}>
-          Submit
+          Submit{" "}
         </Button>
       </React.Fragment>
     );
