@@ -16,7 +16,7 @@ class LogoutForm extends React.Component {
           <label htmlFor="username">Username</label>
           <input
             type="text"
-            readonly
+            readOnly
             className="form-control"
             name="username"
             value={this.context.username}

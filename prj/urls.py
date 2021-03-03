@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_jwt.views import refresh_jwt_token, obtain_jwt_token
 
 
 urlpatterns = [
@@ -8,5 +8,6 @@ urlpatterns = [
     path("", include("fe.urls")),
     path("home/", include("home.urls")),
     path("games/", include("games.urls")),
-    path("token-auth/", obtain_jwt_token),
+    path("login/", obtain_jwt_token),
+    path("refresh_token/", refresh_jwt_token),
 ]

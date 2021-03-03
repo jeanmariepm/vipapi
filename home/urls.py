@@ -7,6 +7,6 @@ from .views import current_user, UserList
 
 app_name = "home"
 urlpatterns = [
-    path("current_user/", current_user),
+    # path("current_user/", current_user),
     path("users/", UserList.as_view()),
 ]
