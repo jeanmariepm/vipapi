@@ -62,7 +62,7 @@ class Game {
     return action;
   }
 
-  minmax = (squares, player, depth = 0) => {
+  minmax(squares, player, depth = 0) {
     console.log(`minmax exploring ${squares} ${player}`);
     let next_val = 0;
     let action = -1;
@@ -105,7 +105,7 @@ class Game {
     }
     console.log(`minmax returning ${next_val} ${action}`);
     return [next_val, action];
-  };
+  }
 }
 
 export default Game;

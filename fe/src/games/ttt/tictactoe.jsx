@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Button } from "react-bootstrap";
 import Square from "./square";
 import Game from "./game";
-import styles from "./tictactoe.css";
 
 class TicTacToe extends Component {
   state = {

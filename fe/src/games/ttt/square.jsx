@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
-import styles from "./tictactoe.css";
 
 class Square extends Component {
   constructor(props) {
