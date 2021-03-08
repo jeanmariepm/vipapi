@@ -1,47 +1,42 @@
 {
   "name": "fe",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest",
-    "start": "./node_modules/.bin/parcel serve index.html",
-    "build": "./build.sh"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "browserslist": [
-    "since 2017-06"
-  ],
-  "devDependencies": {
-    "@babel/core": "^7.13.8",
-    "@babel/preset-env": "^7.13.9",
-    "@babel/preset-react": "^7.12.13",
-    "babel-jest": "^26.6.3",
-    "jest": "^26.6.3",
-    "parcel": "^1.12.4",
-    "parcel-bundler": "^1.12.4"
-  },
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "axios": "^0.21.1",
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/user-event": "^12.8.1",
     "bootstrap": "^4.6.0",
-    "font-awesome": "^4.7.0",
-    "jquery": "^3.5.1",
-    "jwt-decode": "^3.1.2",
-    "lodash": "^4.17.20",
-    "popper.js": "^1.16.1",
-    "prop-types": "^15.7.2",
     "react": "^17.0.1",
-    "react-bootstrap": "^1.4.3",
+    "react-bootstrap": "^1.5.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
-    "react-toastify": "^7.0.3"
+    "react-scripts": "4.0.3",
+    "react-toastify": "^7.0.3",
+    "web-vitals": "^1.1.0"
   },
-  "jest": {
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
-    }
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

@@ -1,11 +1,9 @@
-import React, { useContext } from "react";
-import UserContext from "../context/userContext";
+import React from "react";
 
 const Home = () => {
-  const userState = useContext(UserContext);
   return (
     <React.Fragment>
-      <h2>Hello, {userState.username}!</h2>
+      <h2>Hello, Guest!</h2>
       <div className="alert alert-dark" role="alert">
         To fully explore the site, register. <br />
         If you have already registered, please login

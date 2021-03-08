@@ -1,21 +1,16 @@
 import React from "react";
-import { Switch, Route, Link, Redirect } from "react-router-dom";
-import Addition from "../games/addition/addition";
-import TicTacToe from "../games/ttt/tictactoe";
-import { Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { Switch, Route, Link } from "react-router-dom";
+
+import { Nav, Navbar, NavDropdown } from "react-bootstrap";
+
+import Addition from "../puzzles/addition/addition";
 import Home from "./home";
-import LoginNav from "./loginNav";
-import BridgeNav from "./bridgeNav";
-import auth from "../common/authService";
 
-const Menu = () => {
-  const username = auth.getCurrentUser();
-  const loggedIn = username ? true : false;
-
+const Menu = (props) => {
   const path = "/";
+  const homePath = path;
   const bridgePath = path + "bridge";
   const tttPath = path + "ttt";
-  const loginNavPath = path + "login";
   const additionPath = path + "addition";
 
   return (
@@ -25,14 +20,13 @@ const Menu = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link as={Link} to="/">
+            <Nav.Link as={Link} to={homePath}>
               Home
             </Nav.Link>
-            <Nav.Link href="#link">Ideas</Nav.Link>
-            <NavDropdown title="Games" id="basic-nav-dropdown">
-              <NavDropdown.Item as={Link} to={bridgePath}>
-                Bridge
-              </NavDropdown.Item>
+            <Nav.Link as={Link} to={bridgePath}>
+              Bridge
+            </Nav.Link>
+            <NavDropdown title="Puzzles" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to={tttPath}>
                 TicTacToe
               </NavDropdown.Item>
@@ -41,18 +35,11 @@ const Menu = () => {
                 Addition
               </NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link as={Link} to={loginNavPath}>
-              {loggedIn ? "Logout" : "Login"}
-            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
       <Switch>
         <Route path={additionPath} component={Addition} />
-        <Route path={bridgePath} component={BridgeNav} />
-
-        <Route path={tttPath} component={TicTacToe} />
-        <Route path={loginNavPath} component={LoginNav} />
         <Route exact path="/" component={Home} />
       </Switch>
     </React.Fragment>
