@@ -1,4 +1,5 @@
 import React from "react";
+import { Container } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Menu from "./menu";
@@ -6,8 +7,10 @@ import Menu from "./menu";
 const Veed = (props) => {
   return (
     <BrowserRouter>
-      <ToastContainer />
-      <Menu />
+      <Container>
+        <ToastContainer />
+        <Menu />
+      </Container>
     </BrowserRouter>
   );
 };

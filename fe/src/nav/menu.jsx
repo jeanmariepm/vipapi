@@ -1,10 +1,10 @@
 import React from "react";
 import { Switch, Route, Link } from "react-router-dom";
-
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-
 import Addition from "../puzzles/addition/addition";
 import Home from "./home";
+import TicTacToe from "../puzzles/ttt/tictactoe";
+import Bridge from "../bridge/bridge";
 
 const Menu = (props) => {
   const path = "/";
@@ -40,6 +40,9 @@ const Menu = (props) => {
       </Navbar>
       <Switch>
         <Route path={additionPath} component={Addition} />
+        <Route path={tttPath} component={TicTacToe} />
+        <Route path={bridgePath} component={Bridge} />
+
         <Route exact path="/" component={Home} />
       </Switch>
     </React.Fragment>
