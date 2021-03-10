@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import SuitImage from "./gifs/suitImage";
 
 const Hand = ({ cards, name }) => {
@@ -14,28 +14,26 @@ const Hand = ({ cards, name }) => {
   const suits = ["S", "H", "D", "C"];
 
   return (
-    <Table borderless>
-      <thead>
-        <tr>
-          <td style={{ maxWidth: 10 }}></td>
-          <td>{name}</td>
-        </tr>
-      </thead>
-      <tbody>
-        {suits.map((suit) => {
-          return (
-            <tr key={suit} style={{ maxHeight: 2 }}>
-              <td>
-                <SuitImage suit={suit} />
-              </td>
-              <td>
-                <p style={styles}>{cards[suit]}</p>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </Table>
+    <Card>
+      <Card.Body>
+        <Card.Subtitle>{name}</Card.Subtitle>
+        <Card.Text>
+          {suits.map((suit) => {
+            return (
+              <div key={suit} style={{ maxHeight: 25 }}>
+                <td>
+                  <SuitImage suit={suit} />
+                </td>
+                <td>
+                  <p style={styles}>{cards[suit]}</p>
+                </td>
+                <br />
+              </div>
+            );
+          })}
+        </Card.Text>
+      </Card.Body>
+    </Card>
   );
 };
 

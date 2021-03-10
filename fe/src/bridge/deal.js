@@ -1,6 +1,8 @@
 class Deal {
   constructor() {
     this.hands = this.shuffle();
+    this.dealer = Math.floor(Math.random() * 4);
+    this.vul = Math.floor(Math.random() * 4);
   }
   shuffle() {
     let cards = [];
@@ -69,6 +71,16 @@ class Deal {
       return this.hands[3];
     }
     return null;
+  }
+  getDealer() {
+    const dealerMap = {
+      0: "W",
+      1: "N",
+      2: "E",
+      3: "S",
+    };
+
+    return dealerMap[this.dealer];
   }
 }
 

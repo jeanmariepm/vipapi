@@ -5,11 +5,16 @@ import Addition from "../puzzles/addition/addition";
 import Home from "./home";
 import TicTacToe from "../puzzles/ttt/tictactoe";
 import Bridge from "../bridge/bridge";
+import Logout from "./logout";
+import Login from "./login";
 
 const Menu = (props) => {
   const path = "/";
   const homePath = path;
   const bridgePath = path + "bridge";
+  const loginPath = path + "login";
+  const logoutPath = path + "logout";
+
   const tttPath = path + "ttt";
   const additionPath = path + "addition";
 
@@ -35,6 +40,12 @@ const Menu = (props) => {
                 Addition
               </NavDropdown.Item>
             </NavDropdown>
+            <Nav.Link as={Link} to={loginPath}>
+              Login
+            </Nav.Link>
+            <Nav.Link as={Link} to={logoutPath}>
+              Logout
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -42,6 +53,8 @@ const Menu = (props) => {
         <Route path={additionPath} component={Addition} />
         <Route path={tttPath} component={TicTacToe} />
         <Route path={bridgePath} component={Bridge} />
+        <Route path={loginPath} component={Login} />
+        <Route path={logoutPath} component={Logout} />
 
         <Route exact path="/" component={Home} />
       </Switch>

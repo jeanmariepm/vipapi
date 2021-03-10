@@ -11,11 +11,11 @@ class TicTacToe extends Component {
     };
   }
 
-  startOver() {
+  startOver = () => {
     this.setState({
       game: new Game(),
     });
-  }
+  };
 
   renderSquare(i) {
     return (

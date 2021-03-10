@@ -16,9 +16,6 @@ class Agent {
       `HCP: ${this.hcp} Dist:${this.distribution} LTC:${this.ltc} Shape:${this.shape}`
     );
   }
-  getBid() {
-    return "TBD";
-  }
   evaluateHand() {
     for (const suit in this.hand) {
       const cards = this.hand[suit];
@@ -38,93 +35,99 @@ class Agent {
         ? "S"
         : "B";
   }
+
+  getBid() {
+    let aiBid = "TBD";
+
+    aiBid = this.getNTBid();
+    if (aiBid === "TBD") aiBid = this.get1MajorBid();
+    if (aiBid === "TBD") aiBid = this.get1MinorBid();
+    if (aiBid === "TBD") aiBid = this.get2CBid();
+    if (aiBid === "TBD") aiBid = this.getPreemptBid();
+    if (aiBid === "TBD") aiBid = "P";
+
+    return aiBid;
+  }
+
+  getNTBid = () => {
+    if (this.handShape === "U")
+      // unbalaced
+      return "TBD";
+    let adjustedHcp = this.hcp;
+    if (this.handShape == "B") {
+      // add a pt for 5-cd suit
+      adjustedHcp = this.hcp + (this.distribution.count(5) === 1 ? 1 : 0);
+    }
+    if (adjustedHcp >= 15 && adjustedHcp <= 17) return "1N";
+    if (adjustedHcp >= 20 && adjustedHcp <= 21) return "1N";
+    return "TBD";
+  };
+
+  get1MajorBid = () => {
+    const spadeLength = this.distribution[0];
+    const heartLength = this.distribution[1];
+    if (spadeLength < 5 && heartLength < 5) return "TBD";
+    if (this.hcp >= 11 && this.hcp <= 21)
+      return spadeLength >= heartLength ? "1S" : "1H";
+    if (this.hcp === 10 && this.handShape === "U")
+      return spadeLength >= heartLength ? "1S" : "1H";
+    return "TBD";
+  };
+
+  get1MinorBid = () => {
+    const diamondLength = this.distribution[2];
+    const clubLength = this.distribution[3];
+    if (this.hcp >= 12 && this.hcp <= 21)
+      return diamondLength >= clubLength && diamondLength >= 4 ? "1D" : "1C";
+    if (this.hcp == 11 && this.shape === "U")
+      return diamondLength >= clubLength ? "1D" : "1C";
+    if (this.hcp == 10 && clubLength > 5 && this.shape === "U") return "1C";
+    return "TBD";
+  };
+  get2CBid = () => {
+    if (this.hcp >= 21) return "2C";
+    return "TBD";
+  };
+
+  getPreemptBid = () => {
+    if (this.ltc >= 9) return "TBD";
+    if (_.max(this.distribution) < 6) return "TBD";
+    const spadeLength = this.distribution[0];
+    const heartLength = this.distribution[1];
+    const diamondLength = this.distribution[2];
+    const clubLength = this.distribution[3];
+    if (_.max(this.distribution) == 6)
+      return spadeLength == 6
+        ? "2S"
+        : heartLength == 6
+        ? "2H"
+        : diamondLength == 6
+        ? "2D"
+        : "P";
+    if (max(this.distribution) > 6) {
+      const suit =
+        spadeLength == 6
+          ? "S"
+          : heartLength == 6
+          ? "H"
+          : diamondLength == 6
+          ? "D"
+          : "C";
+      const level = 11 - this.ltc;
+      return level + suit;
+    }
+    return "TBD";
+  };
+
   /*
-  def getNTBid(self):
-  if self.handShape == "U":  # unbalaced
-      return "TBD"
-  if self.handShape == "B":
-      # add a pt for 5-cd suit
-      adjustedHcp = self.hcp + (1 if self.distribution.count(5) == 1 else 0)
-  elif self.handShape == "S":
-      adjustedHcp = self.hcp
-  if adjustedHcp >= 15 and adjustedHcp <= 17:
-      return "1NT"
-  if adjustedHcp >= 20 and adjustedHcp <= 21:
-      return "1NT"
-  return "TBD"
 
-def get1MajorBid(self):
-  spadeLength = self.distribution[0]
-  heartLength = self.distribution[1]
-  if spadeLength < 5 and heartLength < 5:
-      return "TBD"
-  if self.hcp >= 11 and self.hcp <= 21:
-      return "1S" if spadeLength >= heartLength else "1H"
-  if self.hcp == 10 and self.handShape == "U":
-      return "1S" if spadeLength >= heartLength else "1H"
-  return "TBD"
 
-def get1MinorBid(self):
-  diamondLength = self.distribution[2]
-  clubLength = self.distribution[3]
-  if self.hcp >= 12 and self.hcp <= 21:
-      return "1D" if diamondLength >= clubLength and diamondLength >= 4 else "1C"
-  if self.hcp == 11 and (diamondLength + clubLength) >= 10:
-      return "1D" if diamondLength >= clubLength else "1C"
-  return "TBD"
 
 def get2CBid(self):
-  if self.hcp >= 21:
-      return "2C"
-  return "TBD"
 
 def getPreemptBid(self):
-  if self.ltc >= 9:
-      return "TBD"
-  if max(self.distribution) < 6:
-      return "TBD"
-  spadeLength = self.distribution[0]
-  heartLength = self.distribution[1]
-  diamondLength = self.distribution[2]
-  clubLength = self.distribution[3]
-  if max(self.distribution) == 6:
-      return (
-          "2S"
-          if spadeLength == 6
-          else "2H"
-          if heartLength == 6
-          else "2D"
-          if diamondLength == 6
-          else "TBD"
-      )
-  if max(self.distribution) > 6:
-      suit = (
-          "S"
-          if spadeLength > 6
-          else "H"
-          if heartLength > 6
-          else "D"
-          if diamondLength > 6
-          else "C"
-      )
-      level = 11 - self.ltc
-      return f"{level}{suit}"
-  return "TBD"
+D"
 
-def make_bid(self):
-  ai_bid = self.getNTBid()
-  if ai_bid == "TBD":
-      ai_bid = self.get1MajorBid()
-  if ai_bid == "TBD":
-      ai_bid = self.get1MinorBid()
-  if ai_bid == "TBD":
-      ai_bid = self.get2CBid()
-  if ai_bid == "TBD":
-      ai_bid = self.getPreemptBid()
-  if ai_bid == "TBD":
-      ai_bid = "Pass"
-
-  return f"{ai_bid}"
 */
 }
 
