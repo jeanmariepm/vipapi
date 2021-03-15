@@ -11,9 +11,8 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer, UserSerializerWithToken
 
 
-def index(request, page):
-    print(f"Requested page is: {page}")
-    return render(request, page)
+def index(request):
+    return render(request, "index.html")
 
 
 @api_view(["GET"])

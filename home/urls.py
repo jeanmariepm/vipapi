@@ -15,5 +15,5 @@ urlpatterns = [
     path("signup/", UserList.as_view()),
     path("login/", obtain_jwt_token),
     path("refresh_token/", refresh_jwt_token),
-    url(r"(?P<page>^\w+.html/$)", views.index),
+    path("", views.index),
 ]
