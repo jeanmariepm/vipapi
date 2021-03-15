@@ -54,7 +54,7 @@ class Agent {
       // unbalaced
       return "TBD";
     let adjustedHcp = this.hcp;
-    if (this.handShape == "B") {
+    if (this.handShape === "B") {
       // add a pt for 5-cd suit
       adjustedHcp = this.hcp + (this.distribution.count(5) === 1 ? 1 : 0);
     }
@@ -79,9 +79,9 @@ class Agent {
     const clubLength = this.distribution[3];
     if (this.hcp >= 12 && this.hcp <= 21)
       return diamondLength >= clubLength && diamondLength >= 4 ? "1D" : "1C";
-    if (this.hcp == 11 && this.shape === "U")
+    if (this.hcp === 11 && this.shape === "U")
       return diamondLength >= clubLength ? "1D" : "1C";
-    if (this.hcp == 10 && clubLength > 5 && this.shape === "U") return "1C";
+    if (this.hcp === 10 && clubLength > 5 && this.shape === "U") return "1C";
     return "TBD";
   };
   get2CBid = () => {
@@ -96,21 +96,21 @@ class Agent {
     const heartLength = this.distribution[1];
     const diamondLength = this.distribution[2];
     const clubLength = this.distribution[3];
-    if (_.max(this.distribution) == 6)
-      return spadeLength == 6
+    if (_.max(this.distribution) === 6)
+      return spadeLength === 6
         ? "2S"
-        : heartLength == 6
+        : heartLength === 6
         ? "2H"
-        : diamondLength == 6
+        : diamondLength === 6
         ? "2D"
         : "P";
-    if (max(this.distribution) > 6) {
+    if (_.max(this.distribution) > 6) {
       const suit =
-        spadeLength == 6
+        spadeLength === 6
           ? "S"
-          : heartLength == 6
+          : heartLength === 6
           ? "H"
-          : diamondLength == 6
+          : diamondLength === 6
           ? "D"
           : "C";
       const level = 11 - this.ltc;

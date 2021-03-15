@@ -4,8 +4,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const apiUrl =
-  window.location.port === "3000" || !window.location.port
-    ? window.location.protocol + "//" + window.location.hostname + ":8000"
+  window.location.hostname === "localhost"
+    ? "http://localhost:8000"
     : window.location.origin;
 const tokenKey = "token";
 let loggedInUserName = null;

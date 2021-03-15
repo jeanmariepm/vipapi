@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "react-bootstrap";
+import { Card, Row, Col } from "react-bootstrap";
 import SuitImage from "./gifs/suitImage";
 
 const Hand = ({ cards, name }) => {
@@ -17,21 +17,18 @@ const Hand = ({ cards, name }) => {
     <Card>
       <Card.Body>
         <Card.Subtitle>{name}</Card.Subtitle>
-        <Card.Text>
-          {suits.map((suit) => {
-            return (
-              <div key={suit} style={{ maxHeight: 25 }}>
-                <td>
-                  <SuitImage suit={suit} />
-                </td>
-                <td>
-                  <p style={styles}>{cards[suit]}</p>
-                </td>
-                <br />
-              </div>
-            );
-          })}
-        </Card.Text>
+        {suits.map((suit) => {
+          return (
+            <Row key={suit}>
+              <Col sm={4}>
+                <SuitImage suit={suit} />{" "}
+              </Col>
+              <Col sm={40}>
+                <div style={styles}>{cards[suit]}</div>
+              </Col>
+            </Row>
+          );
+        })}
       </Card.Body>
     </Card>
   );

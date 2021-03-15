@@ -1,52 +1,66 @@
 import React from "react";
-import { Card, Table } from "react-bootstrap";
+import { Card, Row, Col, Button } from "react-bootstrap";
 import _ from "lodash";
-
-const showBids = (dealer, bids) => {
+const styles = {
+  fontFamily: ["Courier New", "Courier", "monospace"],
+  textAlign: "center",
+  fontWeight: "bolder",
+  fontSize: "small",
+  maxHeight: "fit-content",
+  display: "inline-block",
+  marginLeft: "2%",
+  zoon: 1,
+};
+const showBids = (dealer, bids, aiBid) => {
   for (let b = 0; b < dealer; b++) bids = ["", ...bids];
   bids = [...bids, "?"];
+
+  const bidMap = {
+    "": "-",
+    Pass: "P",
+    "?": aiBid ? (
+      <Button onClick={() => alert(`AI Recommends: ${aiBid}`)}>{"?"}</Button>
+    ) : (
+      "?"
+    ),
+  };
+
   return (
-    <tbody>
+    <React.Fragment>
       {bids.map((row, idx) => {
         return (
-          <React.Fragment>
+          <div key={idx}>
             {idx % 4 === 0 && (
-              <tr key={idx}>
+              <Row key={idx}>
                 {_.slice(bids, idx, idx + 4).map((bid, cidx) => {
-                  return <td key={cidx}>{bid}</td>;
+                  return (
+                    <Col key={cidx} style={{ maxWidth: 3 }}>
+                      <div style={styles}>{bidMap[bid] || bid}</div>
+                    </Col>
+                  );
                 })}
-              </tr>
+              </Row>
             )}
-          </React.Fragment>
+          </div>
         );
       })}
-    </tbody>
+    </React.Fragment>
   );
 };
-const Auction = ({ dealer, bids }) => {
+const Auction = ({ dealer, bids, aiBid }) => {
   return (
     <Card>
       <Card.Body>
-        <Card.Subtitle>Dealer:{dealer}</Card.Subtitle>
-        <Card.Text>
-          <Table
-            variant="light"
-            bordered
-            size="sm"
-            className="table-responsive"
-            style={{ fontSize: "small" }}
-          >
-            <thead>
-              <tr>
-                <th>W</th>
-                <th>N</th>
-                <th>E</th>
-                <th>S</th>
-              </tr>
-            </thead>
-            {showBids(dealer, bids)}
-          </Table>
-        </Card.Text>
+        <Row>
+          {["W", "N", "E", "S"].map((p, idx) => {
+            return (
+              <Col key={idx} style={{ maxWidth: 3 }}>
+                <div style={styles}>{p}</div>
+              </Col>
+            );
+          })}
+        </Row>
+        {showBids(dealer, bids, aiBid)}
       </Card.Body>
     </Card>
   );

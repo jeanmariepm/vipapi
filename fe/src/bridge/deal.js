@@ -68,10 +68,7 @@ class Deal {
     return bridgeMap[ch % 13];
   }
   getHand(player) {
-    if (player === "South") {
-      return this.hands[3];
-    }
-    return null;
+    return this.hands[player];
   }
   getDealer() {
     return this.dealer;
