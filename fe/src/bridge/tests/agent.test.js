@@ -9,6 +9,7 @@ test("create an agent", () => {
     { S: "A", H: "JT76", D: "T7", C: "KQ8763" },
     { S: "A", H: "JT76", D: "KQ8763", C: "T7" },
     { S: "KQ3", H: "AKQ93", D: "A5", C: "AJ5" },
+    { S: "JT98764", H: "85", D: "82", C: "A2" },
   ];
 
   let agent = new Agent(hands[0]);
@@ -31,4 +32,7 @@ test("create an agent", () => {
 
   agent = new Agent(hands[5]);
   expect(agent.getBid()).toBe("2C");
+
+  agent = new Agent(hands[6]);
+  expect(agent.getBid()).toBe("3S");
 });

@@ -40,6 +40,7 @@ class Agent {
     let aiBid = "TBD";
 
     aiBid = this.getNTBid();
+
     if (aiBid === "TBD") aiBid = this.get1MajorBid();
     if (aiBid === "TBD") aiBid = this.get1MinorBid();
     if (aiBid === "TBD") aiBid = this.get2CBid();
@@ -92,11 +93,12 @@ class Agent {
   getPreemptBid = () => {
     if (this.ltc >= 9) return "TBD";
     if (_.max(this.distribution) < 6) return "TBD";
+
     const spadeLength = this.distribution[0];
     const heartLength = this.distribution[1];
     const diamondLength = this.distribution[2];
     const clubLength = this.distribution[3];
-    if (_.max(this.distribution) === 6)
+    if (_.max(this.distribution) === 6) {
       return spadeLength === 6
         ? "2S"
         : heartLength === 6
@@ -104,13 +106,14 @@ class Agent {
         : diamondLength === 6
         ? "2D"
         : "P";
+    }
     if (_.max(this.distribution) > 6) {
       const suit =
-        spadeLength === 6
+        spadeLength > 6
           ? "S"
-          : heartLength === 6
+          : heartLength > 6
           ? "H"
-          : diamondLength === 6
+          : diamondLength > 6
           ? "D"
           : "C";
       const level = 11 - this.ltc;
