@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Row, Col, Button } from "react-bootstrap";
+import { Card, Row, Col } from "react-bootstrap";
 import _ from "lodash";
 const styles = {
   fontFamily: ["Courier New", "Courier", "monospace"],
@@ -18,11 +18,6 @@ const showBids = (dealer, bids, aiBid) => {
   const bidMap = {
     "": "-",
     Pass: "P",
-    "?": aiBid ? (
-      <Button onClick={() => alert(`AI Recommends: ${aiBid}`)}>{"?"}</Button>
-    ) : (
-      "?"
-    ),
   };
 
   return (

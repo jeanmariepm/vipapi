@@ -59,8 +59,8 @@ class Agent {
       // add a pt for 5-cd suit
       adjustedHcp = this.hcp + (this.distribution.count(5) === 1 ? 1 : 0);
     }
-    if (adjustedHcp >= 15 && adjustedHcp <= 17) return "1N";
-    if (adjustedHcp >= 20 && adjustedHcp <= 21) return "1N";
+    if (adjustedHcp >= 15 && adjustedHcp <= 17) return "1T";
+    if (adjustedHcp >= 20 && adjustedHcp <= 21) return "2T";
     return "TBD";
   };
 
