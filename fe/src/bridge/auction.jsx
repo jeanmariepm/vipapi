@@ -17,7 +17,13 @@ const showBids = (dealer, bids, aiBid) => {
 
   const bidMap = {
     "": "-",
-    Pass: "P",
+    "1T": "1NT",
+    "2T": "2NT",
+    "3T": "3NT",
+    "4T": "4NT",
+    "5T": "5NT",
+    "6T": "6NT",
+    "7T": "7NT",
   };
 
   return (
