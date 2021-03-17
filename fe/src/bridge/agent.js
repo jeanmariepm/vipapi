@@ -97,7 +97,7 @@ class Agent {
     const spadeLength = this.distribution[0];
     const heartLength = this.distribution[1];
     const diamondLength = this.distribution[2];
-    const clubLength = this.distribution[3];
+    // const clubLength = this.distribution[3];
     if (_.max(this.distribution) === 6) {
       return spadeLength === 6
         ? "2S"

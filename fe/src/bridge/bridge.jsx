@@ -5,8 +5,9 @@ import { Container, Row, Col } from "react-bootstrap";
 import Auction from "./auction";
 import BidBox from "./bidBox";
 import Agent from "./agent";
-import { lastIndexOf } from "lodash";
+import DealControl from "./dealControl";
 
+const playerNames = { 0: "West", 1: "North", 2: "East", 3: "South" };
 class Bridge extends Component {
   constructor(props) {
     super(props);
@@ -72,25 +73,70 @@ class Bridge extends Component {
   };
 
   render() {
-    const { bids } = this.state;
+    if (this.biddingOver()) return this.showFinishedHands();
+    return this.showBiddableHand();
+  }
+
+  showFinishedHands() {
+    return (
+      <Container>
+        <Row>
+          <Col></Col>
+          <Col>
+            <Hand cards={this.deal.getHand(1)} name={playerNames[1]} />
+          </Col>
+          <Col>
+            <DealControl saveDeal={this.saveDeal} nextDeal={this.nextDeal} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Hand cards={this.deal.getHand(0)} name={playerNames[0]} />
+          </Col>
+          <Col>
+            <Auction
+              dealer={this.deal.getDealer()}
+              bids={this.state.bids}
+              biddingOver={true}
+            />
+          </Col>
+          <Col>
+            <Hand cards={this.deal.getHand(2)} name={playerNames[2]} />
+          </Col>
+        </Row>
+        <Row>
+          <Col></Col>
+          <Col>
+            <Hand cards={this.deal.getHand(3)} name={playerNames[3]} />
+          </Col>
+          <Col></Col>
+        </Row>
+      </Container>
+    );
+  }
+  showBiddableHand() {
     const dealer = this.deal.getDealer();
-    const player = (dealer + bids.length) % 4;
-    const playerName = { 0: "West", 1: "North", 2: "East", 3: "South" }[player];
-    const cards = this.deal.getHand(player);
+    const player = (dealer + this.state.bids.length) % 4;
+
     return (
       <Container>
         <Row>
           <Col style={{ maxWidth: 150 }}>
-            <Hand cards={cards} name={playerName} />
+            <Hand
+              cards={this.deal.getHand(player)}
+              name={playerNames[player]}
+            />
           </Col>
           <Col style={{ maxWidth: 180 }}>
-            <Auction dealer={dealer} bids={bids} aiBid={this.aiBid} />
+            <Auction
+              dealer={this.deal.getDealer()}
+              bids={this.state.bids}
+              biddingOver={false}
+            />
           </Col>
           <Col style={{ maxWidth: 150 }}>
             <BidBox
               placeBid={this.placeBid}
-              saveDeal={this.saveDeal}
-              nextDeal={this.nextDeal}
               goingBid={this.goingBid}
               biddingOver={this.biddingOver()}
               doubleOption={this.getDoubleOption()}

@@ -1,32 +1,28 @@
 import React, { useState } from "react";
 import { Form, Button, Card, Row, Col } from "react-bootstrap";
 
-const BidBox = ({
-  placeBid,
-  saveDeal,
-  nextDeal,
-  goingBid,
-  biddingOver,
-  doubleOption,
-  aiBid,
-}) => {
+const BidBox = ({ placeBid, goingBid, biddingOver, doubleOption, aiBid }) => {
   const [bid, setBid] = useState("");
 
-  const onPickBid = (event) => {
+  const onPickBid = (event, aiBid) => {
     const bid = event.target.value;
     if (bid === "Bid") return;
-    setBid(bid);
+    if (aiBid && (bidReverseMap[bid] || bid) !== aiBid) {
+      setBid(bid);
+      return;
+    } else {
+      placeBid(bidReverseMap[bid] || bid);
+      setBid("");
+      return;
+    }
   };
+  const onPlaceBid = () => {
+    placeBid(bidReverseMap[bid] || bid);
+    setBid("");
+  };
+
   const onUndoBid = () => {
     setBid("");
-  };
-  const onSaveDeal = () => {
-    setBid("");
-    saveDeal();
-  };
-  const onNextDeal = () => {
-    setBid("");
-    nextDeal();
   };
 
   const bidReverseMap = {
@@ -54,11 +50,6 @@ const BidBox = ({
     XX: "RDbl",
   };
 
-  const onPlaceBid = () => {
-    setBid("");
-    placeBid(bidReverseMap[bid] || bid);
-  };
-
   const getPicks = (goingBid) => {
     let picks = [];
     for (let level = 1; level <= 7; level++)
@@ -70,15 +61,12 @@ const BidBox = ({
     return picks;
   };
 
-  let options = ["Bid", "Pass"];
-  if (doubleOption) options.push(doubleOption);
-
   const showConfirmPane = () => {
     return (
       <Card>
         <Card.Subtitle>
           <Row>Your bid: {bid}</Row>
-          {aiBid && <Row>AI says: {aiBid}</Row>}
+          {aiBid && <Row>AI says: {bidMap[aiBid] || aiBid}</Row>}
         </Card.Subtitle>
         <Row>
           <Col sm={4}>
@@ -96,42 +84,24 @@ const BidBox = ({
             </Button>
           </Col>
         </Row>
-        {showNextPane()}
       </Card>
     );
   };
-  const showNextPane = () => {
-    return (
-      <Row>
-        <Col sm={4}>
-          <Button variant="link" size="sm" onClick={onNextDeal}>
-            <i
-              className="fa fa-arrow-right"
-              title="Next deal"
-              aria-hidden="true"
-            ></i>
-          </Button>
-        </Col>
 
-        <Col sm={4}>
-          <Button variant="link" size="sm" onClick={onSaveDeal}>
-            <i className="fa fa-save" title="Save deal" aria-hidden="true"></i>
-          </Button>
-        </Col>
-      </Row>
-    );
-  };
   const showBiddingPane = () => {
+    let options = ["Bid", "Pass"];
+    if (doubleOption) options.push(doubleOption);
+
     return (
       <Card>
         <Row>
           <Col sm={8}>
             <Form.Control
               as="select"
-              onChange={onPickBid}
+              onChange={(event) => onPickBid(event, aiBid)}
               className="selectpicker btn-success "
               size="sm"
-              defaultValue={bid}
+              value={"Bid"}
             >
               {options.map((option, idx) => (
                 <option key={option}>{bidMap[option] || option}</option>
@@ -146,13 +116,6 @@ const BidBox = ({
     );
   };
 
-  if (biddingOver)
-    return (
-      <Card>
-        <Card.Subtitle>Bidding Over! </Card.Subtitle>
-        {showNextPane()}
-      </Card>
-    );
   if (!bid) return showBiddingPane();
   return showConfirmPane();
 };

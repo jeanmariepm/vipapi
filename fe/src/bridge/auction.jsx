@@ -11,9 +11,9 @@ const styles = {
   marginLeft: "2%",
   zoon: 1,
 };
-const showBids = (dealer, bids, aiBid) => {
+const showBids = (dealer, bids, biddingOver) => {
   for (let b = 0; b < dealer; b++) bids = ["", ...bids];
-  bids = [...bids, "?"];
+  bids = [...bids, biddingOver ? "-" : "?"];
 
   const bidMap = {
     "": "-",
@@ -48,7 +48,8 @@ const showBids = (dealer, bids, aiBid) => {
     </React.Fragment>
   );
 };
-const Auction = ({ dealer, bids, aiBid }) => {
+
+const Auction = ({ dealer, bids, biddingOver }) => {
   return (
     <Card>
       <Card.Body>
@@ -61,7 +62,7 @@ const Auction = ({ dealer, bids, aiBid }) => {
             );
           })}
         </Row>
-        {showBids(dealer, bids, aiBid)}
+        {showBids(dealer, bids, biddingOver)}
       </Card.Body>
     </Card>
   );
