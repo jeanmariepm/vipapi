@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { Form, Button, Card, Row, Col } from "react-bootstrap";
+import UndoBid from "./undoBid";
 
-const BidBox = ({ placeBid, goingBid, biddingOver, doubleOption, aiBid }) => {
+const BidBox = ({
+  placeBid,
+  undoBid,
+  goingBid,
+  allowUndo,
+  doubleOption,
+  aiBid,
+}) => {
   const [bid, setBid] = useState("");
 
   const onPickBid = (event, aiBid) => {
@@ -22,6 +30,7 @@ const BidBox = ({ placeBid, goingBid, biddingOver, doubleOption, aiBid }) => {
   };
 
   const onUndoBid = () => {
+    undoBid();
     setBid("");
   };
 
@@ -73,45 +82,53 @@ const BidBox = ({ placeBid, goingBid, biddingOver, doubleOption, aiBid }) => {
             <Button variant="link" size="sm" onClick={onPlaceBid}>
               <i
                 className="fa fa-paper-plane"
-                title="Place bid"
+                title="Confirm bid"
                 aria-hidden="true"
               ></i>
             </Button>
           </Col>
-          <Col sm={4}>
-            <Button variant="link" size="sm" onClick={onUndoBid}>
-              <i className="fa fa-undo" title="Undo bid" aria-hidden="true"></i>{" "}
-            </Button>
-          </Col>
         </Row>
+        <Row>{showBiddingDD()}</Row>
+        <Row>{showUndoOption()}</Row>
       </Card>
     );
   };
 
-  const showBiddingPane = () => {
+  const showBiddingDD = () => {
     let options = ["Bid", "Pass"];
     if (doubleOption) options.push(doubleOption);
 
     return (
+      <Col sm={8}>
+        <Form.Control
+          as="select"
+          onChange={(event) => onPickBid(event, aiBid)}
+          className="selectpicker btn-success "
+          size="sm"
+          value={"Bid"}
+        >
+          {options.map((option, idx) => (
+            <option key={option}>{bidMap[option] || option}</option>
+          ))}
+          {getPicks(goingBid).map((pick) => (
+            <option key={pick}>{pick}</option>
+          ))}
+        </Form.Control>
+      </Col>
+    );
+  };
+  const showUndoOption = () => {
+    return (
+      <React.Fragment>
+        {allowUndo && <UndoBid onUndoBid={onUndoBid} />}
+      </React.Fragment>
+    );
+  };
+  const showBiddingPane = () => {
+    return (
       <Card>
-        <Row>
-          <Col sm={8}>
-            <Form.Control
-              as="select"
-              onChange={(event) => onPickBid(event, aiBid)}
-              className="selectpicker btn-success "
-              size="sm"
-              value={"Bid"}
-            >
-              {options.map((option, idx) => (
-                <option key={option}>{bidMap[option] || option}</option>
-              ))}
-              {getPicks(goingBid).map((pick) => (
-                <option key={pick}>{pick}</option>
-              ))}
-            </Form.Control>
-          </Col>
-        </Row>
+        <Row>{showBiddingDD()}</Row>
+        <Row>{showUndoOption()}</Row>
       </Card>
     );
   };

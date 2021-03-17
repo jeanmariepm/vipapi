@@ -42,6 +42,14 @@ class Bridge extends Component {
     this.setState({ bids });
   };
 
+  undoBid = () => {
+    console.log("Undoing last bid...");
+    const bids = [...this.state.bids];
+    bids.pop();
+    this.aiBid = ""; // need to get next bid from agent
+    this.setState({ bids });
+  };
+
   biddingOver = () => {
     const bids = [...this.state.bids];
     if (bids.length >= 4) {
@@ -86,7 +94,11 @@ class Bridge extends Component {
             <Hand cards={this.deal.getHand(1)} name={playerNames[1]} />
           </Col>
           <Col>
-            <DealControl saveDeal={this.saveDeal} nextDeal={this.nextDeal} />
+            <DealControl
+              undoBid={this.undoBid}
+              saveDeal={this.saveDeal}
+              nextDeal={this.nextDeal}
+            />
           </Col>
         </Row>
         <Row>
@@ -137,8 +149,9 @@ class Bridge extends Component {
           <Col style={{ maxWidth: 150 }}>
             <BidBox
               placeBid={this.placeBid}
+              undoBid={this.undoBid}
               goingBid={this.goingBid}
-              biddingOver={this.biddingOver()}
+              allowUndo={this.state.bids.length > 0}
               doubleOption={this.getDoubleOption()}
               aiBid={this.aiBid}
             />
