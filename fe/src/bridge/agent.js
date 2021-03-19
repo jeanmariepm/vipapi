@@ -1,9 +1,8 @@
 import _ from "lodash";
 
 class Agent {
-  constructor(hand, auction = null) {
+  constructor(hand) {
     this.hand = hand;
-    this.auction = auction;
     this.hcp = 0;
     this.ltc = 0;
     this.shape = "";
@@ -36,21 +35,10 @@ class Agent {
         : "B";
   }
 
-  getGoingBid = (bids) => {
-    let bidHist = [...bids];
-    let bid;
-    while ((bid = bidHist.pop())) {
-      if (bid.match(/^\d/)) {
-        return bid;
-      }
-    }
-    return null;
-  };
-
   haveStopper(suit) {
     const cards = this.hand[suit];
-    if (cards.charAt(0) === "A") return true;
-    if (cards.charAt(0) === "K" && cards.length >= 2) return true;
+    if (cards.search("A") >= 0) return true;
+    if (cards.search("K") >= 0 && cards.length >= 2) return true;
     if (cards.length === 3) {
       if (
         cards.charAt(0) === "Q" &&
@@ -62,10 +50,70 @@ class Agent {
     return false;
   }
 
-  getBid(bids) {
-    if (!bids) return this.getOpeningBid();
-    if (!this.getGoingBid(bids)) return this.getOpeningBid();
-    if (bids.length === 1) return this.getOvercall(bids[0]);
+  getTwoLongest() {
+    const longestLength = _.max(this.distribution);
+    const longestIndex = _.indexOf(this.distribution, longestLength);
+    const longestSuit = this.suitMap[longestIndex];
+    const remainingDist = [...this.distribution];
+    remainingDist[longestIndex] = 0;
+    const secondLength = _.max(remainingDist);
+    const secondIndex = _.indexOf(remainingDist, secondLength);
+    const secondSuit = this.suitMap[secondIndex];
+    return [longestLength, longestSuit, secondLength, secondSuit];
+  }
+
+  getGoingBid(bids) {
+    let bid;
+    let dblRdbl = "";
+    for (let i = bids.length - 1; i >= 0; i--) {
+      bid = bids[i];
+      if (bid === "X" && !dblRdbl) dblRdbl = "X";
+      if (bid === "XX" && !dblRdbl) dblRdbl = "XX";
+      if (bid.match(/^\d/)) return [i, bid, dblRdbl];
+    }
+    return [-1, "", ""];
+  }
+  wePassed(bids) {
+    let bid;
+    for (let i = bids.length - 2; i >= 0; i = i - 2) {
+      bid = bids[i];
+      if (bid !== "P") return false;
+    }
+    return true;
+  }
+
+  getBiddingContext(bids) {
+    const [gb, goingBid, dblRdbl] = this.getGoingBid(bids);
+    const [pgb, priorGoingBid, priorDblRdbl] = goingBid
+      ? this.getGoingBid(bids.slice(0, gb))
+      : [-1, "", ""];
+    const biddingContext = {
+      bidderRole: null,
+      goingBid,
+      priorGoingBid,
+      dblRdbl,
+      priorDblRdbl,
+    };
+
+    if (!goingBid) biddingContext.bidderRole = "Opener";
+    else if (gb === bids.length - 2) {
+      if (!priorGoingBid) biddingContext.bidderRole = "Responder";
+      else if (this.wePassed(bids.slice(0, gb)))
+        biddingContext.bidderRole = "Advancer";
+    } else if (bids.length <= 7 && this.wePassed(bids))
+      biddingContext.bidderRole = "Overcaller";
+
+    return biddingContext;
+  }
+
+  getBid(bids = []) {
+    let aiBid = "";
+    const bc = this.getBiddingContext(bids);
+    //console.log(bc);
+    if (bc.bidderRole === "Opener") aiBid = this.getOpeningBid();
+    if (bc.bidderRole === "Overcaller") aiBid = this.getOvercall(bc.goingBid);
+    if (bc.bidderRole === "Responder") aiBid = this.getResponse(bids, bc);
+    return aiBid;
   }
   getOpeningBid() {
     let aiBid = "";
@@ -85,24 +133,47 @@ class Agent {
     let aiBid = "";
     if (this.hcp >= 18) return "X";
 
-    const rhoSuit = bid.charAt(1);
-    const rhoLevel = bid.charCodeAt(0) - "0".charCodeAt(0);
-    aiBid = this.getNTOvercall(rhoLevel, rhoSuit);
-    if (!aiBid) aiBid = this.getSuitOvercall(rhoLevel, rhoSuit);
-    if (!aiBid) aiBid = this.getTODouble(rhoLevel, rhoSuit);
-    if (!aiBid) aiBid = this.getPreemptOvercall(rhoLevel, rhoSuit);
+    const suit = bid.charAt(1);
+    const level = bid.charCodeAt(0) - "0".charCodeAt(0);
+    aiBid = this.getNTOvercall(level, suit);
+    if (!aiBid) aiBid = this.getSuitOvercall(level, suit);
+    if (!aiBid) aiBid = this.getTODouble(level, suit);
+    if (!aiBid) aiBid = this.getPreemptOvercall(level, suit);
     if (!aiBid) aiBid = "P";
     return aiBid;
   }
+  getResponse(bids, bc) {
+    const rhoBid = bids[bids.length - 1];
+    if (rhoBid === "P") return this.getResponseBid(bc.goingBid);
+    else if (rhoBid === "X") return this.getDblResponseBid(bc.goingBid);
+    else return this.getIntResponseBid(bc.priorGoingBid, bc.goingBid);
+  }
+  getResponseBid(bid) {
+    let aiBid = "";
+    const pdSuit = bid.charAt(1);
+    aiBid =
+      pdSuit === "C" || pdSuit === "D"
+        ? this.getMinorResponse(bid)
+        : pdSuit === "H" || pdSuit === "S"
+        ? this.getMajorResponse(bid)
+        : this.getIntResponseBid(bid);
+    return aiBid;
+  }
+  getDblResponseBid(bid) {
+    return "";
+  }
+  getIntResponseBid(bid, rhoBid) {
+    return "";
+  }
 
   getNTBid = () => {
-    if (this.handShape === "U")
+    if (this.shape === "U")
       // unbalaced
       return "";
     let adjustedHcp = this.hcp;
-    if (this.handShape === "B") {
+    if (this.shape === "B") {
       // add a pt for 5-cd suit
-      adjustedHcp = this.hcp + (this.distribution.count(5) === 1 ? 1 : 0);
+      adjustedHcp = this.hcp + (_.groupBy(this.distribution)[5] === 1 ? 1 : 0);
     }
     if (adjustedHcp >= 15 && adjustedHcp <= 17) return "1T";
     if (adjustedHcp >= 20 && adjustedHcp <= 21) return "2T";
@@ -115,7 +186,7 @@ class Agent {
     if (spadeLength < 5 && heartLength < 5) return "";
     if (this.hcp >= 11 && this.hcp <= 21)
       return spadeLength >= heartLength ? "1S" : "1H";
-    if (this.hcp === 10 && this.handShape === "U")
+    if (this.hcp === 10 && this.shape === "U")
       return spadeLength >= heartLength ? "1S" : "1H";
     return "";
   };
@@ -168,48 +239,91 @@ class Agent {
   };
 
   suitMap = { 0: "S", 1: "H", 2: "D", 3: "C" };
-  getNTOvercall(rhoLevel, rhoSuit) {
+  getNTOvercall(level, suit) {
     let aiBid = "";
-    if (rhoLevel <= 2 && this.haveStopper(rhoSuit)) {
+    if (level <= 2 && suit !== "T" && this.haveStopper(suit)) {
       aiBid = this.getNTBid();
       aiBid =
-        aiBid === "1T"
-          ? rhoLevel === 1
-            ? "1T"
-            : rhoLevel === 2
-            ? "2T"
-            : ""
-          : "";
+        aiBid === "1T" ? (level === 1 ? "1T" : level === 2 ? "2T" : "") : "";
     }
     return aiBid;
   }
 
-  getSuitOvercall(rhoLevel, rhoSuit) {
-    if (this.hcp < 9) return "";
+  getSuitOvercall(level, suit) {
+    //console.log("Suit overcall of ", level, suit);
+    const [
+      longestLength,
+      longestSuit,
+      secondLength,
+      secondSuit,
+    ] = this.getTwoLongest();
 
-    const longestSuitLength = _.max(this.distribution);
-    if (longestSuitLength < 5) return ""; // no 5-carders
-    const longestSuitIndex = _.indexOf(this.distribution, longestSuitLength);
-    const longestSuit = this.suitMap[longestSuitIndex];
-    if (longestSuitLength >= 5) {
-      if (rhoLevel + longestSuit > rhoLevel + rhoSuit)
-        return rhoLevel + longestSuit;
-      return rhoLevel + 1 + longestSuit;
+    if (this.hcp < 9 + 2 * (level - 1)) return "";
+
+    if (longestSuit !== suit && longestLength >= 5) {
+      if (level + longestSuit > level + suit) return level + longestSuit;
+      return level + 1 + longestSuit;
+    } else if (secondLength >= 5) {
+      if (level + secondSuit > level + suit) return level + secondSuit;
+      return level + 1 + secondSuit;
     }
+    return "";
   }
-  getTODouble(rhoLevel, rhoSuit) {
+  getTODouble(level, suit) {
     if (this.hcp < 12) return "";
+    if (suit === "T") return "";
 
-    const cards = this.hand[rhoSuit];
+    const cards = this.hand[suit];
+    const suits = ["S", "H", "D", "C"];
+
     if (cards.length >= 3) return "";
-    for (let suit in ["S", "H", "D", "C"]) {
-      if (suit !== rhoSuit && this.hand[suit].length < 3) return "";
+    for (let s in suits) {
+      if (suits[s] !== suit && this.hand[suits[s]].length < 3) return "";
     }
     return "X";
   }
-  getPreemptOvercall(rhoLevel, rhoSuit) {
+  getPreemptOvercall(level, suit) {
     let aiBid = this.getPreemptBid();
-    if (aiBid > rhoLevel + rhoSuit) return aiBid;
+    if (aiBid > level + suit) return aiBid;
+    return "";
+  }
+  getMinorResponse(bid) {
+    const level = bid.charAt(0);
+    const suit = bid.charAt(1);
+
+    const [
+      longestLength,
+      longestSuit,
+      secondLength,
+      secondSuit,
+    ] = this.getTwoLongest();
+    if (this.hcp >= 12) {
+      if (longestLength < 5 && this.shape === "B") return "2T";
+
+      let suitToBid = longestSuit;
+      if (suitToBid === suit) suitToBid = secondSuit;
+      if (suitToBid !== "C") return level + suitToBid;
+      return "2C";
+    } else if (this.hcp >= 6) {
+      if (longestLength >= 5) {
+        if (longestSuit === "S" || longestSuit === "H")
+          return level + longestSuit;
+      }
+      const heartLength = this.distribution[1];
+      if (heartLength === 4) return "1H";
+      const spadeLength = this.distribution[0];
+      if (spadeLength === 4) return "1S";
+      if (this.hcp >= 8 && this.hcp <= 10 && this.shape !== "U") return "1T";
+      return "1D";
+    }
+    console.log("Pass", this.hcp);
+
+    return "P";
+  }
+  getMajorResponse(bid) {
+    return "";
+  }
+  getNTResponse(bid) {
     return "";
   }
 }

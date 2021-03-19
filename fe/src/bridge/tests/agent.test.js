@@ -11,14 +11,22 @@ test("create an agent", () => {
     { S: "KQ3", H: "AKQ93", D: "A5", C: "AJ5" },
     { S: "JT98764", H: "85", D: "82", C: "A2" },
     { S: "5", H: "JT76", D: "T7", C: "KQ8763" },
+    { S: "A3", H: "JT76", D: "KQ876", C: "T7" },
+    { S: "K2", H: "QJT93", D: "K982", C: "Q7" },
+    { S: "KT74", H: "AK52", D: "6", C: "AQJ5" },
+    { S: "J", H: "A63", D: "KJT7", C: "KT985" },
   ];
 
-  let agent = new Agent(hands[0]);
+  let agent;
+
+  agent = new Agent(hands[0]);
+  agent.print();
   expect(agent.hcp).toBe(17);
   expect(agent.getBid()).toBe("1T");
   expect(agent.getBid(["1H"])).toBe("1T");
-  expect(agent.getBid(["1D"])).toBe(""); // no stopper to bid 1T
+  expect(agent.getBid(["1D"])).toBe("X"); // no stopper to bid 1T
   expect(agent.getBid(["2H"])).toBe("2T");
+  expect(agent.getBid(["1D", "P"])).toBe("2T");
 
   agent = new Agent(hands[1]);
   expect(agent.ltc).toBe(5);
@@ -39,10 +47,22 @@ test("create an agent", () => {
 
   agent = new Agent(hands[6]);
   expect(agent.getBid()).toBe("3S");
+  agent = new Agent(hands[6], ["P"]);
+  expect(agent.getBid()).toBe("3S");
 
   agent = new Agent(hands[7]);
   expect(agent.getBid()).toBe("P");
 
-  agent = new Agent(hands[6], ["P"]);
-  expect(agent.getBid()).toBe("3S");
+  agent = new Agent(hands[8]);
+  expect(agent.getBid()).toBe("P");
+  expect(agent.getBid(["1T"])).toBe("2D");
+
+  agent = new Agent(hands[9]);
+  expect(agent.getBid(["1S", "P", "2C"])).toBe("2H");
+
+  agent = new Agent(hands[10]);
+  expect(agent.getBid()).toBe("1C");
+
+  agent = new Agent(hands[11]);
+  expect(agent.getBid(["P", "P", "1C"])).toBe("P");
 });

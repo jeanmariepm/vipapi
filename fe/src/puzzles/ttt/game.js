@@ -84,11 +84,13 @@ class Game {
         }
       });
     });
+    console.log(`minmax found so far ...  ${next_val} ${action}`);
+
     // pick the best remaining
-    if (next_val === 0 && depth < 10) {
+    if (next_val <= 0 && depth < 10) {
       let [cnext_val, caction] = [next_val, action];
       squares.forEach((element, index) => {
-        if (next_val === 0 && !element) {
+        if (next_val <= 0 && !element) {
           squares[index] = player;
           [next_val, action] = this.minmax(
             squares,

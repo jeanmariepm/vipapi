@@ -32,11 +32,11 @@ class Addition extends Component {
     );
   }
 
-  startOver() {
+  startOver = () => {
     this.setState((state) => ({
       score: 0,
     }));
-  }
+  };
 
   renderProblem() {
     return (
@@ -56,7 +56,7 @@ class Addition extends Component {
     );
   }
 
-  inputKeyPress(event) {
+  inputKeyPress = (event) => {
     if (event.key === "Enter") {
       const answer = parseInt(this.state.response);
       if (answer === this.state.num1 + this.state.num2) {
@@ -77,13 +77,13 @@ class Addition extends Component {
         }));
       }
     }
-  }
+  };
 
-  updateResponse(event) {
+  updateResponse = (event) => {
     this.setState({
       response: event.target.value,
     });
-  }
+  };
 }
 
 export default Addition;
