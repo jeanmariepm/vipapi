@@ -33,8 +33,8 @@ class Game {
         squares[a] === squares[b] &&
         squares[a] === squares[c]
       ) {
-        console.log("Found a winner:", squares[a], squares);
-        return this.squares[a];
+        //console.log("Found a winner:", squares[a], squares);
+        return squares[a];
       }
     }
     return null;
@@ -64,51 +64,60 @@ class Game {
     return action;
   }
 
-  minmax(squares, player, depth = 0) {
-    console.log(`minmax exploring ${squares} ${player}`);
-    let next_val = 0;
-    let action = -1;
-    const best_val = player === "X" ? 1 : -1;
-    const next_player = player === "X" ? "O" : "X";
-
-    // pick a winning/loss-avoiding move if one exist
-    [player, next_player].forEach((cplayer) => {
-      squares.forEach((element, index) => {
-        if (element === null && next_val === 0) {
-          squares[index] = cplayer;
-          if (this.calculateWinner(squares) === cplayer) {
-            next_val = cplayer === player ? best_val : -best_val;
-            action = index;
-          }
-          squares[index] = null;
+  bestVal = { X: 1, O: -1 };
+  getWinningMove(squares, player) {
+    let sq = [...squares];
+    for (let i = 0; i < squares.length; i++) {
+      if (!squares[i]) {
+        sq[i] = player;
+        const winner = this.calculateWinner(sq);
+        sq[i] = squares[i];
+        if (winner === player) {
+          return [this.bestVal[player], i];
         }
-      });
-    });
-    console.log(`minmax found so far ...  ${next_val} ${action}`);
-
-    // pick the best remaining
-    if (next_val <= 0 && depth < 10) {
-      let [cnext_val, caction] = [next_val, action];
-      squares.forEach((element, index) => {
-        if (next_val <= 0 && !element) {
-          squares[index] = player;
-          [next_val, action] = this.minmax(
-            squares,
-            (player = player === "X" ? "O" : "X"),
-            (depth = depth + 1)
-          );
-          if (next_val === -best_val) {
-            [cnext_val, caction] = [next_val, action];
-          } else if (next_val === 0) {
-            [cnext_val, caction] = [next_val, action];
-          }
-          squares[index] = null;
-        }
-      });
-      [next_val, action] = [cnext_val, caction];
+      }
     }
-    console.log(`minmax returning ${next_val} ${action}`);
-    return [next_val, action];
+
+    return [null, null];
+  }
+
+  minmax(squares, player, depth = 0) {
+    //console.log(`${"*".repeat(depth)} minmax exploring ${squares} ${player}`);
+    const nextPlayer = player === "X" ? "O" : "X";
+
+    // no empty squares => game is tied
+    let gameOver = true;
+    for (let i = 0; i < squares.length; i++) if (!squares[i]) gameOver = false;
+    if (gameOver) return [0, -1];
+
+    // see if there's an immediate winning move
+    let [nextVal, action] = this.getWinningMove(squares, player);
+    if (nextVal === this.bestVal[player]) return [nextVal, action];
+
+    // pick the best remaining option
+    let sq = [...squares];
+    let [lossVal, lossAction] = [this.bestVal[nextPlayer], -1];
+    for (let i = 0; i < squares.length; i++) {
+      if (!squares[i]) {
+        sq[i] = player;
+        depth < 0 &&
+          console.log(
+            `${"*".repeat(depth)} minmax considering ${i} for ${player}`
+          );
+        [nextVal, action] = this.minmax(sq, nextPlayer, depth + 1);
+        depth < 0 &&
+          console.log(
+            `${"*".repeat(
+              depth
+            )} minmax considered ${i} for ${player} and got ${nextVal},${action}`
+          );
+        sq[i] = squares[i];
+        if (nextVal === this.bestVal[player]) return [nextVal, i];
+        if (nextVal === 0) [lossVal, lossAction] = [nextVal, i];
+      }
+    }
+    // we have a tie if we are here
+    return [lossVal, lossAction];
   }
 }
 
