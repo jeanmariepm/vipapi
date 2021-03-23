@@ -12,25 +12,33 @@ const DealControl = ({ undoBid, saveDeal, nextDeal }) => {
 
   const showNextPane = () => {
     return (
-      <Row>
-        <Col sm={4}>
-          <UndoBid onUndoBid={undoBid} />
-        </Col>
-        <Col sm={4}>
-          <Button variant="link" size="sm" onClick={onNextDeal}>
-            <i
-              className="fa fa-arrow-right"
-              title="Next deal"
-              aria-hidden="true"
-            ></i>
-          </Button>
-        </Col>
-        <Col sm={4}>
-          <Button variant="link" size="sm" onClick={onSaveDeal}>
-            <i className="fa fa-save" title="Save deal" aria-hidden="true"></i>
-          </Button>
-        </Col>
-      </Row>
+      <React.Fragment>
+        <Row>
+          <Col sm={4}>
+            <UndoBid onUndoBid={undoBid} />
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={4}>
+            <Button variant="link" size="sm" onClick={onNextDeal}>
+              <i
+                className="fa fa-arrow-right"
+                title="Next deal"
+                aria-hidden="true"
+              ></i>
+            </Button>
+          </Col>
+          <Col sm={4}>
+            <Button variant="link" size="sm" onClick={onSaveDeal}>
+              <i
+                className="fa fa-save"
+                title="Save deal"
+                aria-hidden="true"
+              ></i>
+            </Button>
+          </Col>
+        </Row>
+      </React.Fragment>
     );
   };
   return <React.Fragment>{showNextPane()}</React.Fragment>;

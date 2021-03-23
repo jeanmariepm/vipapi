@@ -8,6 +8,16 @@ class Agent {
     this.shape = "";
     this.distribution = [];
     this.evaluateHand();
+    const {
+      longestLength,
+      longestSuit,
+      secondLength,
+      secondSuit,
+    } = this.getTwoLongest();
+    this.longestLength = longestLength;
+    this.longestSuit = longestSuit;
+    this.secondLength = secondLength;
+    this.secondSuit = secondSuit;
   }
   print() {
     console.log(
@@ -59,7 +69,7 @@ class Agent {
     const secondLength = _.max(remainingDist);
     const secondIndex = _.indexOf(remainingDist, secondLength);
     const secondSuit = this.suitMap[secondIndex];
-    return [longestLength, longestSuit, secondLength, secondSuit];
+    return { longestLength, longestSuit, secondLength, secondSuit };
   }
 
   getGoingBid(bids) {
@@ -95,6 +105,8 @@ class Agent {
       priorDblRdbl,
     };
 
+    console.assert(pgb >= -1);
+
     if (!goingBid) biddingContext.bidderRole = "Opener";
     else if (gb === bids.length - 2) {
       if (!priorGoingBid) biddingContext.bidderRole = "Responder";
@@ -119,10 +131,10 @@ class Agent {
     let aiBid = "";
 
     aiBid = this.getNTBid();
-
+    if (!aiBid) aiBid = this.get2CBid();
+    if (!aiBid) aiBid = this.getNTBid();
     if (!aiBid) aiBid = this.get1MajorBid();
     if (!aiBid) aiBid = this.get1MinorBid();
-    if (!aiBid) aiBid = this.get2CBid();
     if (!aiBid) aiBid = this.getPreemptBid();
     if (!aiBid) aiBid = "P";
 
@@ -144,26 +156,9 @@ class Agent {
   }
   getResponse(bids, bc) {
     const rhoBid = bids[bids.length - 1];
-    if (rhoBid === "P") return this.getResponseBid(bc.goingBid);
-    else if (rhoBid === "X") return this.getDblResponseBid(bc.goingBid);
-    else return this.getIntResponseBid(bc.priorGoingBid, bc.goingBid);
-  }
-  getResponseBid(bid) {
-    let aiBid = "";
-    const pdSuit = bid.charAt(1);
-    aiBid =
-      pdSuit === "C" || pdSuit === "D"
-        ? this.getMinorResponse(bid)
-        : pdSuit === "H" || pdSuit === "S"
-        ? this.getMajorResponse(bid)
-        : this.getIntResponseBid(bid);
-    return aiBid;
-  }
-  getDblResponseBid(bid) {
-    return "";
-  }
-  getIntResponseBid(bid, rhoBid) {
-    return "";
+    if (bc.goingBid === rhoBid)
+      return this.getIntResponseBid(bc.priorGoingBid, bc.goingBid);
+    return this.getResponseBid(bc.goingBid);
   }
 
   getNTBid = () => {
@@ -194,11 +189,12 @@ class Agent {
   get1MinorBid = () => {
     const diamondLength = this.distribution[2];
     const clubLength = this.distribution[3];
-    if (this.hcp >= 12 && this.hcp <= 21)
-      return diamondLength >= clubLength && diamondLength >= 4 ? "1D" : "1C";
-    if (this.hcp === 11 && this.shape === "U")
-      return diamondLength >= clubLength ? "1D" : "1C";
-    if (this.hcp === 10 && clubLength > 5 && this.shape === "U") return "1C";
+    if (
+      this.hcp >= 12 ||
+      (this.hcp >= 10 &&
+        this.longestLength + this.secondLength + this.hcp >= 20)
+    )
+      return diamondLength >= 4 && diamondLength >= clubLength ? "1D" : "1C";
     return "";
   };
   get2CBid = () => {
@@ -232,7 +228,8 @@ class Agent {
           : diamondLength > 6
           ? "D"
           : "C";
-      const level = 11 - this.ltc;
+      let level = 11 - this.ltc;
+      if (level > 4) level = 4;
       return level + suit;
     }
     return "";
@@ -251,21 +248,17 @@ class Agent {
 
   getSuitOvercall(level, suit) {
     //console.log("Suit overcall of ", level, suit);
-    const [
-      longestLength,
-      longestSuit,
-      secondLength,
-      secondSuit,
-    ] = this.getTwoLongest();
 
     if (this.hcp < 9 + 2 * (level - 1)) return "";
 
-    if (longestSuit !== suit && longestLength >= 5) {
-      if (level + longestSuit > level + suit) return level + longestSuit;
-      return level + 1 + longestSuit;
-    } else if (secondLength >= 5) {
-      if (level + secondSuit > level + suit) return level + secondSuit;
-      return level + 1 + secondSuit;
+    if (this.longestSuit !== suit && this.longestLength >= 5) {
+      if (level + this.longestSuit > level + suit)
+        return level + this.longestSuit;
+      return level + 1 + this.longestSuit;
+    } else if (this.secondLength >= 5) {
+      if (level + this.secondSuit > level + suit)
+        return level + this.secondSuit;
+      return level + 1 + this.secondSuit;
     }
     return "";
   }
@@ -287,27 +280,42 @@ class Agent {
     if (aiBid > level + suit) return aiBid;
     return "";
   }
+
+  getResponseBid(bid) {
+    let aiBid = "";
+
+    if (bid === "2C") aiBid = this.get2CResponse();
+    if (!aiBid)
+      if (bid === "1C" || bid === "1D") aiBid = this.getMinorResponse(bid);
+    if (!aiBid)
+      if (bid === "1H" || bid === "1S") aiBid = this.getMajorResponse(bid);
+    if (!aiBid)
+      if (bid === "1T" || bid === "2T") aiBid = this.getNTResponseBid(bid);
+    if (!aiBid) if (bid.charAt(1) === "2") aiBid = this.getWeak2Response(bid);
+
+    return aiBid;
+  }
+
+  getIntResponseBid(bid, rhoBid) {
+    return "";
+  }
   getMinorResponse(bid) {
+    console.log("getMinorResponse for ", bid);
+
     const level = bid.charAt(0);
     const suit = bid.charAt(1);
 
-    const [
-      longestLength,
-      longestSuit,
-      secondLength,
-      secondSuit,
-    ] = this.getTwoLongest();
     if (this.hcp >= 12) {
-      if (longestLength < 5 && this.shape === "B") return "2T";
+      if (this.longestLength < 5 && this.shape === "B") return "2T";
 
-      let suitToBid = longestSuit;
-      if (suitToBid === suit) suitToBid = secondSuit;
+      let suitToBid = this.longestSuit;
+      if (suitToBid === suit) suitToBid = this.secondSuit;
       if (suitToBid !== "C") return level + suitToBid;
       return "2C";
     } else if (this.hcp >= 6) {
-      if (longestLength >= 5) {
-        if (longestSuit === "S" || longestSuit === "H")
-          return level + longestSuit;
+      if (this.longestLength >= 5) {
+        if (this.longestSuit === "S" || this.longestSuit === "H")
+          return level + this.longestSuit;
       }
       const heartLength = this.distribution[1];
       if (heartLength === 4) return "1H";
@@ -324,6 +332,9 @@ class Agent {
     return "";
   }
   getNTResponse(bid) {
+    return "";
+  }
+  get2CResponse() {
     return "";
   }
 }

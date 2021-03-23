@@ -97,51 +97,71 @@ class Bridge extends Component {
   };
 
   render() {
-    if (this.biddingOver()) return this.showFinishedHands();
-    return this.showBiddableHand();
+    if (this.biddingOver()) return this.showHands(-1);
+    return this.showHands(this.player);
   }
 
-  showFinishedHands() {
+  showHands(bidder) {
     return (
       <Container>
         <Row>
           <Col></Col>
           <Col>
-            <Hand cards={this.deal.getHand(1)} name={playerNames[1]} />
+            {(bidder === -1 || bidder === 1) && (
+              <Hand cards={this.deal.getHand(1)} name={playerNames[1]} />
+            )}
           </Col>
           <Col>
-            <DealControl
-              undoBid={this.undoBid}
-              saveDeal={this.saveDeal}
-              nextDeal={this.nextDeal}
-            />
+            {bidder === -1 ? (
+              <DealControl
+                undoBid={this.undoBid}
+                saveDeal={this.saveDeal}
+                nextDeal={this.nextDeal}
+              />
+            ) : (
+              <BidBox
+                placeBid={this.placeBid}
+                undoBid={this.undoBid}
+                goingBid={this.getGoingBid()}
+                allowUndo={this.state.bids.length > 0}
+                doubleOption={this.getDoubleOption()}
+                aiBid={this.aiBid}
+              />
+            )}
           </Col>
         </Row>
         <Row>
           <Col>
-            <Hand cards={this.deal.getHand(0)} name={playerNames[0]} />
+            {(bidder === -1 || bidder === 0) && (
+              <Hand cards={this.deal.getHand(0)} name={playerNames[0]} />
+            )}
           </Col>
           <Col>
             <Auction
               dealer={this.deal.getDealer()}
               bids={this.state.bids}
-              biddingOver={true}
+              biddingOver={bidder === -1}
             />
           </Col>
           <Col>
-            <Hand cards={this.deal.getHand(2)} name={playerNames[2]} />
+            {(bidder === -1 || bidder === 2) && (
+              <Hand cards={this.deal.getHand(2)} name={playerNames[2]} />
+            )}
           </Col>
         </Row>
         <Row>
           <Col></Col>
           <Col>
-            <Hand cards={this.deal.getHand(3)} name={playerNames[3]} />
+            {(bidder === -1 || bidder === 3) && (
+              <Hand cards={this.deal.getHand(3)} name={playerNames[3]} />
+            )}
           </Col>
           <Col></Col>
         </Row>
       </Container>
     );
   }
+  /*
   showBiddableHand() {
     return (
       <Container>
@@ -173,6 +193,7 @@ class Bridge extends Component {
       </Container>
     );
   }
+  */
 }
 
 export default Bridge;
