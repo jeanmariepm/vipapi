@@ -8,7 +8,7 @@ import { Image } from "react-bootstrap";
 const images = { S, H, D, C };
 const SuitImage = ({ suit }) => (
   <React.Fragment>
-    <Image src={images[suit]} alt={suit} />
+    <Image src={images[suit]} fluid alt={suit} />
   </React.Fragment>
 );
 

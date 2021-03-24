@@ -97,22 +97,23 @@ class Bridge extends Component {
   };
 
   render() {
-    if (this.biddingOver()) return this.showHands(-1);
     return this.showHands(this.player);
+  }
+
+  showOneHand(bidder, seat) {
+    if (this.biddingOver() || bidder === seat)
+      return <Hand cards={this.deal.getHand(seat)} name={playerNames[seat]} />;
+    return <Hand name={playerNames[seat]} />;
   }
 
   showHands(bidder) {
     return (
-      <Container>
+      <Container fluid>
         <Row>
           <Col></Col>
+          <Col>{this.showOneHand(bidder, 1)} </Col>
           <Col>
-            {(bidder === -1 || bidder === 1) && (
-              <Hand cards={this.deal.getHand(1)} name={playerNames[1]} />
-            )}
-          </Col>
-          <Col>
-            {bidder === -1 ? (
+            {this.biddingOver() ? (
               <DealControl
                 undoBid={this.undoBid}
                 saveDeal={this.saveDeal}
@@ -132,9 +133,7 @@ class Bridge extends Component {
         </Row>
         <Row>
           <Col>
-            {(bidder === -1 || bidder === 0) && (
-              <Hand cards={this.deal.getHand(0)} name={playerNames[0]} />
-            )}
+            <Col>{this.showOneHand(bidder, 0)} </Col>
           </Col>
           <Col>
             <Auction
@@ -144,56 +143,19 @@ class Bridge extends Component {
             />
           </Col>
           <Col>
-            {(bidder === -1 || bidder === 2) && (
-              <Hand cards={this.deal.getHand(2)} name={playerNames[2]} />
-            )}
+            <Col>{this.showOneHand(bidder, 2)} </Col>
           </Col>
         </Row>
         <Row>
           <Col></Col>
           <Col>
-            {(bidder === -1 || bidder === 3) && (
-              <Hand cards={this.deal.getHand(3)} name={playerNames[3]} />
-            )}
+            <Col>{this.showOneHand(bidder, 3)} </Col>
           </Col>
           <Col></Col>
         </Row>
       </Container>
     );
   }
-  /*
-  showBiddableHand() {
-    return (
-      <Container>
-        <Row>
-          <Col style={{ maxWidth: 150 }}>
-            <Hand
-              cards={this.deal.getHand(this.player)}
-              name={playerNames[this.player]}
-            />
-          </Col>
-          <Col style={{ maxWidth: 180 }}>
-            <Auction
-              dealer={this.deal.getDealer()}
-              bids={this.state.bids}
-              biddingOver={false}
-            />
-          </Col>
-          <Col style={{ maxWidth: 150 }}>
-            <BidBox
-              placeBid={this.placeBid}
-              undoBid={this.undoBid}
-              goingBid={this.getGoingBid()}
-              allowUndo={this.state.bids.length > 0}
-              doubleOption={this.getDoubleOption()}
-              aiBid={this.aiBid}
-            />
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
-  */
 }
 
 export default Bridge;

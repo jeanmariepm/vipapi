@@ -10,6 +10,7 @@ const Hand = ({ cards, name }) => {
     fontSize: "large",
     maxHeight: "fit-content",
     maxWidth: 100,
+    marginLeft: 1,
   };
   const suits = ["S", "H", "D", "C"];
 
@@ -20,12 +21,10 @@ const Hand = ({ cards, name }) => {
         {suits.map((suit) => {
           return (
             <Row key={suit}>
-              <Col sm={4}>
-                <SuitImage suit={suit} />{" "}
+              <Col xs={2}>
+                <SuitImage suit={suit} />
               </Col>
-              <Col sm={40}>
-                <div style={styles}>{cards[suit]}</div>
-              </Col>
+              <Col>{cards && <div style={styles}>{cards[suit]}</div>}</Col>
             </Row>
           );
         })}

@@ -290,7 +290,7 @@ class Agent {
     if (!aiBid)
       if (bid === "1H" || bid === "1S") aiBid = this.getMajorResponse(bid);
     if (!aiBid)
-      if (bid === "1T" || bid === "2T") aiBid = this.getNTResponseBid(bid);
+      if (bid === "1T" || bid === "2T") aiBid = this.getNTResponse(bid);
     if (!aiBid) if (bid.charAt(1) === "2") aiBid = this.getWeak2Response(bid);
 
     return aiBid;
@@ -300,7 +300,7 @@ class Agent {
     return "";
   }
   getMinorResponse(bid) {
-    console.log("getMinorResponse for ", bid);
+    // console.log("getMinorResponse for ", bid);
 
     const level = bid.charAt(0);
     const suit = bid.charAt(1);
@@ -329,11 +329,74 @@ class Agent {
     return "P";
   }
   getMajorResponse(bid) {
-    return "";
+    const level = bid.charAt(0);
+    const suit = bid.charAt(1);
+    const supportLength = this.hand[suit].length;
+    let dummyPoints = 0;
+
+    if (supportLength >= 3) {
+      ["S", "H", "D", "C"].forEach((s) => {
+        if (suit !== s) {
+          const l = this.hand[suit].length;
+          dummyPoints += l === 0 ? 5 : l === 1 ? 3 : l === 2 ? 1 : 0;
+        }
+      });
+    }
+    const totalPoints = this.hcp + dummyPoints;
+
+    if (supportLength >= 3) {
+      if (totalPoints >= 12) return 4 + suit;
+      if (totalPoints >= 10) return 3 + suit;
+      if (totalPoints >= 7) return 2 + suit;
+      if (totalPoints >= 5) return "1T";
+    }
+    if (totalPoints >= 12)
+      if (this.longestLength >= 5)
+        if (1 + this.longestSuit > bid) return 1 + this.longestSuit;
+        else return 2 + this.longestSuit;
+      else return "2C";
+    else if (totalPoints >= 6)
+      if (suit === "H" && this.distribution[0] >= 4) return "1S";
+      else return "1T";
+    return "P";
   }
   getNTResponse(bid) {
-    return "";
+    const level = bid.charAt(0) - "0";
+    const respLevel = level + 1;
+    const spadeLength = this.distribution[0];
+    const heartLength = this.distribution[1];
+    const diamondLength = this.distribution[2];
+    const clubLength = this.distribution[3];
+
+    // Jacoby
+    if (spadeLength >= 5 && heartLength < 5) return respLevel + "H";
+    if (heartLength >= 5 && spadeLength < 5) return respLevel + "D";
+    if (spadeLength >= 5 && heartLength >= 5)
+      if (level === 1) {
+        if (this.hcp >= 8) return respLevel + "H";
+        else return respLevel + "D";
+      } else {
+        if (this.hcp >= 4) return respLevel + "H";
+        else return respLevel + "D";
+      }
+
+    // Stayman
+    if (spadeLength >= 4 || heartLength >= 4)
+      if (level === 1 && this.hcp >= 8) return respLevel + "C";
+    if (level === 2 && this.hcp >= 4) return respLevel + "C";
+
+    //Size ask with an invitational hand
+    if (level === 1 && this.hcp >= 8) return respLevel + "S";
+
+    // Minor suit transfer
+    if (level === 1 && this.ltc <= 9) {
+      if (clubLength >= 6) return respLevel + "S";
+      if (diamondLength >= 6) return respLevel + "T";
+    }
+
+    return "P";
   }
+
   get2CResponse() {
     return "";
   }
