@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button, Card, Row, Col } from "react-bootstrap";
+import { Button, Container, Row, Modal } from "react-bootstrap";
 import UndoBid from "./undoBid";
 
 const BidBox = ({
@@ -11,9 +11,13 @@ const BidBox = ({
   aiBid,
 }) => {
   const [bid, setBid] = useState("");
-
+  const styles = {
+    fontFamily: ["Courier New"],
+    fontSize: "large",
+  };
   const onPickBid = (event, aiBid) => {
     const bid = event.target.value;
+    console.log("onPickBid ", bid);
     if (bid === "Bid") return;
     if (aiBid && (bidReverseMap[bid] || bid) !== aiBid) {
       setBid(bid);
@@ -29,6 +33,9 @@ const BidBox = ({
     setBid("");
   };
 
+  const onRetryBid = () => {
+    setBid("");
+  };
   const onUndoBid = () => {
     undoBid();
     setBid("");
@@ -59,64 +66,80 @@ const BidBox = ({
     XX: "RDbl",
   };
 
-  const getPicks = (goingBid) => {
-    let picks = [];
-    for (let level = 1; level <= 7; level++)
-      ["C", "D", "H", "S", "T"].forEach((suit) => {
-        const pick = `${level}${suit}`;
-        if (!goingBid || pick > goingBid)
-          return picks.push(bidMap[pick] || pick);
-      });
-    return picks;
-  };
-
   const showConfirmPane = () => {
     return (
-      <Card>
-        <Card.Subtitle>
+      <Modal.Dialog>
+        <Modal.Header>
+          <Modal.Title>Check your bid</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
           <Row>Your bid: {bid}</Row>
-          {aiBid && <Row>AI says: {bidMap[aiBid] || aiBid}</Row>}
-        </Card.Subtitle>
-        <Row>
-          <Col sm={4}>
-            <Button variant="link" size="sm" onClick={onPlaceBid}>
-              <i
-                className="fa fa-paper-plane"
-                title="Confirm bid"
-                aria-hidden="true"
-              ></i>
-            </Button>
-          </Col>
-        </Row>
-        <Row>{showBiddingDD()}</Row>
-        <Row>{showUndoOption()}</Row>
-      </Card>
+          <Row> AI says: {bidMap[aiBid] || aiBid}</Row>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onRetryBid}>
+            Retry
+          </Button>
+          <Button variant="primary" onClick={onPlaceBid}>
+            Confirm Bid
+          </Button>
+        </Modal.Footer>
+      </Modal.Dialog>
     );
   };
-
-  const showBiddingDD = () => {
-    let options = ["Bid", "Pass"];
+  const showBiddingButtons = () => {
+    let options = ["Pass"];
     if (doubleOption) options.push(doubleOption);
 
     return (
-      <Col sm={8}>
-        <Form.Control
-          as="select"
-          onChange={(event) => onPickBid(event, aiBid)}
-          className="selectpicker btn-success "
-          size="sm"
-          value={"Bid"}
-        >
+      <Container style={styles}>
+        <Row>
           {options.map((option, idx) => (
-            <option key={option}>{bidMap[option] || option}</option>
+            <div key={idx} xs={3}>
+              <Button
+                key={option}
+                onClick={(event) => onPickBid(event, aiBid)}
+                className="btn-sm m-0 p-0"
+                variant={option === "Pass" ? "success" : "danger"}
+                value={option}
+              >
+                {option}
+              </Button>
+            </div>
           ))}
-          {getPicks(goingBid).map((pick) => (
-            <option key={pick}>{pick}</option>
-          ))}
-        </Form.Control>
-      </Col>
+        </Row>
+        {[1, 2, 3, 4, 5, 6, 7].map((level) => (
+          <Row key={level}>
+            {["C", "D", "H", "S", "T"].map((suit) => (
+              <div key={suit}>
+                {level + suit <= goingBid ? (
+                  <Button
+                    disabled
+                    className="btn-sm m-0 p-0"
+                    style={{ height: 12 }}
+                    variant="dark"
+                    value={level + suit}
+                  >
+                    {bidMap[level + suit] || level + suit}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={(event) => onPickBid(event, aiBid)}
+                    className="btn-sm m-0 p-0"
+                    variant="success"
+                    value={level + suit}
+                  >
+                    {bidMap[level + suit] || level + suit}
+                  </Button>
+                )}
+              </div>
+            ))}
+          </Row>
+        ))}
+      </Container>
     );
   };
+
   const showUndoOption = () => {
     return (
       <React.Fragment>
@@ -126,10 +149,10 @@ const BidBox = ({
   };
   const showBiddingPane = () => {
     return (
-      <Card>
-        <Row>{showBiddingDD()}</Row>
-        <Row>{showUndoOption()}</Row>
-      </Card>
+      <React.Fragment>
+        <div>{showBiddingButtons()}</div>
+        <div>{showUndoOption()}</div>
+      </React.Fragment>
     );
   };
 

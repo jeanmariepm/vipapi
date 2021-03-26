@@ -14,27 +14,19 @@ const DealControl = ({ undoBid, saveDeal, nextDeal }) => {
     return (
       <React.Fragment>
         <Row>
-          <Col sm={4}>
+          <Col>
             <UndoBid onUndoBid={undoBid} />
           </Col>
         </Row>
         <Row>
-          <Col sm={4}>
-            <Button variant="link" size="sm" onClick={onNextDeal}>
-              <i
-                className="fa fa-arrow-right"
-                title="Next deal"
-                aria-hidden="true"
-              ></i>
+          <Col>
+            <Button variant="success" size="sm" onClick={onNextDeal}>
+              Next Deal
             </Button>
           </Col>
-          <Col sm={4}>
-            <Button variant="link" size="sm" onClick={onSaveDeal}>
-              <i
-                className="fa fa-save"
-                title="Save deal"
-                aria-hidden="true"
-              ></i>
+          <Col>
+            <Button variant="link" size="sm" disabled onClick={onSaveDeal}>
+              Save to Review
             </Button>
           </Col>
         </Row>

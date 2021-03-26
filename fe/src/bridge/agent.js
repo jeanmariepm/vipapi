@@ -329,7 +329,7 @@ class Agent {
     return "P";
   }
   getMajorResponse(bid) {
-    const level = bid.charAt(0);
+    //const level = bid.charAt(0);
     const suit = bid.charAt(1);
     const supportLength = this.hand[suit].length;
     let dummyPoints = 0;

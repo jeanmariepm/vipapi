@@ -3,8 +3,8 @@ import { Button } from "react-bootstrap";
 
 const UndoBid = ({ onUndoBid }) => {
   return (
-    <Button variant="link" size="sm" onClick={onUndoBid}>
-      <i className="fa fa-undo" title="Undo last bid" aria-hidden="true"></i>
+    <Button variant="secondary" size="sm" onClick={onUndoBid}>
+      Undo last bid
     </Button>
   );
 };
