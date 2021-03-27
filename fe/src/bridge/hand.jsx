@@ -5,31 +5,23 @@ import SuitImage from "./gifs/suitImage";
 const Hand = ({ cards, name }) => {
   const styles = {
     fontFamily: ["Courier New", "Courier", "monospace"],
-    textAlign: "left",
     fontWeight: "bolder",
-    fontSize: "large",
-    maxHeight: "fit-content",
-    maxWidth: 100,
-    marginLeft: 1,
   };
   const suits = ["S", "H", "D", "C"];
 
   return (
-    <Card>
-      <Card.Body>
-        <Card.Subtitle>{name}</Card.Subtitle>
-        {suits.map((suit) => {
-          return (
-            <Row key={suit}>
-              <Col xs={2}>
-                <SuitImage suit={suit} />
-              </Col>
-              <Col>{cards && <div style={styles}>{cards[suit]}</div>}</Col>
-            </Row>
-          );
-        })}
-      </Card.Body>
-    </Card>
+    <React.Fragment>
+      <h6>{name}</h6>
+      {suits.map((suit) => {
+        return (
+          <h8 key={suit}>
+            <SuitImage suit={suit} />
+            {cards && cards[suit]}
+            &nbsp;
+          </h8>
+        );
+      })}
+    </React.Fragment>
   );
 };
 

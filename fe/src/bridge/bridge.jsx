@@ -105,16 +105,6 @@ class Bridge extends Component {
       return (
         <React.Fragment>
           <Hand cards={this.deal.getHand(seat)} name={playerNames[seat]} />
-          {!this.biddingOver() && (
-            <BidBox
-              placeBid={this.placeBid}
-              undoBid={this.undoBid}
-              goingBid={this.getGoingBid()}
-              allowUndo={this.state.bids.length > 0}
-              doubleOption={this.getDoubleOption()}
-              aiBid={this.aiBid}
-            />
-          )}
         </React.Fragment>
       );
     return <Hand name={playerNames[seat]} />;
@@ -146,6 +136,16 @@ class Bridge extends Component {
               bids={this.state.bids}
               biddingOver={bidder === -1}
             />
+            {!this.biddingOver() && (
+              <BidBox
+                placeBid={this.placeBid}
+                undoBid={this.undoBid}
+                goingBid={this.getGoingBid()}
+                allowUndo={this.state.bids.length > 0}
+                doubleOption={this.getDoubleOption()}
+                aiBid={this.aiBid}
+              />
+            )}
           </Col>
           <Col>
             <Col>{this.showOneHand(bidder, 2)} </Col>
