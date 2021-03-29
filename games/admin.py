@@ -3,7 +3,7 @@ from .models import Deal
 
 
 class DealAdmin(admin.ModelAdmin):
-    list_display = ("hands", "bid", "ai_bid")
+    list_display = ("hands", "auction", "username")
 
 
 # Register your models here.

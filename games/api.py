@@ -10,7 +10,7 @@ class DealViewSet(viewsets.ModelViewSet):
     serializer_class = DealSerializer
 
     def get_queryset(self):
-        return Deal.objects.all()
+        return Deal.objects.all().order_by("-saved_date")
 
     def perform_create(self, serializer):
         serializer.save()

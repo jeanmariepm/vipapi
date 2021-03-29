@@ -3,21 +3,16 @@ import http from "./http";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const apiUrl =
-  window.location.hostname === "localhost"
-    ? "http://localhost:8000"
-    : window.location.origin;
 const tokenKey = "token";
 let loggedInUserName = null;
 
 const login = async (username, password, callback) => {
-  const loginURL = apiUrl + "/login/";
+  const loginURL = http.apiUrl() + "/login/";
   try {
     const { data: result } = await http.post(loginURL, {
       username,
       password,
     });
-    console.log("jwt", jwtDecode(result.token));
 
     localStorage.setItem(tokenKey, result.token);
     loggedInUserName = username;
@@ -28,7 +23,7 @@ const login = async (username, password, callback) => {
   }
 };
 const signup = async (username, password, callback) => {
-  const signupURL = apiUrl + "/signup/";
+  const signupURL = http.apiUrl() + "/signup/";
   try {
     const { data: result } = await axios.post(signupURL, {
       username,
@@ -44,16 +39,14 @@ const signup = async (username, password, callback) => {
 };
 
 async function loginWithJwt(jwt) {
-  console.log("logging in with jwt:", jwt);
   try {
     const { data: result } = await axios.post(
-      apiUrl + "/refresh_token/",
+      http.apiUrl() + "/refresh_token/",
       { token: jwt },
       {
         headers: { Authorization: "JWT " + jwt },
       }
     );
-    console.log("logged in with jwt", result);
     if (result.token) {
       loggedInUserName = result.username;
       localStorage.setItem(tokenKey, result.token);
@@ -74,19 +67,19 @@ const logout = (callback) => {
   callback();
 };
 
+const getJwt = () => {
+  return localStorage.getItem(tokenKey);
+};
 const getCurrentUser = () => {
   if (loggedInUserName) return loggedInUserName;
   try {
     const jwt = localStorage.getItem(tokenKey);
     if (!jwt) return null;
-    console.log("jwt", jwtDecode(jwt));
     const exp = jwtDecode(jwt).exp;
     const expRolerance = 1000 * 60 * 60 * 4;
     if (exp < expRolerance) {
-      console.log("Token has expired:", exp);
       loginWithJwt(jwt);
     } else {
-      console.log("Token has NOT expired:", exp, "<", expRolerance);
       loggedInUserName = jwtDecode(jwt).username;
     }
     return loggedInUserName;
@@ -101,6 +94,7 @@ const auth = {
   signup,
   logout,
   getCurrentUser,
+  getJwt,
 };
 
 export default auth;

@@ -6,6 +6,7 @@ import Auction from "./auction";
 import BidBox from "./bidBox";
 import Agent from "./agent";
 import DealControl from "./dealControl";
+import bridgeApi from "../api/bridgeApi";
 
 const playerNames = { 0: "West", 1: "North", 2: "East", 3: "South" };
 class Bridge extends Component {
@@ -33,9 +34,13 @@ class Bridge extends Component {
     this.setState({ bids: [] });
   };
   saveDeal = () => {
-    console.log("Save deal...");
-    this.startDeal();
-    this.setState({ bids: [] });
+    const hands = JSON.stringify(this.deal.hands);
+    const auction = JSON.stringify(this.state.bids);
+
+    bridgeApi.saveDeal(hands, auction, (result) => {
+      console.log("Deal saved:", result);
+    });
+    this.nextDeal();
   };
 
   getGoingBid = () => {
@@ -50,7 +55,6 @@ class Bridge extends Component {
   };
 
   placeBid = (bid) => {
-    console.log("Bid:", bid);
     const bids = [...this.state.bids, bid];
     this.player = (this.dealer + bids.length) % 4;
     this.aiBid = this.agents[this.player].getBid(bids);

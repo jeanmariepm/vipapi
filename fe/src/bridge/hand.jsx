@@ -1,12 +1,7 @@
 import React from "react";
-import { Card, Row, Col } from "react-bootstrap";
 import SuitImage from "./gifs/suitImage";
 
 const Hand = ({ cards, name }) => {
-  const styles = {
-    fontFamily: ["Courier New", "Courier", "monospace"],
-    fontWeight: "bolder",
-  };
   const suits = ["S", "H", "D", "C"];
 
   return (

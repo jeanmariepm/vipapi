@@ -17,8 +17,10 @@ const BidBox = ({
   };
   const onPickBid = (event, aiBid) => {
     const bid = event.target.value;
-    console.log("onPickBid ", bid);
-    if (bid === "Bid") return;
+    if (bid === "Skip") {
+      setBid(bid);
+      return;
+    }
     if (aiBid && (bidReverseMap[bid] || bid) !== aiBid) {
       setBid(bid);
       return;
@@ -66,6 +68,22 @@ const BidBox = ({
     XX: "RDbl",
   };
 
+  const showAllBiddingOptions = () => {
+    return (
+      <Modal.Dialog>
+        <Modal.Header>
+          <Modal.Title>Make your bid</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{showBiddingButtons(true)}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onRetryBid}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal.Dialog>
+    );
+  };
+
   const showConfirmPane = () => {
     return (
       <Modal.Dialog>
@@ -87,9 +105,11 @@ const BidBox = ({
       </Modal.Dialog>
     );
   };
-  const showBiddingButtons = () => {
+  const showBiddingButtons = (all = false) => {
     let options = ["Pass"];
-    if (doubleOption) options.push(doubleOption);
+    if (doubleOption) options.push(bidMap[doubleOption]);
+    options.push("Skip");
+    const minLevel = goingBid ? goingBid.charAt(0) - "0" : 1;
 
     return (
       <Container style={styles}>
@@ -100,41 +120,53 @@ const BidBox = ({
                 key={option}
                 onClick={(event) => onPickBid(event, aiBid)}
                 className="btn-sm m-0 p-0"
-                variant={option === "Pass" ? "success" : "danger"}
+                variant={
+                  option === "Pass"
+                    ? "success"
+                    : option === "Skip"
+                    ? "warning"
+                    : "danger"
+                }
                 value={option}
               >
                 {option}
               </Button>
+              &nbsp;
             </div>
           ))}
         </Row>
         {[1, 2, 3, 4, 5, 6, 7].map((level) => (
-          <Row key={level}>
-            {["C", "D", "H", "S", "T"].map((suit) => (
-              <div key={suit}>
-                {level + suit <= goingBid ? (
-                  <Button
-                    disabled
-                    className="btn-sm m-0 p-0"
-                    style={{ height: 12 }}
-                    variant="dark"
-                    value={level + suit}
-                  >
-                    {bidMap[level + suit] || level + suit}
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={(event) => onPickBid(event, aiBid)}
-                    className="btn-sm m-0 p-0"
-                    variant="success"
-                    value={level + suit}
-                  >
-                    {bidMap[level + suit] || level + suit}
-                  </Button>
-                )}
-              </div>
-            ))}
-          </Row>
+          <div key={level}>
+            {(all || (level >= minLevel && level <= minLevel + 1)) && (
+              <Row key={level}>
+                {["C", "D", "H", "S", "T"].map((suit) => (
+                  <div key={suit}>
+                    {level + suit <= goingBid ? (
+                      <Button
+                        disabled
+                        className="btn-sm m-0 p-0"
+                        style={{ height: 12 }}
+                        variant="link"
+                        value={level + suit}
+                      >
+                        {bidMap[level + suit] || level + suit}
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={(event) => onPickBid(event, aiBid)}
+                        className="btn-sm m-0 p-0"
+                        variant="success"
+                        value={level + suit}
+                      >
+                        {bidMap[level + suit] || level + suit}
+                      </Button>
+                    )}
+                    &nbsp;
+                  </div>
+                ))}
+              </Row>
+            )}
+          </div>
         ))}
       </Container>
     );
@@ -157,6 +189,7 @@ const BidBox = ({
   };
 
   if (!bid) return showBiddingPane();
+  if (bid === "Skip") return showAllBiddingOptions();
   return showConfirmPane();
 };
 

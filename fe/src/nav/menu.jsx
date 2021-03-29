@@ -8,11 +8,14 @@ import Bridge from "../bridge/bridge";
 import Logout from "./logout";
 import Login from "./login";
 import auth from "../api/auth";
+import DealsTable from "../bridge/dealsTable";
 
 const Menu = (props) => {
   const path = "/";
   const homePath = path;
   const bridgePath = path + "bridge";
+  const dealsPath = path + "deals";
+
   const loginPath = path + "login";
   const logoutPath = path + "logout";
 
@@ -36,9 +39,17 @@ const Menu = (props) => {
             <Nav.Link as={Link} to={homePath}>
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to={bridgePath}>
-              Bridge
-            </Nav.Link>
+            <NavDropdown title="Bridge" id="basic-nav-dropdown">
+              <NavDropdown.Item as={Link} to={bridgePath}>
+                Practice
+              </NavDropdown.Item>
+              {loggedIn && (
+                <NavDropdown.Item as={Link} to={dealsPath}>
+                  Review
+                </NavDropdown.Item>
+              )}
+            </NavDropdown>
+
             <NavDropdown title="Puzzles" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to={tttPath}>
                 TicTacToe
@@ -64,6 +75,8 @@ const Menu = (props) => {
         <Route path={additionPath} component={Addition} />
         <Route path={tttPath} component={TicTacToe} />
         <Route path={bridgePath} component={Bridge} />
+        <Route path={dealsPath} component={DealsTable} />
+
         <Route
           path={loginPath}
           render={() => (
