@@ -9,8 +9,11 @@ test("saveDeal", async () => {
   while (!auth.getCurrentUser()) await new Promise((r) => setTimeout(r, 1000));
   console.log("Logged in as ", auth.getCurrentUser());
 
-  const deal = new Deal();
-  const bids = ["P", "P", "P", "P"];
+  let deal = new Deal();
+  let bids = ["P", "P", "P", "P"];
+  deal = JSON.stringify(deal.hands);
+  bids = JSON.stringify(bids);
+  console.log(deal);
 
   let savedDeal;
   bridgeApi.saveDeal(deal, bids, (result) => {
@@ -31,7 +34,13 @@ test("getDeals", async () => {
   let fetchedDeals;
   bridgeApi.getDeals((result) => {
     fetchedDeals = result;
+    console.log("Test: got deals:", fetchedDeals);
   });
-  await new Promise((r) => setTimeout(r, 1000));
-  expect(fetchedDeals).toBeDefined();
+  while (!fetchedDeals) await new Promise((r) => setTimeout(r, 1000));
+  expect(fetchedDeals.length).toBeGreaterThan(0);
+  const deal = fetchedDeals[0];
+  console.log("First dael:", deal, typeof deal);
+
+  const hands = JSON.parse(deal.hands);
+  console.log("First dael parsed:", hands, typeof hands);
 });

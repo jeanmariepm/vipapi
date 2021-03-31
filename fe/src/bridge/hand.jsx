@@ -6,14 +6,14 @@ const Hand = ({ cards, name }) => {
 
   return (
     <React.Fragment>
-      <h6>{name}</h6>
+      <h5>{name}</h5>
       {suits.map((suit) => {
         return (
-          <h8 key={suit}>
+          <h6 key={suit}>
             <SuitImage suit={suit} />
             {cards && cards[suit]}
             &nbsp;
-          </h8>
+          </h6>
         );
       })}
     </React.Fragment>

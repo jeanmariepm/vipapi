@@ -3,7 +3,7 @@ from games.models import Deal
 
 
 class DealSerializer(serializers.ModelSerializer):
-    hands = serializers.JSONField()
+    # hands = serializers.JSONField()
 
     class Meta:
         model = Deal

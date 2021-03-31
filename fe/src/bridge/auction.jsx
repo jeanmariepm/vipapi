@@ -49,10 +49,12 @@ const showBids = (dealer, bids, biddingOver) => {
   );
 };
 
-const Auction = ({ dealer, bids, biddingOver }) => {
+const Auction = ({ title, dealer, bids, biddingOver }) => {
   return (
     <Card>
       <Card.Body>
+        <Row>{title}</Row>
+
         <Row>
           {["W", "N", "E", "S"].map((p, idx) => {
             return (

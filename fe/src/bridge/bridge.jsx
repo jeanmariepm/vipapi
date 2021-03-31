@@ -12,14 +12,22 @@ const playerNames = { 0: "West", 1: "North", 2: "East", 3: "South" };
 class Bridge extends Component {
   constructor(props) {
     super(props);
+    this.begin = true;
+  }
+  componentDidMount() {
     this.startDeal();
-    this.state = {
-      bids: [],
-    };
   }
 
   startDeal = () => {
     this.deal = new Deal();
+
+    if (this.begin && this.props.location.state) {
+      const { hands, auction } = this.props.location.state;
+
+      this.deal.setHands(JSON.parse(hands));
+      this.auction = JSON.parse(auction);
+    }
+
     this.agents = [];
     for (let a = 0; a < 4; a++) {
       this.agents.push(new Agent(this.deal.getHand(a)));
@@ -27,11 +35,16 @@ class Bridge extends Component {
     this.dealer = this.deal.getDealer();
     this.player = this.dealer;
     this.aiBid = this.agents[this.player].getBid();
+    this.setState({ bids: [] });
+  };
+  doneDeal = () => {
+    console.log("Redirect to Review page");
   };
 
   nextDeal = () => {
     this.startDeal();
-    this.setState({ bids: [] });
+    this.auction = null;
+    this.begin = false;
   };
   saveDeal = () => {
     const hands = JSON.stringify(this.deal.hands);
@@ -101,7 +114,8 @@ class Bridge extends Component {
   };
 
   render() {
-    return this.showHands(this.player);
+    if (this.deal) return this.showHands(this.player);
+    return null;
   }
 
   showOneHand(bidder, seat) {
@@ -118,7 +132,16 @@ class Bridge extends Component {
     return (
       <Container fluid>
         <Row>
-          <Col></Col>
+          <Col>
+            {this.auction && (
+              <Auction
+                title={"Saved Auction"}
+                dealer={this.dealer}
+                bids={this.auction}
+                biddingOver={true}
+              />
+            )}
+          </Col>
           <Col>{this.showOneHand(bidder, 1)} </Col>
           <Col>
             {this.biddingOver() && (
@@ -126,6 +149,8 @@ class Bridge extends Component {
                 undoBid={this.undoBid}
                 saveDeal={this.saveDeal}
                 nextDeal={this.nextDeal}
+                doneDeal={this.doneDeal}
+                practiceMode={!this.auction}
               />
             )}
           </Col>
@@ -136,7 +161,7 @@ class Bridge extends Component {
           </Col>
           <Col>
             <Auction
-              dealer={this.deal.getDealer()}
+              dealer={this.dealer}
               bids={this.state.bids}
               biddingOver={bidder === -1}
             />

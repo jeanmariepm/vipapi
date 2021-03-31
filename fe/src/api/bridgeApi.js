@@ -14,7 +14,7 @@ const saveDeal = async (hands, auction, callback) => {
     const { data: result } = await http.post(
       http.apiUrl() + "/games/api/deals/",
       {
-        hands: JSON.stringify(hands),
+        hands,
         auction,
         username,
       },
