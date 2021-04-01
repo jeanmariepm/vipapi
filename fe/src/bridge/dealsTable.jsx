@@ -15,15 +15,18 @@ class DealsTable extends Component {
     pageSize: 4,
     selectedUser: null,
     sortColumn: { path: "saved_date", order: "desc" },
+    begin: true, // TODO need to use reduex for this
   };
 
   componentDidMount() {
-    let deals;
-    bridgeApi.getDeals((result) => {
-      deals = result;
-      const users = this.getUniqueUsers(deals);
-      this.setState({ deals, users, selectedUser: users[0] });
-    });
+    if (this.state.begin) {
+      let deals;
+      bridgeApi.getDeals((result) => {
+        deals = result;
+        const users = this.getUniqueUsers(deals);
+        this.setState({ deals, users, selectedUser: users[0], begin: false });
+      });
+    }
   }
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
@@ -37,9 +40,10 @@ class DealsTable extends Component {
 
   getUniqueUsers = (deals) => {
     const users = ["All users"];
-    deals.forEach((deal) => {
-      users.push(_.get(deal, "username"));
-    });
+    if (deals)
+      deals.forEach((deal) => {
+        users.push(_.get(deal, "username"));
+      });
     const userObjects = [];
     [...new Set(users)].forEach((u, idx) => {
       const userObject = { id: idx, name: u };
@@ -69,8 +73,8 @@ class DealsTable extends Component {
     { path: "hands", label: "Hands" },
 
     { path: "auction", label: "Auction" },
-    { path: "username", label: "Saved By" },
-    { path: "saved_date", label: "Saved Date and Time" },
+    { path: "username", label: "By" },
+    { path: "saved_date", label: "At" },
   ];
 
   getPagedData = () => {
@@ -108,14 +112,10 @@ class DealsTable extends Component {
           />
         </div>
         <div className="col-10">
-          <Link
-            to="/bridge"
-            className="btn btn-primary"
-            style={{ marginBottom: 20 }}
-          >
+          <Link to="/bridge" className="btn-sm btn-primary">
             New Deal
           </Link>
-          <p>Listing {totalCount} saved deals .</p>
+          {` Listing ${totalCount} saved deals`}
           <Table
             columns={this.columns}
             data={deals}

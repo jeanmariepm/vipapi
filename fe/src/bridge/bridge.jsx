@@ -38,7 +38,8 @@ class Bridge extends Component {
     this.setState({ bids: [] });
   };
   doneDeal = () => {
-    console.log("Redirect to Review page");
+    console.log("Redirect to Review page ", this.props);
+    this.props.history.goBack();
   };
 
   nextDeal = () => {

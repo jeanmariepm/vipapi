@@ -39,17 +39,15 @@ const Menu = (props) => {
             <Nav.Link as={Link} to={homePath}>
               Home
             </Nav.Link>
-            <NavDropdown title="Bridge" id="basic-nav-dropdown">
-              <NavDropdown.Item as={Link} to={bridgePath}>
-                Practice
-              </NavDropdown.Item>
-              {loggedIn && (
-                <NavDropdown.Item as={Link} to={dealsPath}>
-                  Review
-                </NavDropdown.Item>
-              )}
-            </NavDropdown>
-
+            {loggedIn ? (
+              <Nav.Link as={Link} to={dealsPath}>
+                Bridge
+              </Nav.Link>
+            ) : (
+              <Nav.Link as={Link} to={bridgePath}>
+                Bridge
+              </Nav.Link>
+            )}
             <NavDropdown title="Puzzles" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to={tttPath}>
                 TicTacToe

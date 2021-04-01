@@ -15,8 +15,8 @@ const ListGroup = ({
           key={item[valueProperty]}
           className={
             item === selectedItem
-              ? "list-group-item active"
-              : "list-group-item clickable"
+              ? "p-1 list-group-item active"
+              : "p-1 list-group-item clickable"
           }
         >
           {item[textProperty]}
