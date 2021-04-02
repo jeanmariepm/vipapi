@@ -13,7 +13,7 @@ const DealControl = ({
   const showNextPane = () => {
     return (
       <React.Fragment>
-        <UndoBid onUndoBid={undoBid} />
+        {undoBid && <UndoBid onUndoBid={undoBid} />}
         {practiceMode ? (
           <React.Fragment>
             <Button variant="success" size="sm" onClick={nextDeal}>

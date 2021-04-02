@@ -145,9 +145,11 @@ class Bridge extends Component {
           </Col>
           <Col>{this.showOneHand(bidder, 1)} </Col>
           <Col>
-            {this.biddingOver() && (
+            {(this.auction || this.biddingOver()) && (
               <DealControl
-                undoBid={this.undoBid}
+                undoBid={
+                  this.state.bids && this.state.bids.length > 0 && this.undoBid
+                }
                 saveDeal={this.saveDeal}
                 nextDeal={this.nextDeal}
                 doneDeal={this.doneDeal}
