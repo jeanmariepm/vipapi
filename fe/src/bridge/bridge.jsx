@@ -7,12 +7,14 @@ import BidBox from "./bidBox";
 import Agent from "./agent";
 import DealControl from "./dealControl";
 import bridgeApi from "../api/bridgeApi";
+import Login from "../nav/login";
 
 const playerNames = { 0: "West", 1: "North", 2: "East", 3: "South" };
 class Bridge extends Component {
   constructor(props) {
     super(props);
     this.begin = true;
+    this.state = { bids: [], needsLogin: false };
   }
   componentDidMount() {
     this.startDeal();
@@ -35,7 +37,7 @@ class Bridge extends Component {
     this.dealer = this.deal.getDealer();
     this.player = this.dealer;
     this.aiBid = this.agents[this.player].getBid();
-    this.setState({ bids: [] });
+    this.setState({ bids: [], needsLogin: false });
   };
   doneDeal = () => {
     console.log("Redirect to Review page ", this.props);
@@ -53,8 +55,17 @@ class Bridge extends Component {
 
     bridgeApi.saveDeal(hands, auction, (result) => {
       console.log("Deal saved:", result);
+      if (!result) {
+        console.log("Deal not saved:");
+        this.setState({ needsLogin: true });
+
+        console.log("Redirected to login");
+      } else this.nextDeal();
     });
-    this.nextDeal();
+  };
+  loginHandler = () => {
+    console.log("Logged in again");
+    this.setState({ needsLogin: false });
   };
 
   getGoingBid = () => {
@@ -115,6 +126,14 @@ class Bridge extends Component {
   };
 
   render() {
+    if (this.state.needsLogin)
+      return (
+        <Login
+          loginHandler={this.loginHandler}
+          signipHandler={this.loginHandler}
+        />
+      );
+
     if (this.deal) return this.showHands(this.player);
     return null;
   }
@@ -166,7 +185,7 @@ class Bridge extends Component {
             <Auction
               dealer={this.dealer}
               bids={this.state.bids}
-              biddingOver={bidder === -1}
+              biddingOver={this.biddingOver()}
             />
             {!this.biddingOver() && (
               <BidBox

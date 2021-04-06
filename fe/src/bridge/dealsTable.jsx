@@ -7,6 +7,7 @@ import Table from "../common/table";
 import Pagination from "../common/pagination";
 import { paginate } from "../common/paginate";
 import ListGroup from "../common/listGroup";
+import Login from "../nav/login";
 class DealsTable extends Component {
   state = {
     deals: [],
@@ -16,6 +17,7 @@ class DealsTable extends Component {
     selectedUser: null,
     sortColumn: { path: "saved_date", order: "desc" },
     begin: true, // TODO need to use reduex for this
+    needsLogin: false,
   };
 
   componentDidMount() {
@@ -23,11 +25,26 @@ class DealsTable extends Component {
       let deals;
       bridgeApi.getDeals((result) => {
         deals = result;
-        const users = this.getUniqueUsers(deals);
-        this.setState({ deals, users, selectedUser: users[0], begin: false });
+        if (!deals) {
+          this.setState({ needsLogin: true });
+        } else {
+          const users = this.getUniqueUsers(deals);
+          this.setState({
+            deals,
+            users,
+            selectedUser: users[0],
+            begin: false,
+            needsLogin: false,
+          });
+        }
       });
     }
   }
+  loginHandler = () => {
+    console.log("Logged in again");
+    this.setState({ needsLogin: false });
+  };
+
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
   };
@@ -97,6 +114,14 @@ class DealsTable extends Component {
     return { totalCount: filtered.length, data: deals };
   };
   render() {
+    if (this.state.needsLogin)
+      return (
+        <Login
+          loginHandler={this.loginHandler}
+          signipHandler={this.loginHandler}
+        />
+      );
+
     if (!this.state.deals) return <p>There are no deals in the database.</p>;
     const { pageSize, currentPage, sortColumn } = this.state;
 

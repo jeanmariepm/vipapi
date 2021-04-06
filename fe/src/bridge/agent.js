@@ -84,12 +84,24 @@ class Agent {
     return [-1, "", ""];
   }
   wePassed(bids) {
-    let bid;
+    let bid,
+      passCount = 0;
     for (let i = bids.length - 2; i >= 0; i = i - 2) {
       bid = bids[i];
-      if (bid !== "P") return false;
+      if (bid !== "P") return -1;
+      passCount++;
     }
-    return true;
+    return passCount;
+  }
+  theyPassed(bids) {
+    let bid,
+      passCount = 0;
+    for (let i = bids.length - 1; i >= 0; i = i - 2) {
+      bid = bids[i];
+      if (bid !== "P") return -1;
+      passCount++;
+    }
+    return passCount;
   }
 
   getBiddingContext(bids) {
@@ -106,14 +118,38 @@ class Agent {
     };
 
     console.assert(pgb >= -1);
+    console.log(this.theyPassed(bids), this.wePassed(bids));
 
     if (!goingBid) biddingContext.bidderRole = "Opener";
-    else if (gb === bids.length - 2) {
-      if (!priorGoingBid) biddingContext.bidderRole = "Responder";
-      else if (this.wePassed(bids.slice(0, gb)))
+    if (!biddingContext.bidderRole)
+      if (
+        this.theyPassed(bids) >= 0 &&
+        bids.length >= 2 &&
+        gb === bids.length - 2 &&
+        this.wePassed(bids.slice(0, bids.length - 2)) >= 0
+      )
+        biddingContext.bidderRole = "Responder";
+    if (!biddingContext.bidderRole)
+      if (
+        this.theyPassed(bids) >= 0 &&
+        bids.length >= 4 &&
+        gb === bids.length - 2 &&
+        bids[bids.length - 4] !== "P" &&
+        this.wePassed(bids.slice(0, bids.length - 4)) >= 0
+      )
+        biddingContext.bidderRole = "OpenerRebid";
+
+    if (!biddingContext.bidderRole)
+      if (this.theyPassed(bids) === -1 && this.wePassed(bids) !== -1)
+        if (this.wePassed(bids) <= 3) biddingContext.bidderRole = "Overcaller";
+    if (!biddingContext.bidderRole)
+      if (
+        this.theyPassed(bids) === -1 &&
+        bids.length >= 2 &&
+        bids[bids.length - 2] !== "P" &&
+        this.wePassed(bids.slice(0, bids.length - 2)) >= 0
+      )
         biddingContext.bidderRole = "Advancer";
-    } else if (bids.length <= 7 && this.wePassed(bids))
-      biddingContext.bidderRole = "Overcaller";
 
     return biddingContext;
   }
@@ -121,10 +157,12 @@ class Agent {
   getBid(bids = []) {
     let aiBid = "";
     const bc = this.getBiddingContext(bids);
-    //console.log(bc);
+    console.log(bc);
     if (bc.bidderRole === "Opener") aiBid = this.getOpeningBid();
     if (bc.bidderRole === "Overcaller") aiBid = this.getOvercall(bc.goingBid);
     if (bc.bidderRole === "Responder") aiBid = this.getResponse(bids, bc);
+    if (bc.bidderRole === "OpenerRebid") aiBid = this.getOpenerRebid(bids, bc);
+
     return aiBid;
   }
   getOpeningBid() {
@@ -143,10 +181,11 @@ class Agent {
 
   getOvercall(bid) {
     let aiBid = "";
-    if (this.hcp >= 18) return "X";
 
     const suit = bid.charAt(1);
     const level = bid.charCodeAt(0) - "0".charCodeAt(0);
+    if (this.hcp >= 18 + 2 * (level - 1)) return "X";
+
     aiBid = this.getNTOvercall(level, suit);
     if (!aiBid) aiBid = this.getSuitOvercall(level, suit);
     if (!aiBid) aiBid = this.getTODouble(level, suit);
@@ -160,7 +199,12 @@ class Agent {
       return this.getIntResponseBid(bc.priorGoingBid, bc.goingBid);
     return this.getResponseBid(bc.goingBid);
   }
+  getOpenerRebid(bids, bc) {
+    let aiBid = "";
+    const openingBid = bids[bids.length - 2];
 
+    return aiBid;
+  }
   getNTBid = () => {
     if (this.shape === "U")
       // unbalaced
@@ -249,7 +293,7 @@ class Agent {
   getSuitOvercall(level, suit) {
     //console.log("Suit overcall of ", level, suit);
 
-    if (this.hcp < 9 + 2 * (level - 1)) return "";
+    if (this.hcp < 8 + 3 * (level - 1)) return "";
 
     if (this.longestSuit !== suit && this.longestLength >= 5) {
       if (level + this.longestSuit > level + suit)
@@ -264,7 +308,9 @@ class Agent {
   }
   getTODouble(level, suit) {
     if (this.hcp < 12) return "";
-    if (suit === "T") return "";
+    if (suit === "T")
+      if (this.getNTBid() === "1T" && level <= 2) return "X";
+      else return "";
 
     const cards = this.hand[suit];
     const suits = ["S", "H", "D", "C"];
@@ -304,8 +350,13 @@ class Agent {
 
     const level = bid.charAt(0);
     const suit = bid.charAt(1);
+    const spadeLength = this.distribution[0];
+    const heartLength = this.distribution[1];
+    const diamondLength = this.distribution[2];
+    const clubLength = this.distribution[3];
 
     if (this.hcp >= 12) {
+      // GF hands
       if (this.longestLength < 5 && this.shape === "B") return "2T";
 
       let suitToBid = this.longestSuit;
@@ -313,24 +364,42 @@ class Agent {
       if (suitToBid !== "C") return level + suitToBid;
       return "2C";
     } else if (this.hcp >= 6) {
+      // constructive or invitational with no fit
       if (this.longestLength >= 5) {
         if (this.longestSuit === "S" || this.longestSuit === "H")
           return level + this.longestSuit;
       }
-      const heartLength = this.distribution[1];
       if (heartLength === 4) return "1H";
-      const spadeLength = this.distribution[0];
       if (spadeLength === 4) return "1S";
       if (this.hcp >= 8 && this.hcp <= 10 && this.shape !== "U") return "1T";
-      return "1D";
+      if (diamondLength >= 4 && suit !== "D") return "1D";
+    } else {
+      //weak shifts
+      if (this.ltc <= 8 && this.longestLength === 6) {
+        if (spadeLength === 6) return "2S";
+        if (heartLength === 6) return "2H";
+        if (diamondLength === 6 && suit !== "D") return "2D";
+      } else if (this.ltc <= 8 && this.longestLength > 6) {
+        if (suit !== this.longestSuit) return "3" + this.longestSuit;
+      }
     }
-    console.log("Pass", this.hcp);
+
+    // constructive or better including GF with a minor fit
+    const fit =
+      (suit === "C" && clubLength >= 5) || (suit === "D" && diamondLength >= 4);
+    if (fit) {
+      if (6 <= this.hcp <= 9) return "3" + suit;
+      if (this.hcp <= 10) return "2" + suit;
+    }
 
     return "P";
   }
+
   getMajorResponse(bid) {
     //const level = bid.charAt(0);
     const suit = bid.charAt(1);
+    const spadeLength = this.distribution[0];
+
     const supportLength = this.hand[suit].length;
     let dummyPoints = 0;
 
@@ -350,14 +419,24 @@ class Agent {
       if (totalPoints >= 7) return 2 + suit;
       if (totalPoints >= 5) return "1T";
     }
-    if (totalPoints >= 12)
+    if (this.hcp >= 12) {
+      //GF hands
       if (this.longestLength >= 5)
         if (1 + this.longestSuit > bid) return 1 + this.longestSuit;
         else return 2 + this.longestSuit;
       else return "2C";
-    else if (totalPoints >= 6)
-      if (suit === "H" && this.distribution[0] >= 4) return "1S";
+    } else if (this.hcp >= 6) {
+      // not enough for 2 over 1
+      if (suit === "H" && spadeLength >= 4) return "1S";
       else return "1T";
+    } else {
+      //weak shifts
+      if (this.ltc <= 8 && this.longestLength === 6) {
+        if (suit === "H" && spadeLength === 6) return "2S";
+      } else if (this.ltc <= 8 && this.longestLength > 6) {
+        if (suit > this.longestSuit) return "3" + this.longestSuit;
+      }
+    }
     return "P";
   }
   getNTResponse(bid) {
@@ -380,25 +459,62 @@ class Agent {
         else return respLevel + "D";
       }
 
-    // Stayman
-    if (spadeLength >= 4 || heartLength >= 4)
-      if (level === 1 && this.hcp >= 8) return respLevel + "C";
-    if (level === 2 && this.hcp >= 4) return respLevel + "C";
+    // Stayman with 4-cd major
+    if (spadeLength >= 4 || heartLength >= 4) {
+      if (level === 1 && this.hcp >= 8) return "2C";
+      if (level === 2 && this.hcp >= 4) return "3C";
+    }
+
+    // GF 3145 or 2155 or 3-cd major
+    if (level === 1 && this.hcp >= 10) {
+      if (spadeLength === 1 && heartLength === 3 && this.longestLength === 5)
+        return "3S";
+      if (spadeLength === 3 && heartLength === 1 && this.longestLength === 5)
+        return "3H";
+      if (clubLength === 5 && diamondLength === 5) return "3D";
+      if (spadeLength >= 3 || heartLength >= 3) return "3C";
+    }
 
     //Size ask with an invitational hand
-    if (level === 1 && this.hcp >= 8) return respLevel + "S";
+    if (level === 1 && 8 <= this.hcp <= 9) return "2S";
 
     // Minor suit transfer
     if (level === 1 && this.ltc <= 9) {
-      if (clubLength >= 6) return respLevel + "S";
-      if (diamondLength >= 6) return respLevel + "T";
+      if (clubLength >= 6) return "2S";
+      if (diamondLength >= 6) return "2T";
+    }
+
+    // GF balanced
+    let adjustedHcp = this.hcp;
+    if (this.shape === "B") {
+      // add a pt for 5-cd suit
+      adjustedHcp = this.hcp + (_.groupBy(this.distribution)[5] === 1 ? 1 : 0);
+    }
+    if (level === 1) {
+      if (10 <= adjustedHcp <= 15) return "3T";
+      if (16 <= adjustedHcp <= 17) return "2S";
+      if (18 <= adjustedHcp <= 19) return "6T";
+      if (20 <= adjustedHcp <= 21) return "2S";
+      if (22 <= adjustedHcp) return "7T";
+    } else if (level === 2) {
+      if (5 <= adjustedHcp <= 11) return "3T";
+      if (12 <= adjustedHcp) return "4C";
+      if (13 <= adjustedHcp <= 15) return "6T";
+      if (16 <= adjustedHcp) return "4C";
+      if (17 <= adjustedHcp) return "7T";
     }
 
     return "P";
   }
 
   get2CResponse() {
-    return "";
+    if (this.hcp >= 5 && this.longestLength >= 5)
+      return this.longestSuit === "C"
+        ? "3C"
+        : this.longestSuit === "D"
+        ? "3D"
+        : "2" + this.longestSuit;
+    return "2D";
   }
 }
 

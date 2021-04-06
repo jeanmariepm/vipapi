@@ -34,14 +34,13 @@ const saveDeal = async (hands, auction, callback) => {
 export async function getDeals(callback) {
   const username = auth.getCurrentUser();
   if (!username) {
-    console.log("Not saving deal. Need to login first");
+    console.log("Not fetching deal. Need to login first");
     return;
   }
 
   try {
     const jwt = auth.getJwt();
 
-    console.log("Fetching deals from:", http.apiUrl() + "/games/api/deals/");
     const { data: result } = await http.get(
       http.apiUrl() + "/games/api/deals/",
       {
@@ -51,7 +50,6 @@ export async function getDeals(callback) {
         headers: { Authorization: "JWT " + jwt },
       }
     );
-    console.log("Done fetching deals", result);
     callback(result);
   } catch (ex) {
     if (ex.response) console.log(ex.response);
