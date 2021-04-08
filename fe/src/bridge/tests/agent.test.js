@@ -19,7 +19,6 @@ test("create an agent", () => {
   ];
 
   let agent;
-
   agent = new Agent(hands[0]);
   expect(agent.hcp).toBe(17);
   expect(agent.getBid()).toBe("1T");
@@ -27,6 +26,7 @@ test("create an agent", () => {
   expect(agent.getBid(["1D"])).toBe("X"); // no stopper to bid 1T
   expect(agent.getBid(["2H"])).toBe("2T");
   expect(agent.getBid(["1D", "P"])).toBe("2T");
+  expect(agent.getBid(["1T", "P"])).toBe("2C");
 
   agent = new Agent(hands[1]);
   expect(agent.ltc).toBe(5);
