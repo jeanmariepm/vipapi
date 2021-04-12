@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-const getNTBid = (agent) => {
+const getOpening = (agent) => {
   if (agent.shape === "U")
     // unbalaced
     return "";
@@ -14,19 +14,20 @@ const getNTBid = (agent) => {
   return "";
 };
 
-const getNTOvercall = (bids, biddingContext, agent) => {
+const getOvercall = (bids, biddingContext, agent) => {
   let aiBid = "";
   for (let suit of biddingContext.oppSuits) {
     if (suit === "T") return aiBid;
     if (!agent.haveStopper(suit)) return aiBid;
   }
-  aiBid = getNTBid(agent);
+  aiBid = getOpening(agent);
   const { goingBid } = biddingContext;
   const level = goingBid.charAt(0) - "0";
   aiBid = aiBid === "1T" ? (level === 1 ? "1T" : level === 2 ? "2T" : "") : "";
   return aiBid;
 };
-const getResponseToNT = (bids, biddingContext, agent) => {
+
+const getResponse = (bids, biddingContext, agent) => {
   const rhoBid = bids[bids.length - 1];
   if (rhoBid !== "P") return ""; // yet to handle inerference
   const { goingBid } = biddingContext;
@@ -103,6 +104,6 @@ const getResponseToNT = (bids, biddingContext, agent) => {
   return "P";
 };
 
-const NT = { getNTBid, getNTOvercall, getResponseToNT };
+const NT = { getOpening, getOvercall, getResponse };
 
 export default NT;
