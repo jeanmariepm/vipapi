@@ -21,6 +21,7 @@ const getOvercall = (bids, biddingContext, agent) => {
     !oppSuits.has(agent.longestSuit) &&
     agent.goodToOvercall(agent.longestSuit)
   ) {
+    if (agent.hcp >= 17) return "X";
     if (level + agent.longestSuit > level + suit)
       return level + agent.longestSuit;
     return level + 1 + agent.longestSuit;
@@ -28,12 +29,14 @@ const getOvercall = (bids, biddingContext, agent) => {
     !oppSuits.has(agent.secondSuit) &&
     agent.goodToOvercall(agent.secondSuit)
   ) {
+    if (agent.hcp >= 17) return "X";
     if (level + agent.secondSuit > level + suit)
       return level + agent.secondSuit;
     return level + 1 + agent.secondSuit;
   }
   return "";
 };
+
 const getResponse = (bids, biddingContext, agent) => {
   const rhoBid = bids[bids.length - 1];
   const rhoLevel = rhoBid.match(/^\d/);
@@ -59,15 +62,17 @@ const getResponse = (bids, biddingContext, agent) => {
     (pdSuit === "H" && heartLength >= 3) ||
     (pdSuit === "S" && spadeLength >= 3);
 
+  console.log("Fit?:", fit);
+
   if (agent.hcp < 5) return "P";
+  console.log(pdRole, agent.ltc);
   if (fit) {
-    console.log("Found a major fit:", pdBid);
     if (pdRole === "Opener") {
-      if (agent.ltc <= 9) {
+      if (agent.ltc <= 9)
         aiBid = agent.ltc <= 7 ? "4" + pdSuit : 11 - agent.ltc + pdSuit;
-        if (aiBid > bidLevel + bidSuit) return aiBid;
-        else return "X";
-      }
+      if (agent.ltc === 10) aiBid = "2" + pdSuit;
+      if (aiBid > bidLevel + bidSuit) return aiBid;
+      else return "X";
     } else {
       //pfRole === "Overcaller"
       if (agent.ltc <= 8) {
@@ -111,6 +116,69 @@ const getResponse = (bids, biddingContext, agent) => {
   }
 };
 
-const Majors = { getOpening, getOvercall, getResponse };
+const getOpenerRebid = (bids, biddingContext, agent) => {
+  const rhoBid = bids[bids.length - 1];
+  const openingBid = bids[bids.length - 4];
+  const openingSuit = openingBid.charAt(1);
+
+  const pdBid = bids[bids.length - 2];
+  const pdLevel = pdBid.charAt(0) - "0";
+  const pdSuit = pdBid.charAt(1);
+  const {
+    secondSuit,
+    secondLength,
+    spadeLength,
+    heartLength,
+    diamondLength,
+    clubLength,
+  } = agent;
+  let aiBid = "";
+
+  if (rhoBid !== "P") return aiBid;
+
+  if (pdLevel === 2 && pdSuit < openingSuit) {
+    // 2 over 1 GF
+    if (pdBid === "2H" && heartLength >= 3) return "3H";
+    aiBid =
+      openingSuit === "H" && heartLength >= 6
+        ? "2H"
+        : openingSuit === "S" && spadeLength >= 6
+        ? "2S"
+        : "";
+    if (aiBid) return aiBid;
+    if (secondLength >= 4)
+      return secondSuit > pdSuit && secondSuit < openingSuit
+        ? "2" + secondSuit
+        : "3" + secondSuit;
+    return "2T";
+  }
+  if (["1T", "1S"].includes(pdBid)) {
+    if (pdSuit === "1S") {
+      if (spadeLength >= 4) {
+        let raiseLevel = 9 - agent.ltc;
+        raiseLevel = raiseLevel > 4 ? 4 : raiseLevel < 2 ? 2 : raiseLevel;
+        return raiseLevel + "S";
+      }
+      if (agent.shape === "B" && agent.hcp <= 17) return "1T";
+    }
+    if (agent.shape === "B" && agent.hcp <= 13) return "P";
+    aiBid =
+      openingSuit === "H" && heartLength >= 6
+        ? "2H"
+        : openingSuit === "S" && spadeLength >= 6
+        ? "2S"
+        : "";
+    if (aiBid) return agent.hcp <= 17 ? aiBid : "3" + openingSuit;
+    if (secondLength >= 4 && secondSuit < openingSuit)
+      return agent.hcp <= 17 ? "2" + secondSuit : "3" + secondSuit;
+    if (secondLength >= 4 && secondSuit === "S" && agent.hcp >= 17) return "2S";
+    if (clubLength >= 2) return "2C";
+    return "2D";
+  }
+
+  return aiBid;
+};
+
+const Majors = { getOpening, getOvercall, getResponse, getOpenerRebid };
 
 export default Majors;

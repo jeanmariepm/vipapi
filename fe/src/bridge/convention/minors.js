@@ -31,8 +31,6 @@ const getResponse = (bids, biddingContext, agent) => {
     clubLength,
   } = agent;
   const bidLevel = rhoSuit ? rhoLevel : pdLevel;
-  const bidSuit = rhoSuit ? rhoSuit : pdSuit;
-  let aiBid = "";
   const fit =
     (pdSuit === "C" && clubLength >= 5) ||
     (pdSuit === "D" && diamondLength >= 4) ||
@@ -102,6 +100,15 @@ const getResponse = (bids, biddingContext, agent) => {
   if (rhoBid === "X" && agent.hcp >= 11) return "XX";
 };
 
-const Minors = { getOpening, getOvercall, getResponse };
+const getOpenerRebid = (bids, biddingContext, agent) => {
+  return "";
+};
+
+const Minors = {
+  getOpening,
+  getOvercall,
+  getResponse,
+  getOpenerRebid,
+};
 
 export default Minors;

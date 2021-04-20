@@ -28,21 +28,30 @@ test("create an agent", () => {
   expect(agent.getBid(["2H"])).toBe("2T");
   expect(agent.getBid(["1D", "P"])).toBe("1H");
   expect(agent.getBid(["1T", "P"])).toBe("2C");
+  expect(agent.getBid(["1T", "P", "4T", "P"])).toBe("6T");
+  expect(agent.getBid(["1T", "P", "2C", "P"])).toBe("2H");
+  expect(agent.getBid(["1T", "P", "3C", "P"])).toBe("3D");
+  expect(agent.getBid(["1T", "P", "3H", "P"])).toBe("3S");
+  expect(agent.getBid(["2T", "P", "3S", "P"])).toBe("3T");
 
   agent = new Agent(hands[1]);
   expect(agent.ltc).toBe(5);
   expect(agent.getBid()).toBe("1S");
   expect(agent.getBid(["1T", "P"])).toBe("2H");
+  expect(agent.getBid(["1S", "P", "1T", "P"])).toBe("2D");
+  expect(agent.getBid(["1S", "P", "2H", "P"])).toBe("3D");
 
   agent = new Agent(hands[2]);
   expect(agent.getBid()).toBe("1H");
   expect(agent.getBid(["P", "1S", "P"])).toBe("2H");
   expect(agent.getBid(["P", "1H", "P"])).toBe("4H");
+  expect(agent.getBid(["1T", "P"])).toBe("2D");
+  expect(agent.getBid(["1T", "P", "2D", "P", "2H", "P"])).toBe("3T");
 
   agent = new Agent(hands[3]);
   expect(agent.getBid()).toBe("1C");
   expect(agent.getBid(["1D", "1H", "P"])).toBe("4H");
-  expect(agent.getBid(["1S", "2H", "P"])).toBe("4H");
+  expect(agent.getBid(["1S", "2H", "P"])).toBe("P");
 
   agent = new Agent(hands[4]);
   expect(agent.getBid()).toBe("1D");
