@@ -35,6 +35,7 @@ test("create an agent", () => {
   expect(agent.getBid(["2T", "P", "3S", "P"])).toBe("3T");
 
   agent = new Agent(hands[1]);
+  agent.print();
   expect(agent.ltc).toBe(5);
   expect(agent.getBid()).toBe("1S");
   expect(agent.getBid(["1T", "P"])).toBe("2H");

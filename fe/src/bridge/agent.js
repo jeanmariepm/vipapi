@@ -22,9 +22,9 @@ class Agent {
     this.secondLength = secondLength;
     this.secondSuit = secondSuit;
     this.lengthPoints = 0;
-    if (longestLength > 4 && longestSuit.match("A|K|Q"))
+    if (longestLength > 4 && hand[longestSuit].match("A|K|Q"))
       this.lengthPoints += longestLength - 4;
-    if (secondLength > 4 && secondSuit.match("A|K|Q"))
+    if (secondLength > 4 && hand[secondSuit].match("A|K|Q"))
       this.lengthPoints += secondLength - 4;
 
     this.spadeLength = this.distribution[0];
@@ -35,7 +35,7 @@ class Agent {
   print() {
     console.log(
       this.hand,
-      `HCP: ${this.hcp} Dist:${this.distribution} LTC:${this.ltc} Shape:${this.shape}`
+      `HCP: ${this.hcp} ${this.lengthPoints} Dist:${this.distribution} LTC:${this.ltc} Shape:${this.shape}`
     );
   }
   evaluateHand() {
