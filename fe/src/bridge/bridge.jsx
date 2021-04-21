@@ -185,6 +185,7 @@ class Bridge extends Component {
             <Auction
               dealer={this.dealer}
               bids={this.state.bids}
+              aiBid={this.aiBid}
               biddingOver={this.biddingOver()}
             />
             {!this.biddingOver() && (

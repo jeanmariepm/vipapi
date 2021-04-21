@@ -11,9 +11,9 @@ const styles = {
   marginLeft: "2%",
   zoon: 1,
 };
-const showBids = (dealer, bids, biddingOver) => {
+const showBids = (dealer, bids, aiBid, biddingOver) => {
   for (let b = 0; b < dealer; b++) bids = ["", ...bids];
-  bids = [...bids, biddingOver ? "-" : "?"];
+  bids = [...bids, biddingOver ? "-" : aiBid ? "i" : "?"];
 
   const bidMap = {
     "": "-",
@@ -36,7 +36,15 @@ const showBids = (dealer, bids, biddingOver) => {
                 {_.slice(bids, idx, idx + 4).map((bid, cidx) => {
                   return (
                     <Col key={cidx} style={{ maxWidth: 3 }}>
-                      <div style={styles}>{bidMap[bid] || bid}</div>
+                      {bid === "i" ? (
+                        <i
+                          className="fa fa-info"
+                          title={aiBid}
+                          aria-hidden="true"
+                        ></i>
+                      ) : (
+                        <div style={styles}>{bidMap[bid] || bid}</div>
+                      )}
                     </Col>
                   );
                 })}
@@ -49,7 +57,8 @@ const showBids = (dealer, bids, biddingOver) => {
   );
 };
 
-const Auction = ({ title, dealer, bids, biddingOver }) => {
+const Auction = ({ title, dealer, bids, aiBid, biddingOver }) => {
+  console.log(aiBid);
   return (
     <Card>
       <Card.Body>
@@ -64,7 +73,7 @@ const Auction = ({ title, dealer, bids, biddingOver }) => {
             );
           })}
         </Row>
-        {showBids(dealer, bids, biddingOver)}
+        {showBids(dealer, bids, aiBid, biddingOver)}
       </Card.Body>
     </Card>
   );
