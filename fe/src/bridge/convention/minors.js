@@ -1,9 +1,7 @@
+import _ from "lodash";
+
 const getOpening = (agent) => {
-  if (
-    agent.hcp >= 12 ||
-    (agent.hcp >= 10 &&
-      agent.longestLength + agent.secondLength + agent.hcp >= 20)
-  ) {
+  if (_.inRange(agent.hcp + agent.lengthPoints, 12, 22)) {
     if (agent.diamondLength === 4 && agent.clubLength === 5 && agent.hcp <= 15)
       return "1D";
     return agent.diamondLength >= 4 && agent.diamondLength >= agent.clubLength

@@ -4,9 +4,9 @@ const getOpening = (agent) => {
   if (agent.shape === "U")
     // unbalaced
     return "";
-  const adjustedHcp = agent.hcp + agent.lengthPoints;
-  if (adjustedHcp >= 15 && adjustedHcp <= 17) return "1T";
-  if (adjustedHcp >= 20 && adjustedHcp <= 21) return "2T";
+  if (_.inRange(agent.hcp + agent.lengthPoints, 15, 18)) return "1T";
+  if (_.inRange(agent.hcp + agent.lengthPoints, 20, 22)) return "2T";
+
   return "";
 };
 
@@ -32,15 +32,19 @@ const getResponse = (bids, biddingContext, agent) => {
   const level = goingBid.charAt(0) - "0";
 
   // Jacoby or Smolen
-  if (agent.spadeLength === 5 && _.inRange(agent.hcp, 8, 9) && level === 1)
+  if (
+    agent.spadeLength === 5 &&
+    _.inRange(agent.hcp + agent.lengthPoints, 8, 10) &&
+    level === 1
+  )
     return "2C"; //use Stayman to invite with a 5-cd Spade
   if (agent.spadeLength >= 5 && agent.heartLength < 4) return level + 1 + "H";
   if (agent.heartLength >= 5 && agent.spadeLength < 4) return level + 1 + "D";
   if (agent.spadeLength >= 5 && agent.heartLength >= 5) {
     if (level === 1) {
-      return agent.hcp >= 8 ? "2H" : "2D";
+      return agent.hcp + agent.lengthPoints >= 10 ? "2H" : "2D";
     } else {
-      return agent.hcp >= 4 ? "3H" : "3D";
+      return agent.hcp + agent.lengthPoints >= 4 ? "3H" : "3D";
     }
   }
   if (
@@ -48,8 +52,8 @@ const getResponse = (bids, biddingContext, agent) => {
     agent.heartLength >= 4 &&
     agent.spadeLength + agent.heartLength === 9
   ) {
-    if (agent.hcp >= 10 && level === 1) return "2C"; //Smolen
-    if (agent.hcp >= 4 && level === 2) return "3C"; //Smolen
+    if (agent.hcp + agent.lengthPoints >= 10 && level === 1) return "2C"; //Smolen
+    if (agent.hcp + agent.lengthPoints >= 4 && level === 2) return "3C"; //Smolen
     return agent.longestSuit === "S" ? level + 1 + "H" : level + 1 + "D";
   }
 
@@ -63,7 +67,7 @@ const getResponse = (bids, biddingContext, agent) => {
   }
 
   // GF 3145 or 2155 or 3-cd major
-  if (level === 1 && agent.hcp >= 10) {
+  if (level === 1 && agent.hcp + agent.lengthPoints >= 10) {
     if (
       agent.spadeLength === 1 &&
       agent.heartLength === 3 &&
@@ -81,7 +85,8 @@ const getResponse = (bids, biddingContext, agent) => {
   }
 
   //Size ask with an invitational hand
-  if (level === 1 && _.inRange(agent.hcp, 8, 9)) return "2S";
+  if (level === 1 && _.inRange(agent.hcp + agent.lengthPoints, 8, 10))
+    return "2S";
 
   // Minor suit transfer
   if (level === 1 && agent.ltc <= 9) {
@@ -171,8 +176,6 @@ const getOpenerRebid = (bids, biddingContext, agent) => {
 };
 
 const getResponderRebid = (bids, biddingContext, agent) => {
-  console.log("NT getResponderRebid");
-
   //pass with intervention after NT bid response
   for (let i = bids.length - 1; i >= bids.length - 4; i -= 2) {
     if (bids[i] !== "P") return "";
@@ -223,7 +226,6 @@ const getResponderRebid = (bids, biddingContext, agent) => {
       (pdLevel === 3 && agent.hcp >= 4)
     ) {
       //GF hands
-      console.log("GF Jacoby rebid");
       if (pdSuit === "H" && heartLength > 5) return "4H";
       if (pdSuit === "S" && spadeLength > 5) return "4S";
       return "3T";

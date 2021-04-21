@@ -2,11 +2,9 @@ import _ from "lodash";
 
 const getOpening = (agent) => {
   if (agent.spadeLength < 5 && agent.heartLength < 5) return "";
-  if (_.inRange(agent.hcp, 11, 21)) {
+  if (_.inRange(agent.hcp + agent.lengthPoints, 12, 22)) {
     return agent.spadeLength >= agent.heartLength ? "1S" : "1H";
   }
-  if (agent.hcp === 10 && agent.shape === "U")
-    return agent.spadeLength >= agent.heartLength ? "1S" : "1H";
   return "";
 };
 
@@ -62,10 +60,7 @@ const getResponse = (bids, biddingContext, agent) => {
     (pdSuit === "H" && heartLength >= 3) ||
     (pdSuit === "S" && spadeLength >= 3);
 
-  console.log("Fit?:", fit);
-
   if (agent.hcp < 5) return "P";
-  console.log(pdRole, agent.ltc);
   if (fit) {
     if (pdRole === "Opener") {
       if (agent.ltc <= 9)

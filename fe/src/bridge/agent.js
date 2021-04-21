@@ -1,4 +1,4 @@
-import _, { cloneWith } from "lodash";
+import _ from "lodash";
 import NT from "./convention/NT";
 import Minors from "./convention/minors";
 import Majors from "./convention/majors";
@@ -173,7 +173,7 @@ class Agent {
   getBid(bids = []) {
     let aiBid = "";
     const bc = this.getBiddingContext(bids);
-    console.log(bc.bidderRole);
+    // console.log(bc.bidderRole);
     if (bc.bidderRole === "Opener") aiBid = this.getOpeningBid();
     if (bc.bidderRole === "Overcaller") aiBid = this.getOvercall(bids, bc);
     if (bc.bidderRole === "Responder" || bc.bidderRole === "Advancer")
@@ -182,7 +182,7 @@ class Agent {
     if (bc.bidderRole === "ResponderRebid")
       aiBid = this.getResponderRebid(bids, bc);
 
-    console.log("aiBid:", aiBid);
+    // console.log("aiBid:", aiBid);
     return aiBid;
   }
   getOpeningBid() {
@@ -204,6 +204,13 @@ class Agent {
     let aiBid = "";
     const suit = bc.goingBid.charAt(1);
     const level = bc.goingBid.charAt(0) - "0";
+    const { pdRole } = bc;
+
+    // no overcall over strong 2C
+    if (pdRole && pdRole === "Opener" && bids[bids.length - 1] === "2C")
+      return "P";
+    if (pdRole && pdRole === "Overcaller" && bids[bids.length - 3] === "2C")
+      return "P";
 
     aiBid = NT.getOvercall(bids, bc, this);
     if (!aiBid) aiBid = Majors.getOvercall(bids, bc, this); // handles minors as well
@@ -218,23 +225,22 @@ class Agent {
     const suit = openingBid.charAt(1);
     const level = openingBid.charAt(0) - "0";
 
-    console.log("Responding to ", level, suit);
     if (suit === "T") aiBid = NT.getResponse(bids, bc, this);
-    console.log("NT response ", aiBid);
+    // console.log("NT response ", aiBid);
 
     if (!aiBid && level === 1 && ["S", "H"].includes(suit)) {
       aiBid = Majors.getResponse(bids, bc, this);
-      console.log("Major suit response ", aiBid);
+      // console.log("Major suit response ", aiBid);
     }
 
     if (!aiBid && level === 1 && ["D", "C"].includes(suit)) {
       aiBid = Minors.getResponse(bids, bc, this);
-      console.log("Minor suit response ", aiBid);
+      // console.log("Minor suit response ", aiBid);
     }
 
     if (!aiBid) {
       aiBid = this.getResponseBid(bids, bc);
-      console.log("Other response ", aiBid);
+      // console.log("Other response ", aiBid);
     }
 
     return aiBid;
@@ -263,7 +269,6 @@ class Agent {
     let aiBid = "";
     const openingBid = bids[bids.length - 6];
     const suit = openingBid.charAt(1);
-    console.log("dispatch getResponderRebid ", suit);
 
     if (suit === "T") aiBid = NT.getResponderRebid(bids, bc, this);
     return aiBid;
