@@ -2,7 +2,7 @@ import _ from "lodash";
 
 const getOpening = (agent) => {
   if (agent.spadeLength < 5 && agent.heartLength < 5) return "";
-  if (_.inRange(agent.hcp + agent.lengthPoints, 12, 22)) {
+  if (_.inRange(agent.totalPoints, 12, 22)) {
     return agent.spadeLength >= agent.heartLength ? "1S" : "1H";
   }
   return "";
@@ -13,13 +13,13 @@ const getOvercall = (bids, biddingContext, agent) => {
   const level = goingBid.charAt(0) - "0";
   const suit = goingBid.charAt(1);
 
-  if (agent.hcp < 8 + 3 * (level - 1)) return "";
+  if (agent.totalPoints < 8 + 3 * (level - 1)) return "";
 
   if (
     !oppSuits.has(agent.longestSuit) &&
     agent.goodToOvercall(agent.longestSuit)
   ) {
-    if (agent.hcp >= 17) return "X";
+    if (agent.totalPoints >= 17) return "X";
     if (level + agent.longestSuit > level + suit)
       return level + agent.longestSuit;
     return level + 1 + agent.longestSuit;
@@ -27,7 +27,7 @@ const getOvercall = (bids, biddingContext, agent) => {
     !oppSuits.has(agent.secondSuit) &&
     agent.goodToOvercall(agent.secondSuit)
   ) {
-    if (agent.hcp >= 17) return "X";
+    if (agent.totalPoints >= 17) return "X";
     if (level + agent.secondSuit > level + suit)
       return level + agent.secondSuit;
     return level + 1 + agent.secondSuit;
@@ -60,14 +60,17 @@ const getResponse = (bids, biddingContext, agent) => {
     (pdSuit === "H" && heartLength >= 3) ||
     (pdSuit === "S" && spadeLength >= 3);
 
-  if (agent.hcp < 5) return "P";
+  if (agent.totalPoints < 5) return "P";
   if (fit) {
     if (pdRole === "Opener") {
       if (agent.ltc <= 9)
         aiBid = agent.ltc <= 7 ? "4" + pdSuit : 11 - agent.ltc + pdSuit;
-      if (agent.ltc === 10) aiBid = "2" + pdSuit;
+      if (agent.ltc === 10)
+        if (agent.totalPoints < 8) aiBid = "1T";
+        else if (agent.totalPoints < 11) aiBid = "2" + pdSuit;
+
       if (aiBid > bidLevel + bidSuit) return aiBid;
-      else return "X";
+      else return rhoSuit ? "X" : "P";
     } else {
       //pfRole === "Overcaller"
       if (agent.ltc <= 8) {
@@ -79,8 +82,8 @@ const getResponse = (bids, biddingContext, agent) => {
   } else {
     // no major fit
     if (
-      (pdRole === "Opener" && agent.hcp >= 12) ||
-      (pdRole === "Overcaller" && agent.hcp >= 15)
+      (pdRole === "Opener" && agent.totalPoints >= 12) ||
+      (pdRole === "Overcaller" && agent.totalPoints >= 15)
     ) {
       // GF hands
       if (longestLength >= 5 && (!rhoSuit || rhoLevel <= 2)) {
@@ -91,20 +94,25 @@ const getResponse = (bids, biddingContext, agent) => {
       if (longestSuit < 5 && !rhoSuit) return bidLevel + 1 + "C";
       if (rhoSuit && rhoLevel <= 3)
         return agent.haveStopper(rhoSuit) ? bidLevel + "T" : "X";
-    } else if (agent.hcp >= 6) {
-      // constructive or invitational with no fit
+    } else if (agent.totalPoints >= 6) {
+      console.log(" constructive or invitational with no fit");
       aiBid = "";
       if (longestLength >= 5) {
         if (longestSuit > bidSuit) aiBid = bidLevel + longestSuit;
         if (longestSuit < bidSuit) aiBid = bidLevel + 1 + longestSuit;
         if (aiBid < "1T") return aiBid;
-        if (aiBid < "2T" && agent.hcp >= 10 && longestSuit < pdSuit && rhoBid)
+        if (
+          aiBid < "2T" &&
+          agent.totalPoints >= 10 &&
+          longestSuit < pdSuit &&
+          rhoSuit
+        )
           return aiBid;
-        if (aiBid && agent.hcp >= 8 && rhoBid) return "X";
+        if (aiBid && agent.totalPoints >= 8 && rhoSuit) return "X";
       }
       if (bidLevel === 1) {
         if (spadeLength >= 4) return "1S" > bidLevel + bidSuit ? "1S" : "P";
-        if (rhoBid === "P" || agent.hcp >= 8)
+        if (rhoBid === "P" || agent.totalPoints >= 8)
           return "1T" > bidLevel + bidSuit ? "1T" : "P";
       }
     } else return "P";
@@ -154,19 +162,20 @@ const getOpenerRebid = (bids, biddingContext, agent) => {
         raiseLevel = raiseLevel > 4 ? 4 : raiseLevel < 2 ? 2 : raiseLevel;
         return raiseLevel + "S";
       }
-      if (agent.shape === "B" && agent.hcp <= 17) return "1T";
+      if (agent.shape === "B" && agent.totalPoints <= 17) return "1T";
     }
-    if (agent.shape === "B" && agent.hcp <= 13) return "P";
+    if (agent.shape === "B" && agent.totalPoints <= 13) return "P";
     aiBid =
       openingSuit === "H" && heartLength >= 6
         ? "2H"
         : openingSuit === "S" && spadeLength >= 6
         ? "2S"
         : "";
-    if (aiBid) return agent.hcp <= 17 ? aiBid : "3" + openingSuit;
+    if (aiBid) return agent.totalPoints <= 17 ? aiBid : "3" + openingSuit;
     if (secondLength >= 4 && secondSuit < openingSuit)
-      return agent.hcp <= 17 ? "2" + secondSuit : "3" + secondSuit;
-    if (secondLength >= 4 && secondSuit === "S" && agent.hcp >= 17) return "2S";
+      return agent.totalPoints <= 17 ? "2" + secondSuit : "3" + secondSuit;
+    if (secondLength >= 4 && secondSuit === "S" && agent.totalPoints >= 17)
+      return "2S";
     if (clubLength >= 2) return "2C";
     return "2D";
   }

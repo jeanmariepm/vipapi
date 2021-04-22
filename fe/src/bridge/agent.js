@@ -21,11 +21,11 @@ class Agent {
     this.longestSuit = longestSuit;
     this.secondLength = secondLength;
     this.secondSuit = secondSuit;
-    this.lengthPoints = 0;
+    this.totalPoints = this.hcp;
     if (longestLength > 4 && hand[longestSuit].match("A|K|Q"))
-      this.lengthPoints += longestLength - 4;
+      this.totalPoints += longestLength - 4;
     if (secondLength > 4 && hand[secondSuit].match("A|K|Q"))
-      this.lengthPoints += secondLength - 4;
+      this.totalPoints += secondLength - 4;
 
     this.spadeLength = this.distribution[0];
     this.heartLength = this.distribution[1];
@@ -35,7 +35,7 @@ class Agent {
   print() {
     console.log(
       this.hand,
-      `HCP: ${this.hcp} ${this.lengthPoints} Dist:${this.distribution} LTC:${this.ltc} Shape:${this.shape}`
+      ` ${this.hcp} ${this.totalPoints} Dist:${this.distribution} LTC:${this.ltc} Shape:${this.shape}`
     );
   }
   evaluateHand() {
@@ -384,7 +384,7 @@ class Agent {
         ? this.heartLength
         : this.diamondLength;
     if (["S", "H"].includes(suit)) {
-      if (this.hcp + this.lengthPoints + supportLength >= 17) {
+      if (this.totalPoints + supportLength >= 17) {
         aiBid = "4" + suit;
         if (["P", "X"].includes(rhoBid) || aiBid > rhoBid) return aiBid;
       }

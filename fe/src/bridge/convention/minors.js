@@ -1,8 +1,12 @@
 import _ from "lodash";
 
 const getOpening = (agent) => {
-  if (_.inRange(agent.hcp + agent.lengthPoints, 12, 22)) {
-    if (agent.diamondLength === 4 && agent.clubLength === 5 && agent.hcp <= 15)
+  if (_.inRange(agent.totalPoints, 12, 22)) {
+    if (
+      agent.diamondLength === 4 &&
+      agent.clubLength === 5 &&
+      agent.totalPoints <= 15
+    )
       return "1D";
     return agent.diamondLength >= 4 && agent.diamondLength >= agent.clubLength
       ? "1D"
@@ -53,14 +57,14 @@ const getResponse = (bids, biddingContext, agent) => {
     majorToBid = majorsToBid[0];
   }
 
-  if (agent.hcp < 5) return "P";
+  if (agent.totalPoints < 5) return "P";
   if (majorToBid) {
-    if (rhoBid === "P" && bidLevel === 1 && agent.hcp >= 6)
+    if (rhoBid === "P" && bidLevel === 1 && agent.totalPoints >= 6)
       return bidLevel + majorToBid;
     if (
-      (rhoSuit && bidLevel === 1 && agent.hcp >= 8) ||
-      (bidLevel === 2 && agent.hcp >= 10) ||
-      (bidLevel === 3 && agent.hcp >= 12)
+      (rhoSuit && bidLevel === 1 && agent.totalPoints >= 8) ||
+      (bidLevel === 2 && agent.totalPoints >= 10) ||
+      (bidLevel === 3 && agent.totalPoints >= 12)
     ) {
       if (majorToBid === "S" && spadeLength >= 5) return bidLevel + majorToBid;
       if (majorToBid === "H" && heartLength >= 5) return bidLevel + majorToBid;
@@ -82,20 +86,21 @@ const getResponse = (bids, biddingContext, agent) => {
     if (!suit === "T") if (!agent.haveStopper(suit)) haveStoppers = false;
   }
 
-  if (rhoBid === "P" && bidLevel === 1 && agent.hcp <= 10) {
-    if (haveStoppers && agent.shape === "B" && agent.hcp >= 8) return "1T";
+  if (rhoBid === "P" && bidLevel === 1 && agent.totalPoints <= 10) {
+    if (haveStoppers && agent.shape === "B" && agent.totalPoints >= 8)
+      return "1T";
     if (longestSuit === "D" && pdSuit !== "D") return "1D";
     if (fit) return "3" + pdSuit;
     return "1T";
   }
-  if (rhoBid === "P" && bidLevel <= 2 && agent.hcp >= 11) {
+  if (rhoBid === "P" && bidLevel <= 2 && agent.totalPoints >= 11) {
     if (haveStoppers && agent.shape === "B") return "2T";
     if (fit && bidLevel === 1) return "2" + pdSuit;
     if (longestLength >= 5) {
       return bidLevel === 1 ? "1" + longestSuit : "2" + longestSuit;
     }
   }
-  if (rhoBid === "X" && agent.hcp >= 11) return "XX";
+  if (rhoBid === "X" && agent.totalPoints >= 11) return "XX";
 };
 
 const getOpenerRebid = (bids, biddingContext, agent) => {
