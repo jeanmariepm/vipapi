@@ -1,6 +1,8 @@
 import React from "react";
 import { Card, Row, Col } from "react-bootstrap";
+
 import _ from "lodash";
+
 const styles = {
   fontFamily: ["Courier New", "Courier", "monospace"],
   textAlign: "center",
@@ -25,6 +27,7 @@ const showBids = (dealer, bids, aiBid, biddingOver) => {
     "6T": "6NT",
     "7T": "7NT",
   };
+  aiBid = bidMap[aiBid] || aiBid;
 
   return (
     <React.Fragment>

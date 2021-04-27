@@ -57,28 +57,35 @@ const getResponse = (bids, biddingContext, agent) => {
     majorToBid = majorsToBid[0];
   }
 
-  if (agent.totalPoints < 5) return "P";
+  if (agent.totalPoints < 6) return "P";
   if (majorToBid) {
-    if (rhoBid === "P" && bidLevel === 1 && agent.totalPoints >= 6)
-      return bidLevel + majorToBid;
-    if (
-      (rhoSuit && bidLevel === 1 && agent.totalPoints >= 8) ||
-      (bidLevel === 2 && agent.totalPoints >= 10) ||
-      (bidLevel === 3 && agent.totalPoints >= 12)
-    ) {
-      if (majorToBid === "S" && spadeLength >= 5) return bidLevel + majorToBid;
-      if (majorToBid === "H" && heartLength >= 5) return bidLevel + majorToBid;
-      if (majorsToBid.length === 2 && spadeLength === 4) return "X";
-      if (bidLevel === 1 && majorToBid === "H" && heartLength === 4)
-        return "1H";
+    if (rhoBid === "P" && bidLevel === 1) return bidLevel + majorToBid;
+    if (rhoSuit)
       if (
-        bidLevel === 1 &&
-        rhoSuit === "H" &&
-        majorToBid === "S" &&
-        heartLength === 4
-      )
-        return "X";
-    }
+        (bidLevel === 1 && agent.totalPoints >= 8) ||
+        (bidLevel === 2 && agent.totalPoints >= 10) ||
+        (bidLevel === 3 && agent.totalPoints >= 12)
+      ) {
+        if (majorToBid === "S" && spadeLength >= 5)
+          return bidLevel + majorToBid;
+        if (majorToBid === "H" && heartLength >= 5)
+          return bidLevel + majorToBid;
+        if (majorsToBid.length === 2 && spadeLength === 4) return "X";
+        if (
+          bidLevel === 1 &&
+          majorToBid === "H" &&
+          heartLength === 4 &&
+          "H" < rhoSuit
+        )
+          return "1H";
+        if (
+          bidLevel === 1 &&
+          rhoSuit === "H" &&
+          majorToBid === "S" &&
+          heartLength === 4
+        )
+          return "X";
+      }
   }
 
   let haveStoppers = true;
@@ -107,11 +114,34 @@ const getOpenerRebid = (bids, biddingContext, agent) => {
   return "";
 };
 
+const getResponderRebid = (bids, biddingContext, agent) => {
+  //pass with intervention after response
+  for (let i = bids.length - 1; i >= bids.length - 4; i -= 2) {
+    if (bids[i] !== "P") return "";
+  }
+  const { spadeLength, heartLength, diamondLength, clubLength } = agent;
+
+  const pdBid = bids[bids.length - 2];
+  const pdLevel = pdBid.charAt(0) - "0";
+  const pdSuit = pdBid.charAt(1);
+  const prevBid = bids[bids.length - 4];
+  const prevSuit = prevBid.charAt(1);
+  const openingBid = bids[bids.length - 6];
+  const openingSuit = openingBid.charAt(1);
+
+  // pass game and slam bids
+  if (["3T", "4H", "4S", "5C", "5D"].includes(pdBid)) return "P";
+  if (pdLevel >= 6) return "P";
+
+  return "";
+};
+
 const Minors = {
   getOpening,
   getOvercall,
   getResponse,
   getOpenerRebid,
+  getResponderRebid,
 };
 
 export default Minors;

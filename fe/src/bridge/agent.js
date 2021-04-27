@@ -215,7 +215,8 @@ class Agent {
     aiBid = NT.getOvercall(bids, bc, this);
     if (!aiBid) aiBid = Majors.getOvercall(bids, bc, this); // handles minors as well
     if (!aiBid) aiBid = this.getTODouble(bids, bc, level, suit, bc.oppSuits);
-    if (!aiBid) aiBid = this.getPreemptOvercall(level, bc.oppSuitssuit);
+    if (!aiBid)
+      aiBid = this.getPreemptOvercall(level, bc.oppSuitssuit, bc.oppSuits);
     if (!aiBid) aiBid = "P";
     return aiBid;
   }
@@ -252,7 +253,7 @@ class Agent {
     const suit = openingBid.charAt(1);
     if (suit === "T") aiBid = NT.getOpenerRebid(bids, bc, this);
 
-    if (!aiBid && ["S", "H"].includes(suit)) {
+    if (!aiBid) {
       aiBid = Majors.getOpenerRebid(bids, bc, this);
     }
 
@@ -271,6 +272,16 @@ class Agent {
     const suit = openingBid.charAt(1);
 
     if (suit === "T") aiBid = NT.getResponderRebid(bids, bc, this);
+    if (!aiBid) {
+      aiBid = Majors.getResponderRebid(bids, bc, this);
+    }
+
+    if (!aiBid && ["D", "C"].includes(suit)) {
+      aiBid = Minors.getResponderRebid(bids, bc, this);
+    }
+
+    // TODO:  if (!aiBid) aiBid = getRebid(bid);
+
     return aiBid;
   }
 

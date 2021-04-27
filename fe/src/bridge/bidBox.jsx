@@ -17,6 +17,7 @@ const BidBox = ({
   };
   const onPickBid = (event, aiBid) => {
     const bid = event.target.value;
+    console.log("onPickBid", bid, aiBid);
     if (bid === "Skip") {
       setBid(bid);
       return;
@@ -25,6 +26,7 @@ const BidBox = ({
       setBid(bid);
       return;
     } else {
+      console.log("Place bid:", bid, aiBid);
       placeBid(bidReverseMap[bid] || bid);
       setBid("");
       return;

@@ -27,9 +27,17 @@ const getOvercall = (bids, biddingContext, agent) => {
 
 const getResponse = (bids, biddingContext, agent) => {
   const rhoBid = bids[bids.length - 1];
-  if (rhoBid !== "P") return ""; // yet to handle inerference
   const { goingBid } = biddingContext;
   const level = goingBid.charAt(0) - "0";
+  const suit = goingBid.charAt(1);
+
+  if (!["P", "X", "2C"].includes(rhoBid))
+    if (agent.totalPoints >= 10) {
+      if (agent.longestLength > 5 && rhoBid < "4S")
+        if (agent.longestSuit > suit) return level + agent.longestSuit;
+        else return level + 1 + agent.longestSuit;
+      else return "X";
+    } else return "";
 
   // Jacoby or Smolen
   if (
@@ -37,7 +45,7 @@ const getResponse = (bids, biddingContext, agent) => {
     _.inRange(agent.totalPoints, 8, 10) &&
     level === 1
   )
-    return "2C"; //use Stayman to invite with a 5-cd Spade
+    return rhoBid === "2C" ? "X" : "2C"; //use Stayman to invite with a 5-cd Spade
   if (agent.spadeLength >= 5 && agent.heartLength < 4) return level + 1 + "H";
   if (agent.heartLength >= 5 && agent.spadeLength < 4) return level + 1 + "D";
   if (agent.spadeLength >= 5 && agent.heartLength >= 5) {
@@ -64,7 +72,8 @@ const getResponse = (bids, biddingContext, agent) => {
         agent.totalPoints >= 10 &&
         agent.spadeLength + agent.heartLength !== 7
       )
-        return "2C";
+        return rhoBid === "2C" ? "X" : "2C";
+      //use Stayman to invite with a 5-cd Spade
       else if (agent.totalPoints >= 8) return "2C";
     if (level === 2 && agent.totalPoints >= 4) return "3C";
   }
