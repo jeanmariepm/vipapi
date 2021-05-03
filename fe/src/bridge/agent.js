@@ -173,7 +173,6 @@ class Agent {
   getBid(bids = []) {
     let aiBid = "";
     const bc = this.getBiddingContext(bids);
-    // console.log(bc.bidderRole);
     if (bc.bidderRole === "Opener") aiBid = this.getOpeningBid();
     if (bc.bidderRole === "Overcaller") aiBid = this.getOvercall(bids, bc);
     if (bc.bidderRole === "Responder" || bc.bidderRole === "Advancer")

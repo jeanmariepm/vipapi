@@ -16,12 +16,12 @@ test("create an agent", () => {
     { S: "KT74", H: "AK52", D: "6", C: "AQJ5" },
     { S: "J", H: "A63", D: "KJT7", C: "KT985" },
     { S: "42", H: "AQT9732", D: "T6", C: "A6" },
+    { S: "KJ65", H: "KQT87", D: "T654", C: "" },
   ];
 
   let agent;
 
   agent = new Agent(hands[0]);
-  agent.print();
   expect(agent.getBid()).toBe("1T");
   expect(agent.getBid(["1H"])).toBe("1T");
   expect(agent.getBid(["1D"])).toBe("X"); // no stopper to bid 1T
@@ -35,7 +35,6 @@ test("create an agent", () => {
   expect(agent.getBid(["2T", "P", "3S", "P"])).toBe("3T");
 
   agent = new Agent(hands[1]);
-  agent.print();
   expect(agent.ltc).toBe(5);
   expect(agent.getBid()).toBe("1S");
   expect(agent.getBid(["1T", "P"])).toBe("2H");
@@ -91,4 +90,8 @@ test("create an agent", () => {
 
   agent = new Agent(hands[12]);
   expect(agent.getBid(["P", "P"])).toBe("1H");
+
+  agent = new Agent(hands[13]);
+  agent.print();
+  expect(agent.getBid(["1D", "1H", "P", "1S", "P"])).toBe("2S");
 });

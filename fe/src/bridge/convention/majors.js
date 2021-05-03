@@ -154,9 +154,10 @@ const getOpenerRebid = (bids, biddingContext, agent) => {
     return "2T";
   }
   if (["1T", "1S"].includes(pdBid)) {
-    if (pdSuit === "1S") {
+    if (pdSuit === "S") {
       if (spadeLength >= 4) {
-        let raiseLevel = 9 - agent.ltc;
+        let raiseLevel = 8 - agent.ltc;
+
         raiseLevel = raiseLevel > 4 ? 4 : raiseLevel < 2 ? 2 : raiseLevel;
         return raiseLevel + "S";
       }
