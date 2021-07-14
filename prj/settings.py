@@ -24,7 +24,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 INSTALLED_APPS = [
     "home",
-    "ideas",
     "games",
     "fe",
     "django_extensions",
