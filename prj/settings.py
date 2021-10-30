@@ -1,3 +1,4 @@
+import dj_database_url
 from pathlib import Path
 import os
 import datetime
@@ -26,6 +27,8 @@ INSTALLED_APPS = [
     "home",
     "games",
     "fe",
+    'debug_toolbar',
+
     "django_extensions",
     "webpack_loader",
     "rest_framework",
@@ -39,6 +42,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -143,7 +148,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "fe/build/static")]
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 
-import dj_database_url
-
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
+INTERNAL_IPS = [
+    '127.0.0.1',
+]

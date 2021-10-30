@@ -6,9 +6,9 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 black = "*"
+autopep8 = "*"
 
 [packages]
-django = "*"
 pylint-django = "*"
 gunicorn = "*"
 whitenoise = "*"
@@ -18,12 +18,15 @@ dj-database-url = "*"
 wheel = "*"
 setuptools = "*"
 django-webpack-loader = "*"
-djangorestframework = "*"
 pip = "*"
-djangorestframework-jwt = "*"
+djangorestframework_simplejwt = "*"
 django-cors-headers = "*"
 requests = "*"
 psycopg2-binary = "*"
+django-debug-toolbar = "*"
+pytz = "*"
+djangorestframework = "==3.10"
+django = "==3.0"
 
 [requires]
 python_version = "3.8"
