@@ -84,7 +84,6 @@ LOGIN_REDIRECT_URL = "home"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "fe/build")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -148,8 +147,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "fe/build")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "fe/build/static")]
 
 
 db_from_env = dj_database_url.config(conn_max_age=600)
