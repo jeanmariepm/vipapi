@@ -1,13 +1,13 @@
 from django.urls import path
 from rest_framework import routers
-from .api import DealViewSet
-from . import views
+from .views import DealViewSet, PlayerViewSet
 
 app_name = "games"
 
 
 router = routers.DefaultRouter()
-router.register("api/deals", DealViewSet, "deals")
+router.register("deals", DealViewSet, basename="deals")
+router.register("players", PlayerViewSet, basename="players")
 
 
 urlpatterns = router.urls

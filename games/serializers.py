@@ -1,10 +1,27 @@
 from rest_framework import serializers
-from games.models import Deal
+from .models import Deal, Player
 
 
 class DealSerializer(serializers.ModelSerializer):
-    # hands = serializers.JSONField()
+    # player = serializers.JSONField()
 
     class Meta:
         model = Deal
-        fields = "__all__"
+        fields = ['id', 'hands', 'auction', 'player', 'username']
+
+    username = serializers.SerializerMethodField(method_name='getUserName')
+
+    def getUserName(self, deal):
+        return deal.player.user.username
+
+
+class PlayerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Player
+        fields = ['id', 'user', 'username',  'level']
+
+    username = serializers.SerializerMethodField(method_name='getUserName')
+
+    def getUserName(self, player):
+        return player.user.username

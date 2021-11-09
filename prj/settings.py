@@ -26,11 +26,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 INSTALLED_APPS = [
     "home",
     "games",
-    "fe",
-    'debug_toolbar',
+    # 'debug_toolbar',
+    'djoser',
     'rest_framework_simplejwt',
-
-    "django_extensions",
+    # "django_extensions",
     "webpack_loader",
     "rest_framework",
     "corsheaders",
@@ -43,7 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -57,18 +56,24 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         # "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
+        # "rest_framework.authentication.BasicAuthentication",
     ),
+    "COERCE_DECIMAL_TO_STRING": False
 }
-JWT_AUTH = {
-    "JWT_RESPONSE_PAYLOAD_HANDLER": "prj.utils.my_jwt_response_handler",
-    "JWT_EXPIRATION_DELTA": datetime.timedelta(days=2),
-    "JWT_ALLOW_REFRESH": True,
-    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=7),
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30)
+}
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'home.serializers.UserCreateSerializer',
+        'current_user': 'home.serializers.UserSerializer',
+    }
 }
 
 
@@ -146,11 +151,13 @@ STATIC_URL = "/static/"
 # STATIC_ROOT = os.path.join(BASE_DIR, "fe/build")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "fe/build/static")]
 
-CRISPY_TEMPLATE_PACK = "bootstrap4"
-
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING': False
+}
