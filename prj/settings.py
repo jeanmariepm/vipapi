@@ -26,7 +26,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 INSTALLED_APPS = [
     "home",
     "games",
-    # 'debug_toolbar',
+    'debug_toolbar',
     'djoser',
     'rest_framework_simplejwt',
     # "django_extensions",
@@ -42,8 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
-
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -78,12 +77,13 @@ DJOSER = {
 
 
 ROOT_URLCONF = "prj.urls"
-LOGIN_URL = "home:login"
-LOGIN_REDIRECT_URL = "home"
+#LOGIN_URL = "home:login"
+#LOGIN_REDIRECT_URL = "home"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+        # "DIRS": [os.path.join(BASE_DIR, "fe/build")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -145,6 +145,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 
 db_from_env = dj_database_url.config(conn_max_age=600)

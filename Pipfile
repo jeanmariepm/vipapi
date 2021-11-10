@@ -21,11 +21,11 @@ django-cors-headers = "*"
 requests = "*"
 psycopg2-binary = "*"
 django-debug-toolbar = "*"
-djangorestframework = "*"
 drf-nested-routers = "*"
 django-filter = "*"
 djoser = "*"
 django = "==3.2"
+djangorestframework = "*"
 
 [requires]
 python_version = "3.8"
