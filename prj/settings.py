@@ -16,7 +16,7 @@ SECRET_KEY = "l7b^4=b_7@r@4ti#*n5u9e-=9(1*gl6qw*a%63e!l1e9omx9ud"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["vipveed.herokuapp.com", "localhost"]
+# ALLOWED_HOSTS = ["vipveed.herokuapp.com", "localhost"]
 # CORS_ORIGIN_WHITELIST = ("http://localhost:1234",)
 CORS_ORIGIN_ALLOW_ALL = True
 
