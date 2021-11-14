@@ -3,11 +3,10 @@ from .models import Deal, Player
 
 
 class DealSerializer(serializers.ModelSerializer):
-    # player = serializers.JSONField()
 
     class Meta:
         model = Deal
-        fields = ['id', 'hands', 'auction', 'player', 'username']
+        fields = ['id', 'hands', 'auction', 'player', 'username', 'saved_date']
 
     username = serializers.SerializerMethodField(method_name='getUserName')
 
