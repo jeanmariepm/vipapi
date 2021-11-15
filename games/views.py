@@ -26,10 +26,12 @@ class DealViewSet(ModelViewSet):
         serializer = DealSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def create(self, request: Request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         user_id = request.user.id
         if not Player.objects.all().filter(user_id=user_id).exists():
             Player.objects.create(user=user_id)
+        player = Player.objects.get(user_id=user_id)
+        request.data['player'] = player.id
         return super().create(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
