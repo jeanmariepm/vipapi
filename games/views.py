@@ -1,5 +1,5 @@
 from rest_framework.generics import get_object_or_404
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -28,10 +28,15 @@ class DealViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user_id = request.user.id
+        print('Deal create ', user_id)
         if not Player.objects.all().filter(user_id=user_id).exists():
-            Player.objects.create(user=user_id)
+            print('Creating player:', user_id)
+            Player.objects.create(user_id=user_id)
+            print('Created player:', user_id)
         player = Player.objects.get(user_id=user_id)
+        print('Got player:', player)
         request.data['player'] = player.id
+        print('saving deal:', request.data)
         return super().create(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
@@ -43,16 +48,10 @@ class DealViewSet(ModelViewSet):
         return Response('Deal not deleted', status=status.HTTP_400_BAD_REQUEST)
 
 
-class PlayerViewSet(ModelViewSet):
+class PlayerViewSet(ReadOnlyModelViewSet):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
     permission_classes = [IsAuthenticated]
 
     def get_serializer_context(self):
         return {'request': self.request}
-
-    def retrieve(self, request, pk=None):
-        queryset = Player.objects.all()
-        player = get_object_or_404(queryset, user_id=pk)
-        serializer = PlayerSerializer(player)
-        return Response(serializer.data)
