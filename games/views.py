@@ -1,18 +1,17 @@
-from rest_framework.generics import get_object_or_404
+from django.db.models.aggregates import Count
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Deal, Player
-from .serializers import DealSerializer, PlayerSerializer
+from .models import Deal, Player, Review
+from .serializers import DealSerializer, PlayerSerializer, ReviewSerializer
 
 
 class DealViewSet(ModelViewSet):
     queryset = Deal.objects.all()
     serializer_class = DealSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -49,9 +48,21 @@ class DealViewSet(ModelViewSet):
 
 
 class PlayerViewSet(ReadOnlyModelViewSet):
-    queryset = Player.objects.all()
+    queryset = Player.objects.annotate(
+        deals_count=Count('deals')).all()
+
     serializer_class = PlayerSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+
+class ReviewViewSet(ModelViewSet):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        return Review.objects.filter(deal_id=self.kwargs['deal_pk'])
+
+    def get_serializer_context(self):
+        return {'deal_id': self.kwargs['deal_pk']}

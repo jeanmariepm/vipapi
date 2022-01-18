@@ -35,3 +35,12 @@ class Deal(models.Model):
     player = models.ForeignKey(
         Player, on_delete=models.CASCADE, related_name='deals')
     saved_date = models.DateTimeField(default=datetime.now)
+
+
+class Review(models.Model):
+    deal = models.ForeignKey(
+        Deal, on_delete=models.CASCADE, related_name='reviews')
+    reviewer = models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name='reviewed_deals')
+    content = models.TextField()
+    saved_date = models.DateField(auto_now_add=True)
