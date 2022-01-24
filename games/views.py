@@ -27,15 +27,10 @@ class DealViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user_id = request.user.id
-        print('Deal create ', user_id)
         if not Player.objects.all().filter(user_id=user_id).exists():
-            print('Creating player:', user_id)
             Player.objects.create(user_id=user_id)
-            print('Created player:', user_id)
         player = Player.objects.get(user_id=user_id)
-        print('Got player:', player)
         request.data['player'] = player.id
-        print('saving deal:', request.data)
         return super().create(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
@@ -47,7 +42,7 @@ class DealViewSet(ModelViewSet):
         return Response('Deal not deleted', status=status.HTTP_400_BAD_REQUEST)
 
 
-class PlayerViewSet(ReadOnlyModelViewSet):
+class PlayerViewSet(ModelViewSet):
     queryset = Player.objects.annotate(
         deals_count=Count('deals')).all()
 

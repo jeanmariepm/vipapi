@@ -7,6 +7,8 @@ verify_ssl = true
 pylint = "*"
 black = "*"
 autopep8 = "*"
+pytest-django = "*"
+pytest = "==6"
 
 [packages]
 pylint-django = "3"
