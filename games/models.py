@@ -41,6 +41,6 @@ class Review(models.Model):
     deal = models.ForeignKey(
         Deal, on_delete=models.CASCADE, related_name='reviews')
     reviewer = models.ForeignKey(
-        Player, on_delete=models.CASCADE, related_name='reviewed_deals')
+        Player,  null=True, on_delete=models.SET_NULL, related_name='reviewed_deals')
     content = models.TextField()
     saved_date = models.DateField(auto_now_add=True)

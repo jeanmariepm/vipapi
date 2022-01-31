@@ -2,19 +2,37 @@ from rest_framework import serializers
 from .models import Deal, Player, Review
 
 
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'saved_date',  'reviewer_name', 'content']
+
+    reviewer_name = serializers.SerializerMethodField(
+        method_name='getReviewerName')
+
+    def getReviewerName(self, review):
+        return review.reviewer.user.username
+
+    def create(self, validated_data):
+        deal_id = self.context['deal_id']
+        return Review.objects.create(deal_id=deal_id, **validated_data)
+
+
 class DealSerializer(serializers.ModelSerializer):
     # player = serializers.JSONField()
 
     class Meta:
         model = Deal
         fields = ['id', 'hands', 'auction', 'player',
-                  'username',  'saved_date']
+                  'username',  'saved_date', 'reviews']
         read_only_fields = ['username',  'saved_date']
 
     username = serializers.SerializerMethodField(method_name='getUserName')
 
     def getUserName(self, deal):
         return deal.player.user.username
+
+    reviews = ReviewSerializer(many=True, read_only=True)
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -33,19 +51,3 @@ class PlayerSerializer(serializers.ModelSerializer):
 
     def getDealsCount(self, player):
         return player.deals_count
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review
-        fields = ['id', 'saved_date', 'reviewer', 'reviewer_name', 'content']
-
-    reviewer_name = serializers.SerializerMethodField(
-        method_name='getReviewerName')
-
-    def getReviewerName(self, review):
-        return review.reviewer.user.username
-
-    def create(self, validated_data):
-        deal_id = self.context['deal_id']
-        return Review.objects.create(deal_id=deal_id, **validated_data)
